@@ -1,0 +1,21 @@
+/*
+ * ---------------------------------------------------------------------------
+ *
+ * DicomSel: DICOM Image Selector
+ *
+ * Copyright (C) 2005 IRCAD
+ * Authors: Benjamin Gaillard, Marc-Aurèle Mörk, Guillaume Spitz
+ *
+ * ---------------------------------------------------------------------------
+ *
+ * << LICENCE >>
+ *
+ * ---------------------------------------------------------------------------
+ */
+
+
+icon ICON MOVEABLE PURE LOADONCALL DISCARDABLE "images/icon.ico"
+
+#include <wx/msw/wx.rc>
+
+/* End of File */

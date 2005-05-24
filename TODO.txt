@@ -1,0 +1,11 @@
+TODO LIST
+
+Licence has to be defined.  If not GPL/LGPL, please refer to
+src/images/README.txt for additional licencing information.  Once done, update
+"head/licence.txt" and run "make head" to process the top of source files.
+
+Everything is done.  Somehow, some improvements are possible:
+    * add a toolbar (faster access than menu);
+    * implement a slideshow-like presentation of the images;
+    * preload the next image for better responsiveness;
+    * more comments in *.cpp files and Doxygen comments in *.h files.

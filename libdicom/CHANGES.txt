@@ -1,0 +1,8 @@
+Corrections and improvements made to libdicom during DicomSel development:
+
+- Class member initialization order correction (caused GCC warnings).
+- Headers location (<dicom/xxx> instead of <xxx>)
+- Some corrections in directory parsing under non-Win32 platforms.
+- More tolerant code in file reader, allows scanning a directory with
+  different file types (not only DICOM ones).
+- Some other minor corrections.
