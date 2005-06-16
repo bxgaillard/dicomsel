@@ -17,6 +17,7 @@
 #ifndef DICOMSEL_BITMAPPANEL_H
 #define DICOMSEL_BITMAPPANEL_H
 
+// wxWidgets
 #ifndef WX_PRECOMP
 # include <wx/panel.h>
 # include <wx/window.h>
@@ -24,7 +25,7 @@
 # include <wx/string.h>
 # include <wx/image.h>
 # include <wx/dcmemory.h>
-#endif
+#endif // !WX_PRECOMP
 
 class wxBitmap;
 class wxPaintEvent;
@@ -40,7 +41,7 @@ public:
     BitmapPanel( wxWindow* const parent, const wxWindowID id = -1,
 		 bool zoom = true, const wxPoint& pos = wxDefaultPosition,
 		 const wxSize& size = wxDefaultSize,
-		 long style = wxTAB_TRAVERSAL,
+		 long style = wxSUNKEN_BORDER,
 		 const wxString& name = wxT( "BitmapPanel" ) );
     virtual ~BitmapPanel( void );
 
@@ -53,6 +54,8 @@ private:
     wxImage    m_image;
     wxMemoryDC m_memDC;
     wxPoint    m_pos;
+
+    void Rescale( bool force = false );
 
     void OnPaint( wxPaintEvent& event );
     void OnSize ( wxSizeEvent&  event );

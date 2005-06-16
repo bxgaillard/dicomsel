@@ -20,36 +20,31 @@
 # pragma hdrstop
 #endif
 
-// wxWidgets
 #ifndef WX_PRECOMP
 # include <wx/app.h>
-# include <wx/gdicmn.h>
-#endif // !WX_PRECOMP
+# include <wx/frame.h>
+#endif
 
-// Current module
 #include "MainFrame.h"
 
-namespace dicomsel
+namespace radiofrequency
 {
 
-class DicomSelApp : public wxApp
+class RadiofrequencyApp : public wxApp
 {
 public:
     virtual bool OnInit( void );
 };
 
-
-bool DicomSelApp::OnInit( void )
+bool RadiofrequencyApp::OnInit( void )
 {
-    MainFrame* frame = new MainFrame( wxT( "DicomSel" ), wxDefaultPosition,
-				      wxSize( 600, 450 ) );
-    frame->Show();
-
+    (new MainFrame( wxT( "Radiofrequency" ),
+		    wxDefaultPosition, wxDefaultSize ))->Show();
     return true;
 }
 
 } // namespace dicomsel
 
-IMPLEMENT_APP( dicomsel::DicomSelApp )
+IMPLEMENT_APP( radiofrequency::RadiofrequencyApp )
 
 /* End of File */

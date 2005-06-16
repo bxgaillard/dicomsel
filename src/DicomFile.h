@@ -24,7 +24,7 @@
 # include <wx/treectrl.h>
 # include <wx/image.h>
 # include <wx/bitmap.h>
-#endif
+#endif // !WX_PRECOMP
 
 // Virtuals basic types
 #include <Virtuals/Type.h>

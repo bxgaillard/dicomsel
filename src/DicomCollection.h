@@ -20,7 +20,7 @@
 // wxWidgets
 #ifndef WX_PRECOMP
 # include <wx/string.h>
-#endif
+#endif // !WX_PRECOMP
 
 // Virtuals basic types
 #include <Virtuals/Type.h>

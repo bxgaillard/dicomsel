@@ -108,7 +108,7 @@ all: $(SUBDIRS) $(BIN)
 
 # Subdirectories
 ifneq ($(SUBDIRS),)
-    $(SUBDIRS):
+    $(SUBDIRS): $(MKRULES)
 	echo "**" Entering directory $(CWD)$@...
 	$(strip $(MAKE) -C $@ CWD=$(CWD)$@$(DIRSEP) $(TARGET))
 	echo "**" Leaving directory $(CWD)$@...

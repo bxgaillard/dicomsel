@@ -22,7 +22,7 @@ ifneq ($(OS),Windows)
     RANLIB ?= ranlib
 
     # Compiling Flags
-    CFLAGS   ?= -march=$(shell uname -m) -O2 -fomit-frame-pointer -pipe
+    CFLAGS   ?= -O2 -fomit-frame-pointer -pipe
     CFLAGS   := $(CFLAGS)
     CXXFLAGS ?= $(CFLAGS)
     CXXFLAGS := $(CXXFLAGS)

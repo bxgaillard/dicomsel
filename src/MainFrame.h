@@ -17,12 +17,14 @@
 #ifndef DICOMSEL_MAINFRAME_H
 #define DICOMSEL_MAINFRAME_H
 
+// wxWidgets
 #ifndef WX_PRECOMP
 # include <wx/frame.h>
 # include <wx/gdicmn.h>
 # include <wx/string.h>
-#endif
+#endif // !WX_PRECOMP
 
+// Current module
 #include "TagSet.h"
 
 class wxMenuItem;
@@ -39,7 +41,7 @@ namespace dicomsel
 {
 
 class DicomTree;
-class BitmapPanel; 
+class BitmapPanel;
 
 class MainFrame : public wxFrame
 {
@@ -55,8 +57,7 @@ public:
     }
 
 private:
-    wxMenuItem*       m_closeMenu;
-    wxMenuItem*       m_exportMenu;
+    wxMenuItem*       m_closeMenu, * m_exportMenu, * m_sendMenu;
     DicomTree*        m_tree;
     wxPanel*          m_panel;
     BitmapPanel*      m_bitmap;
@@ -87,6 +88,7 @@ private:
     void OnMenuOpenDir      ( wxCommandEvent& event );
     void OnMenuCloseDir     ( wxCommandEvent& event );
     void OnMenuExport       ( wxCommandEvent& event );
+    void OnMenuSend         ( wxCommandEvent& event );
     void OnMenuQuit         ( wxCommandEvent& event );
     void OnMenuDisplayedTags( wxCommandEvent& event );
     void OnMenuExportedTags ( wxCommandEvent& event );

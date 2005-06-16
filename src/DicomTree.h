@@ -17,14 +17,16 @@
 #ifndef DICOMSEL_DICOMTREE_H
 #define DICOMSEL_DICOMTREE_H
 
+// wxWidgets
 #ifndef WX_PRECOMP
 # include <wx/string.h>
 # include <wx/gdicmn.h>
 # include <wx/window.h>
 # include <wx/validate.h>
 # include <wx/treectrl.h>
-#endif
+#endif // !WX_PRECOMP
 
+// Current module
 #include "DicomCollection.h"
 
 class wxImage;

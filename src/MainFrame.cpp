@@ -41,8 +41,9 @@
 # include <wx/wfstream.h>
 # include <wx/buffer.h>
 # include <wx/msgdlg.h>
+# include <wx/ipc.h>
 # include <wx/image.h>
-#endif
+#endif // !WX_PRECOMP
 
 // Standard C library
 #include <cstring>
@@ -53,6 +54,7 @@
 #include "TagSet.h"
 #include "TagDialog.h"
 #include "DicomFile.h"
+#include "config.h"
 #include "version.h"
 #include "MainFrame.h"
 
@@ -82,6 +84,7 @@ enum
 
     // Custom menu IDs
     MENU_EXPORT = wxID_HIGHEST + 1,
+    MENU_SEND,
     MENU_DISPLAYED_TAGS,
     MENU_EXPORTED_TAGS,
 
@@ -105,6 +108,7 @@ BEGIN_EVENT_TABLE( MainFrame, wxFrame )
     EVT_MENU( MENU_OPENDIR,        MainFrame::OnMenuOpenDir       )
     EVT_MENU( MENU_CLOSEDIR,       MainFrame::OnMenuCloseDir      )
     EVT_MENU( MENU_EXPORT,         MainFrame::OnMenuExport        )
+    EVT_MENU( MENU_SEND,           MainFrame::OnMenuSend          )
     EVT_MENU( MENU_QUIT,           MainFrame::OnMenuQuit          )
     EVT_MENU( MENU_DISPLAYED_TAGS, MainFrame::OnMenuDisplayedTags )
     EVT_MENU( MENU_EXPORTED_TAGS,  MainFrame::OnMenuExportedTags  )
@@ -133,30 +137,34 @@ MainFrame::MainFrame( const wxString& title, const wxPoint& pos,
 #if wxUSE_MENUS
     // File menu
     wxMenu* const fileMenu = new wxMenu;
-    fileMenu->Append( MENU_OPENDIR, wxT( "&Open directory...\tCTRL-O" ),
+    fileMenu->Append( MENU_OPENDIR, wxT( "&Open directory...\tCtrl-O" ),
 		      wxT( "Scan a directory for DICOM images" ) );
     m_closeMenu = fileMenu->Append( MENU_CLOSEDIR,
-				    wxT( "&Close directory\tCTRL-C" ),
+				    wxT( "&Close directory\tCtrl-C" ),
 				    wxT( "Close the current directory" ) );
     m_closeMenu->Enable( false );
     fileMenu->AppendSeparator();
     m_exportMenu = fileMenu->Append( MENU_EXPORT,
-				     wxT( "&Export tags...\tCTRL-E" ),
+				     wxT( "&Export tags...\tCtrl-E" ),
 				     wxT( "Export the selected tags to a "
 					  "file" ) );
     m_exportMenu->Enable( false );
+    m_sendMenu = fileMenu->Append( MENU_SEND, wxT( "&Send position\tCtrl-S" ),
+				   wxT( "Send the position of the currently "
+					"selected image to Radiofrequency") );
+    m_sendMenu->Enable( false );
     fileMenu->AppendSeparator();
-    fileMenu->Append( MENU_QUIT, wxT( "&Quit\tCTRL-Q" ),
+    fileMenu->Append( MENU_QUIT, wxT( "&Quit\tCtrl-Q" ),
 		      wxT( "Exit DicomSel" ) );
 
     // Options menu
     wxMenu* const optionsMenu = new wxMenu;
     optionsMenu->Append( MENU_DISPLAYED_TAGS,
-			 wxT( "&Displayed tags...\tCTRL-D" ),
+			 wxT( "&Displayed tags...\tCtrl-D" ),
 			 wxT( "Select which DICOM tags to display alongside "
 			      "the image" ) );
     optionsMenu->Append( MENU_EXPORTED_TAGS,
-			 wxT( "&Exported tags...\tCTRL-T" ),
+			 wxT( "&Exported tags...\tCtrl-T" ),
 			 wxT( "Select which DICOM tags should be exported "
 			      "to a file" ) );
 
@@ -360,8 +368,39 @@ void MainFrame::OnMenuCloseDir( wxCommandEvent& WXUNUSED( event ) )
     m_tree->CloseDirectory();
     m_closeMenu->Enable( false );
     m_exportMenu->Enable( false );
+    m_sendMenu->Enable( false );
     m_bitmap->Clear();
     RefreshLabels();
+}
+
+void MainFrame::OnMenuSend( wxCommandEvent& WXUNUSED( event ) )
+{
+    const DicomFile& dfile = m_tree->GetFile();
+    if( &dfile == NULL ) return;
+
+    wxClient client;
+    wxConnection* const conn = static_cast< wxConnection* >(
+	client.MakeConnection(wxT( IPC_HOSTNAME ),
+#ifdef __WXMSW__
+			      wxT( IPC_SERVICE ),
+#else // __WXMSW__
+			      wxT( IPC_UNIXSOCKET ),
+#endif // !__WXMSW
+			      wxT( IPC_TOPIC ) ) );
+    if( conn != NULL )
+    {
+	wxString str = dfile.GetTagString( TagSet::TAG_IMAGE_POSITION );
+	conn->Poke( wxT( IPC_ITEM ), const_cast< wxChar* >( str.c_str() ) );
+	conn->Disconnect();
+	delete conn;
+    }
+    else
+    {
+	wxMessageBox( wxT( "Failed to contact Radiofrequency.\n"
+			   "Is it correctly launched?" ),
+		      wxT( "Unable to connect to server." ),
+		      wxOK | wxICON_ERROR, this );
+    }
 }
 
 void MainFrame::OnMenuExport( wxCommandEvent& WXUNUSED( event ) )
@@ -439,6 +478,7 @@ void MainFrame::OnSelectionChanged( wxTreeEvent& WXUNUSED( event ) )
     RefreshLabels();
 
     m_exportMenu->Enable( image.Ok() );
+    m_sendMenu->Enable( image.Ok() );
 }
 
 } // namespace dicomsel

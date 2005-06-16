@@ -20,9 +20,13 @@
 # pragma hdrstop
 #endif
 #ifndef WX_PRECOMP
+# include <wx/panel.h>
 # include <wx/window.h>
 # include <wx/gdicmn.h>
 # include <wx/string.h>
+# include <wx/dcbuffer.h>
+# include <wx/brush.h>
+# include <wx/settings.h>
 # include <wx/image.h>
 # include <wx/bitmap.h>
 # include <wx/dcmemory.h>
@@ -43,7 +47,8 @@ END_EVENT_TABLE()
 BitmapPanel::BitmapPanel( wxWindow* const parent, const wxWindowID id,
 			  bool zoom, const wxPoint& pos, const wxSize& size,
 			  long style, const wxString& name )
-:   wxPanel( parent, id, pos, size, style, name ),
+:   wxPanel( parent, id, pos, size, style | wxNO_FULL_REPAINT_ON_RESIZE,
+	     name ),
     m_zoom( zoom )
 {}
 
@@ -55,8 +60,7 @@ void BitmapPanel::SetImage( const wxImage& image )
     if( image.Ok() )
     {
 	m_image = image;
-	wxSizeEvent event( GetSize() );
-	OnSize( event );
+	Rescale( true );
     }
     else Clear();
 }
@@ -79,26 +83,10 @@ void BitmapPanel::Clear( void )
     }
 }
 
-void BitmapPanel::OnPaint( wxPaintEvent& event )
+void BitmapPanel::Rescale( bool force )
 {
-    if( !m_image.Ok() )
-    {
-	event.Skip();
-	return;
-    }
-
-    const wxSize size = m_memDC.GetSize();
-    wxPaintDC dc( this );
-    dc.Blit( m_pos.x, m_pos.y, size.GetWidth(), size.GetHeight(), &m_memDC,
-	     0, 0 );
-}
-
-void BitmapPanel::OnSize( wxSizeEvent& event )
-{
-    event.Skip();
-
     if( !m_image.Ok() ) return;
-    const wxSize size = event.GetSize();
+    const wxSize size = GetClientSize();
     wxSize imageSize;
 
     if( m_zoom ||
@@ -136,16 +124,71 @@ void BitmapPanel::OnSize( wxSizeEvent& event )
     if( imageSize.GetHeight() >= size.GetHeight() ) m_pos.y = 0;
     else m_pos.y = (size.GetHeight() - imageSize.GetHeight()) / 2;
 
-    // Create a scaled version
-    wxImage image =
-	m_image.Scale( imageSize.GetWidth(), imageSize.GetHeight() );
+    // Only rescale if size is different
+    const wxSize dcSize = m_memDC.GetSize();
+    if( force || !dcSize.IsFullySpecified() ||
+	imageSize.GetWidth() != dcSize.GetWidth() ||
+	imageSize.GetHeight() != dcSize.GetHeight() )
+    {
+	// Create a scaled version
+	wxImage image =
+	    m_image.Scale( imageSize.GetWidth(), imageSize.GetHeight() );
 
-    // Pre-draw in temporary drawing context
-    m_memDC.SelectObject( wxBitmap( image.GetWidth(), image.GetHeight() ) );
-    m_memDC.DrawBitmap( wxBitmap( image ), 0, 0 );
+	// Pre-draw in temporary drawing context
+	m_memDC.SelectObject( wxBitmap( image.GetWidth(),
+					image.GetHeight() ) );
+	m_memDC.DrawBitmap( wxBitmap( image ), 0, 0 );
+    }
 
     // Redraw image
-    Refresh();
+    Refresh(false);
+}
+
+void BitmapPanel::OnPaint( wxPaintEvent& event )
+{
+    if( !m_image.Ok() )
+    {
+	event.Skip();
+	return;
+    }
+
+    const wxSize size = m_memDC.GetSize(), winSize = GetClientSize();
+    wxPaintDC dc( this );
+
+    dc.SetPen( wxPen( *wxBLACK, 0, wxTRANSPARENT ) );
+    dc.SetBrush( wxBrush( wxSystemSettings::GetColour(
+	wxSYS_COLOUR_WINDOWFRAME ) ) );
+
+    if( size.GetHeight() < winSize.GetHeight() )
+    {
+	if( m_pos.y > 0 )
+	{
+	    dc.DrawRectangle( 0, 0, winSize.GetWidth(), m_pos.y );
+	}
+	dc.DrawRectangle( 0, m_pos.y + size.GetHeight(), winSize.GetWidth(),
+			  winSize.GetHeight() - size.GetHeight() - m_pos.y );
+    }
+
+    if( size.GetWidth() < winSize.GetWidth() )
+    {
+	if( m_pos.x > 0 )
+	{
+	    dc.DrawRectangle( 0, m_pos.y, m_pos.x, size.GetHeight() );
+	}
+	dc.DrawRectangle( m_pos.x + size.GetWidth(), m_pos.y,
+			  winSize.GetWidth() - size.GetWidth() - m_pos.x,
+			  size.GetHeight() );
+    }
+
+    dc.Blit( m_pos.x, m_pos.y, size.GetWidth(), size.GetHeight(), &m_memDC,
+	     0, 0 );
+}
+
+void BitmapPanel::OnSize( wxSizeEvent& event )
+{
+    event.Skip();
+
+    Rescale();
 }
 
 } // namespace dicomsel

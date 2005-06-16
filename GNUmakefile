@@ -21,7 +21,7 @@ src: libdicom$(DIRSEP)src
 .PHONY: head
 head:
 	$(strip /bin/bash ./tools/gencom.sh -i head/info.txt -l \
-		head/licence.txt GNUmakefile mkfiles src \
+		head/licence.txt GNUmakefile mkfiles src rfsample \
 		libdicom/src/GNUmakefile)
 
 # End of File

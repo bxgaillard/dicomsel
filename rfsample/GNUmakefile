@@ -13,16 +13,12 @@
 
 
 TOPDIR = ..
-BIN    = dicomsel$(EXESUFFIX)
+BIN    = rf$(EXESUFFIX)
 DEPLIB = ..$(DIRSEP)libdicom$(DIRSEP)src$(DIRSEP)libdicom.a
 
 include ../mkfiles/rules.mk
 
 $(BIN): $(DEPLIB)
-
-INCLUDES = -I..$(DIRSEP)libdicom$(DIRSEP)include \
-	   -I..$(DIRSEP)libdicom$(DIRSEP)include$(DIRSEP)dicom
-LIBS     = -L..$(DIRSEP)libdicom$(DIRSEP)src -ldicom
 
 ifneq ($(OS),Windows)
     INCLUDES := $(INCLUDES) $(shell wx-config $(WXFLAGS) --cxxflags)
