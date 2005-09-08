@@ -12,54 +12,37 @@
 # ----------------------------------------------------------------------------
 
 
-# OS-specific Definitions
-ifneq ($(OS),Windows)
-    # Programs
-    CC     ?= gcc
-    CXX    ?= g++
-    RM     ?= rm -f
-    AR     ?= ar
-    RANLIB ?= ranlib
+# Programs
+CC     = $(PREFIX)gcc$(HOST_EXESUFFIX)
+CXX    = $(PREFIX)g++$(HOST_EXESUFFIX)
+STRIP  = $(PREFIX)strip$(HOST_EXESUFFIX)
+RC     = $(PREFIX)windres$(HOST_EXESUFFIX)
+AR     = $(PREFIX)ar$(HOST_EXESUFFIX)
+RANLIB = $(PREFIX)ranlib$(HOST_EXESUFFIX)
+RM     = rm$(HOST_EXESUFFIX) -f
+CP     = cp$(HOST_EXESUFFIX) -fp
+MV     = mv$(HOST_EXESUFFIX) -f
 
-    # Compiling Flags
+# Compiling Flags
+ifneq ($(TARGET_OS),Windows)
     CFLAGS   ?= -O2 -fomit-frame-pointer -pipe
-    CFLAGS   := $(CFLAGS)
-    CXXFLAGS ?= $(CFLAGS)
-    CXXFLAGS := $(CXXFLAGS)
-
-    # Additional Flags
-    EXESUFFIX =
-
-    # Windows Resources
-    RCFILES =
 else
-    # Programs
-    CC     ?= gcc.exe
-    CXX    ?= g++.exe
-    RC     ?= windres.exe
-    RM     ?= rm.exe -f
-    AR     ?= ar.exe
-    RANLIB ?= ranlib.exe
-
-    # Compiling Flags
     CFLAGS   ?= -march=i386 -mtune=i686 -O2 -fomit-frame-pointer -pipe
-    CXXFLAGS ?= $(CFLAGS)
-    CXXFLAGS := $(CXXFLAGS)
-    CFLAGS   += -fno-pcc-struct-return
-    CXXFLAGS += -fno-pcc-struct-return
-
-    # Additional Flags
-    EXESUFFIX = .exe
-
-    # Windows Resources
-    RCFILES := $(wildcard *.rc)
+    CPPFLAGS += -DLITTLE_ENDIAN=1234 -DBIG_ENDIAN=4321 -DBYTE_ORDER=1234
 endif
+CXXFLAGS ?= $(CFLAGS)
+CXXFLAGS := $(CXXFLAGS)
 
 # Custom Additions to Flags
 WARN      = -Wall -Wextra
-CFLAGS   += $(WARN)
-CXXFLAGS += -fno-check-new -fno-rtti $(WARN)
-CPPFLAGS += $(INCLUDES) -MD -MP
-LDFLAGS  += -s
+override CFLAGS   += $(WARN)
+override CXXFLAGS += -fno-rtti $(WARN) -MD -MP
+override CPPFLAGS += $(INCLUDES)
+
+# Remove unsupported dependencies flags if compiling for several architectures
+NUMARCH := $(words $(filter -arch,$(CXXFLAGS)))
+ifneq ($(subst 1,0,$(NUMARCH)),0)
+    override CXXFLAGS := $(filter-out -M%,$(CXXFLAGS))
+endif
 
 # End of File

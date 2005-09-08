@@ -38,8 +38,7 @@ public:
 
 bool RadiofrequencyApp::OnInit( void )
 {
-    (new MainFrame( wxT( "Radiofrequency" ),
-		    wxDefaultPosition, wxDefaultSize ))->Show();
+    (new MainFrame( wxT( "Radiofrequency" ) ))->Show();
     return true;
 }
 

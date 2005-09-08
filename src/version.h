@@ -22,8 +22,8 @@
 
 // DicomSel version information
 #define VERSION_MAJOR   1
-#define VERSION_MINOR   0
-#define VERSION_RELEASE 9
+#define VERSION_MINOR   1
+#define VERSION_RELEASE 0
 
 // String making macros
 #define MAKE_STRING2( s ) #s

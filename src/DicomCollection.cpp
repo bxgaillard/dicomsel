@@ -70,19 +70,24 @@
 namespace dicomsel
 {
 
+DicomCollection::Visitor::~Visitor()
+{}
+
 DicomCollection::DicomCollection( DicomCollection::Visitor* const visitor )
 :   m_visitor( visitor )
 {
     assert( visitor != NULL );
 }
 
-DicomCollection::~DicomCollection()
+DicomCollection::~DicomCollection( void )
 {}
 
 void DicomCollection::ScanDirectory( const wxString& name )
 {
-    // FIXME: conversion from wxString to std::string may be loosy.
+    // FIXME: conversion from wxString to std::string might be loosy.
     // This can only be fixed by redesigning DICOM library string handling...
+    // Note though that this isn't a problem under recent systems which use
+    // UTF-8 for filename encoding.
 
     // Create DICOM directory parser
     dicom::io::CSimpleDirectory

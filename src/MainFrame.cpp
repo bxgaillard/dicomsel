@@ -39,6 +39,7 @@
 # include <wx/dirdlg.h>
 # include <wx/filedlg.h>
 # include <wx/wfstream.h>
+# include <wx/textfile.h>
 # include <wx/buffer.h>
 # include <wx/msgdlg.h>
 # include <wx/ipc.h>
@@ -358,6 +359,7 @@ void MainFrame::OnMenuOpenDir( wxCommandEvent& WXUNUSED( event ) )
 	    m_closeMenu->Enable();
 	    m_bitmap->Clear();
 	    RefreshLabels();
+	    m_tree->SetFocus();
 	}
     }
     else dialog->Destroy();
@@ -380,17 +382,20 @@ void MainFrame::OnMenuSend( wxCommandEvent& WXUNUSED( event ) )
 
     wxClient client;
     wxConnection* const conn = static_cast< wxConnection* >(
-	client.MakeConnection(wxT( IPC_HOSTNAME ),
+	client.MakeConnection( wxT( IPC_HOSTNAME ),
 #ifdef __WXMSW__
-			      wxT( IPC_SERVICE ),
+			       wxT( IPC_SERVICE ),
 #else // __WXMSW__
-			      wxT( IPC_UNIXSOCKET ),
-#endif // !__WXMSW
-			      wxT( IPC_TOPIC ) ) );
+			       wxT( IPC_UNIXSOCKET ),
+#endif // !__WXMSW__
+			       wxT( IPC_TOPIC ) ) );
     if( conn != NULL )
     {
 	wxString str = dfile.GetTagString( TagSet::TAG_IMAGE_POSITION );
-	conn->Poke( wxT( IPC_ITEM ), const_cast< wxChar* >( str.c_str() ) );
+	wxCharBuffer data = str.mb_str( wxConvUTF8 );
+	conn->Poke( wxT( IPC_ITEM ),
+		    reinterpret_cast< wxChar* >( data.data() ),
+		    std::strlen( data ) + 1, wxIPC_TEXT );
 	conn->Disconnect();
 	delete conn;
     }
@@ -421,13 +426,14 @@ void MainFrame::OnMenuExport( wxCommandEvent& WXUNUSED( event ) )
 	    m_exportedTags.Rewind();
 	    TagSet::TagID tag;
 	    wxString str;
+	    const wxString eol = wxTextFile::GetEOL();
 
 	    while( (tag = m_exportedTags.GetNext()) != TagSet::TAG__LAST )
 	    {
 		str = TagSet::GetTagID( tag ) + wxT( '=' )
-		    + dfile.GetTagString( tag ) + wxT( LINE_BREAK );
+		    + dfile.GetTagString( tag ) + eol;
 		const wxCharBuffer data = str.mb_str( wxConvUTF8 );
-		file.Write( data, strlen( data ) );
+		file.Write( data, std::strlen( data ) );
 	    }
 	}
 	file.Close();
@@ -463,12 +469,12 @@ void MainFrame::OnMenuExportedTags( wxCommandEvent& WXUNUSED( event ) )
 
 void MainFrame::OnMenuAbout( wxCommandEvent& WXUNUSED( event ) )
 {
-    wxMessageBox( UniString( L"DicomSel " VERSION_STRING "\n"
-			      "Copyright (C) 2005 IRCAD\n\n"
-			      "Authors: Benjamin Gaillard, "
-			      "Marc-Aur\u00E8le M\u00F6rk, "
-			      "Guillaume Spitz" ), wxT( "About DicomSel" ),
-		  wxOK | wxICON_INFORMATION, this );
+    wxMessageBox( wxString( L"DicomSel " VERSION_STRING "\n"
+			     "Copyright (C) 2005 IRCAD\n\n"
+			     "Authors: Benjamin Gaillard, "
+			     "Marc-Aur\u00E8le M\u00F6rk, "
+			     "Guillaume Spitz", *wxConvCurrent ),
+		  wxT( "About DicomSel" ), wxOK | wxICON_INFORMATION, this );
 }
 
 void MainFrame::OnSelectionChanged( wxTreeEvent& WXUNUSED( event ) )

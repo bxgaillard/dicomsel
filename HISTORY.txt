@@ -1,0 +1,38 @@
+HISTORY
+
+
+1.0.0 ------------------------------------------------------------------------
+
+This release is the final version used for the project presentation.
+- First release.
+
+1.0.9 ------------------------------------------------------------------------
+
+This release is the software integrated to the Radiofrequency project during
+June 2005.
+
+- Implemented IPC for integration with Radiofrequency.
+- Corrected the image flickering effect when resizing (theorically).
+- Corrected some minor bugs (cosmetics, typos, UI tuning...).
+
+1.1.0 ------------------------------------------------------------------------
+
+This release was created during August 2005 to fix some bugs.  It is intended
+to be integrated back to Radiofrequency soon.
+
+- Corrected data format sent through IPC (char instead of wxChar).
+- Introduced cross-compiling for Windows under Unix.
+- Updated included wxWidgets version (2.6.0 -> 2.6.1).
+- Moved wxWidgets precompiled libraries for Windows from "/wxwidgets" to
+  "/3rdparty/wxmsw".
+- Corrected a bug of program fault when another DICOM tree was loaded right
+      after viewing an image.
+- Corrected locale-related bugs for floating point to string conversion and
+  vice-versa by using "std::setlocale()".
+- Removed MSLU dependency on Windows by using a non-unicode wxWidgets build
+  and updated README.txt accordingly.
+- Slightly reworked "rfsample" user interface.
+- Disabled exception handling in wxWidgets build (useless since exceptions are
+  handled outside wxWidgets) to recude executable size by about 30% (!).
+- Fixes for image reading on big endian machines.
+- Actually, image flickering still occuring under Windows. Any idea?

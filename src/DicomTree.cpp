@@ -163,11 +163,11 @@ DicomTree::DicomTree( wxWindow* parent, wxWindowID id, const wxPoint& pos,
     wxImageList* const imageList = new wxImageList( 16, 16, TRUE, 5 );
 
     // Add icons to the list
-    imageList->Add( dir_xpm     );
-    imageList->Add( patient_xpm );
-    imageList->Add( study_xpm   );
-    imageList->Add( series_xpm  );
-    imageList->Add( image_xpm   );
+    imageList->Add( wxBitmap( dir_xpm     ) );
+    imageList->Add( wxBitmap( patient_xpm ) );
+    imageList->Add( wxBitmap( study_xpm   ) );
+    imageList->Add( wxBitmap( series_xpm  ) );
+    imageList->Add( wxBitmap( image_xpm   ) );
 
     // Set the used icons for the tree
     AssignImageList( imageList );
@@ -207,6 +207,7 @@ bool DicomTree::OpenDirectory( const wxString& name )
 		m_files->BuildTree( this, root );
 		Expand( root );
 
+		m_currentFile = NULL;
 		ret = true;
 	    }
 	    else

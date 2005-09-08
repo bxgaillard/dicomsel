@@ -25,6 +25,9 @@
 # include <wx/ipc.h>
 #endif // !WX_PRECOMP
 
+class wxPanel;
+class wxStaticText;
+
 namespace radiofrequency
 {
 
@@ -36,10 +39,15 @@ public:
 	       const wxSize& size = wxDefaultSize );
     virtual ~MainFrame( void );
 
+    void SetLabel( const wxString& label );
+
     virtual wxConnectionBase* OnAcceptConnection( const wxString& topic );
 
 private:
     class Connection;
+
+    wxPanel*      m_panel;
+    wxStaticText* m_text;
 
     void OnClose   ( wxCloseEvent&   event );
     void OnBtnClose( wxCommandEvent& event );

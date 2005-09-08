@@ -31,6 +31,8 @@
 
 // C standard library
 #include <cstdlib>
+#include <clocale>
+#include <sys/types.h>
 
 // Virtuals basic types
 #include <Virtuals/Type.h>
@@ -97,7 +99,7 @@ wxImage DicomFile::GetImage( void )
     if( !m_loaded && !Read() ) return wxNullImage;
 
     unsigned char* const data = reinterpret_cast< unsigned char* >(
-	malloc( m_size.GetWidth() * m_size.GetHeight() * 3 ) );
+	std::malloc( m_size.GetWidth() * m_size.GetHeight() * 3 ) );
     if( data == NULL ) return wxNullImage;
 
     if( m_bitsPerPixel == 8 )
@@ -148,7 +150,15 @@ bool DicomFile::Read( void )
 	m_pFile = new dicom::io::CDicomFile(
 	    std::string( m_filename.mb_str( *wxConvFileName ) ) );
 	m_pFile->LoadInputFile();
+
+	// Locale modification is needed because strtod(), which is used in
+	// libdicom, depends on the current locale; this causes decimal part
+	// of the numbers to be ignored if "." isn't used as a decimal point.
+	// The problem is the same with printf() where something other than a
+	// "." may be issued for floating point numbers.
+	std::setlocale( LC_NUMERIC, "C" );
 	ParseFile( *m_pFile );
+	std::setlocale( LC_NUMERIC, "");
     }
     catch( dicom::exception::CBase& )
     {
@@ -268,19 +278,34 @@ const uint32 DicomFile::VisitDicomRowsTag( dicom::tag::CRows& tag )
 const uint32 DicomFile::VisitDicomPixelDataTag( dicom::tag::CPixelData& tag )
 {
     const bool canRead = m_size.IsFullySpecified() && m_bitsPerPixel != 0;
+    uint32 pos;
 
     if( canRead )
     {
-	tag.SetSize( m_size.GetHeight() * m_size.GetWidth()
-		     * m_bitsPerPixel / 8 );
-    }
+	const int size = m_size.GetHeight() * m_size.GetWidth()
+			 * (m_bitsPerPixel / 8);
+	tag.SetSize( size );
+	pos = tag.SetValue( *this->m_pFile );
 
-    const uint32 pos = tag.SetValue( *this->m_pFile );
-    if( canRead )
-    {
-	if( m_frame == NULL ) m_frame = tag.GetBuffer();
-	else                  m_valid = false;
+	if( m_frame == NULL )
+	{
+	    m_frame = tag.GetBuffer();
+
+	    if( m_bitsPerPixel == 16 &&
+		m_pFile->IsLittleEndian() != (BYTE_ORDER == LITTLE_ENDIAN) )
+	    {
+		char tmp;
+		for( int i = 0; i < size; i += 2 )
+		{
+		    tmp = m_frame[i];
+		    m_frame[i] = m_frame[i + 1];
+		    m_frame[i + 1] = tmp;
+		}
+	    }
+	}
+	else m_valid = false;
     }
+    else pos = tag.SetValue( *this->m_pFile );
 
     // Unused: m_tags[TagSet::TAG_PIXEL_DATA] = wxT( "<Binary Data>" );
 
@@ -291,7 +316,7 @@ const uint32 DicomFile::VisitDicomImagePositionTag(
     dicom::tag::CImagePosition& tag )
 {
     const uint32 pos = tag.SetValue( *m_pFile );
-    m_tags[TagSet::TAG_IMAGE_POSITION].Printf( wxT( "%g %g %g" ),
+    m_tags[TagSet::TAG_IMAGE_POSITION].Printf( wxT( "%.10g %.10g %.10g" ),
 					       tag.GetPositionX(),
 					       tag.GetPositionY(),
 					       tag.GetPositionZ() );
@@ -302,7 +327,7 @@ const uint32 DicomFile::VisitDicomPixelSpacingTag(
     dicom::tag::CPixelSpacing& tag )
 {
     const uint32 pos = tag.SetValue( *m_pFile );
-    m_tags[TagSet::TAG_PIXEL_SPACING].Printf( wxT( "%g %g" ),
+    m_tags[TagSet::TAG_PIXEL_SPACING].Printf( wxT( "%.10g %.10g" ),
 					      tag.GetSpacingWidth(),
 					      tag.GetSpacingHeight() );
     return pos;
@@ -312,7 +337,7 @@ const uint32 DicomFile::VisitDicomSliceThicknessTag(
     dicom::tag::CSliceThickness& tag )
 {
     const uint32 pos = tag.SetValue( *m_pFile );
-    m_tags[TagSet::TAG_SLICE_THICKNESS].Printf( wxT( "%g" ),
+    m_tags[TagSet::TAG_SLICE_THICKNESS].Printf( wxT( "%.10g" ),
 						tag.GetThickness() );
     return pos;
 }
@@ -364,23 +389,19 @@ INTEGER_TAG_VISIT( Sexe,              TAG_SEX,                SexePatient )
 INTEGER_TAG_VISIT( AcquisitionNumber, TAG_ACQUISITION_NUMBER, Number      )
 
 template< class Type >
-void DicomFile::ConvertData( unsigned char* const data, Type* const frame )
+void DicomFile::ConvertData( unsigned char* data, const Type* frame )
 {
     const int total = m_size.GetWidth() * m_size.GetHeight();
-    Type* source = frame;
     Type min, max;
 
     min = max = *frame;
 
     for( int i = 0; i < total; i++ )
     {
-	if( *source < min ) min = *source;
-	if( *source > max ) max = *source;
-	source++;
+	if( frame[i] < min ) min = frame[i];
+	if( frame[i] > max ) max = frame[i];
     }
 
-    source = frame;
-    unsigned char* dest = data;
     const unsigned int diff = static_cast< unsigned int >( max - min );
     unsigned int val;
 
@@ -388,11 +409,11 @@ void DicomFile::ConvertData( unsigned char* const data, Type* const frame )
     {
 	for( int j = 0; j < 3; j++ )
 	{
-	    val = static_cast< unsigned int >( *source - min );
-	    *(dest++) = static_cast< unsigned char >(
+	    val = static_cast< unsigned int >( *frame - min );
+	    *(data++) = static_cast< unsigned char >(
 		((val << 8) - val) / diff );
 	}
-	source++;
+	frame++;
     }
 }
 

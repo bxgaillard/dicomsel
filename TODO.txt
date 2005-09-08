@@ -8,4 +8,5 @@ Everything is done.  Somehow, some improvements are possible:
     * add a toolbar (faster access than menu);
     * implement a slideshow-like presentation of the images;
     * preload the next image for better responsiveness;
-    * more comments in *.cpp files and Doxygen comments in *.h files.
+    * more comments in *.cpp files and Doxygen comments in *.h files;
+    * fix the image flickering effect.

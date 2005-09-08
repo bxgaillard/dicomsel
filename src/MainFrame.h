@@ -51,11 +51,6 @@ public:
 	       const wxSize& size = wxDefaultSize );
     virtual ~MainFrame( void );
 
-    static const wxString UniString( const wchar_t* const str )
-    {
-	return wxString( str, *wxConvCurrent );
-    }
-
 private:
     wxMenuItem*       m_closeMenu, * m_exportMenu, * m_sendMenu;
     DicomTree*        m_tree;

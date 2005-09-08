@@ -71,6 +71,9 @@ class DicomCollection : public dicom::visitor::CDicom
 public:
     class Visitor
     {
+    public:
+	virtual ~Visitor( void ) = 0;
+
     private:
 	friend class DicomCollection;
 

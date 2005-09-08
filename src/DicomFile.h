@@ -147,14 +147,13 @@ private:
     wxSize        m_size;
     char*         m_frame;
 
-    wxString*               m_tags;
+    wxString*     m_tags;
 
     template< class Type >
-    void DicomFile::ConvertData( unsigned char* const data,
-				 Type* const frame );
+    void DicomFile::ConvertData( unsigned char* data, const Type* frame );
 };
 
-} // namespace dicomsel 
+} // namespace dicomsel
 
 #endif // DICOMSEL_DICOMFILE_H
 

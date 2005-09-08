@@ -17,23 +17,9 @@ on which it's based.
 
 REQUIREMENTS
 
-To be able to run DicomSel, nothing special is required.  But if you use an
-older version of Windows (95, 98 or ME), you need an additional library from
-Microsoft called MSLU, available here:
-    http://www.microsoft.com/globaldev/handson/dev/mslu_announce.mspx
-Due to its licence terms, we cannot include it here; we apologize for the
-incovenience.
-
-An alternative to this is to use the library included in the "3rdparty"
-directory.  It's a free replacement of the proprietary Microsoft library.  The
-application executable and this library shall be located in the same directory
-to work together.
-
-Note that the preceding is useless on Windows NT/2000/XP.
-
 On non-Windows platforms (actually UNIX ones), the wxWidgets >= 2.6.0 library
 must be installed to compile DicomSel.  On Windows, this is not required,
-since a precompiled one is alredy embeded within this package.
+since a precompiled build is already embeded within this package.
 
 
 COMPILATION
@@ -56,19 +42,62 @@ without MSYS installed, use "mingw32-make" instead.  The resulting executable
 program is located in the "src" directory: "src/dicomsel" ("src\dicomsel.exe"
 under Windows).
 
+DicomSel should be compilable under Mac OS X.  Just launch "make" as under
+other Unices.  To compile universal binaries, add "-arch ppc -arch i386" to
+your CXXFLAGS/LDFLAGS.  For exemple, use the following command line:
+    CXXFLAGS='-arch ppc -arch i386 -O2 -fomit-frame-pointer -pipe' \
+    LDFLAGS='-arch ppc -arch i386' make
+Note that wxWidgets must be compiled and wx-config launchable with your
+current $PATH.  Report to wxWidget documentation for further informations.
+
+
+CROSS-COMPILATION
+
+As of version 1.1.0, DicomSel can be directly compiled for Windows in a UNIX
+environment (however, this has only been tested on Linux).  For this to work,
+you need the MinGW cross-compiler on your host platform.  Search for a package
+named "mingw" or "xmingw" for your distribution (under Gentoo Linux, try
+"emerge xmingw-runtime && emerge -1 xmingw-gcc && env-update" as root; do not
+forget to ". /etc/profile" to let xmingw be in your $PATH).
+
+Once this is done, test if the cross-compiler is available :
+    i386-mingw32msvc-gcc --version
+If the above command introduced gcc to you, you're able to cross-compile!
+
+Then just go to the root of the DicomSel sources and type "make windows".
+
 
 FILE HIERARCHY DESCRIPTION
 
 Files are organized as follows:
-    3rdparty:  third party libraries.
+    3rdparty:  third party libraries (currently OpenCow and wxWidgets).
     dist:      final application executables and dependent libraries.
     doc:       some documentation.
     head:      informations included at the top of each source file.
     libdicom:  DICOM reader library (libdicom).
     mkfiles:   makefile system.
+    rfsample:  IPC sample program for Radiofrequency integration.
     src:       DicomSel application sources.
     tools:     auxiliary tools (not part of the project).
-    wxwidgets: precompiled wxWidgets library for Win32 platform.
+
+
+(CROSS-)BUILDING WXWIDGETS
+
+The "tools" directory hosts a script, "xbuildwx.sh", able to build wxWidgets
+very easily.  Use the following syntax:
+    /bin/bash tools/xbuildwx <path to the wxWidgets sources archive>
+			     -d <destination directory>
+
+You can also type "make wxmsw" in the DicomSel sources root, this will build
+wxWidgets and copy the necessary files into "3rdparty/wxwidgets" automagically
+for you.
+
+
+MAKING UP THE DISTRIBUTION DIRECTORY
+
+By using "make dist", provided that you have the necessary cross-compilation
+toolchain, you'll be able to make up the "dist" directory, which will contain
+ready-to-use binaries for Linux x86 and Windows.
 
 
 LAST WORDS

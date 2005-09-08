@@ -63,6 +63,8 @@ namespace visitor
 class CAbstractDicomFile
 {
 public:
+    virtual ~CAbstractDicomFile( void ) = 0;
+
     virtual void			VisitDicomFile							( dicom::io::CDicomFile	& )				= 0;
     virtual void			VisitDicomDirectory						( dicom::io::CSimpleDirectory & )		= 0;
 
