@@ -3,12 +3,12 @@
  *
  * DicomSel: DICOM Image Selector
  *
- * Copyright (C) 2005 IRCAD
+ * Copyright (C) 2005, 2006 IRCAD
  * Authors: Benjamin Gaillard, Marc-Aurèle Mörk, Guillaume Spitz
  *
  * ---------------------------------------------------------------------------
  *
- * << LICENCE >>
+ * << LICENSE >>
  *
  * ---------------------------------------------------------------------------
  */
@@ -49,15 +49,27 @@
 // Standard C library
 #include <cstring>
 
+// Global
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif // HAVE_CONFIG_H
+
 // Current module
-#include "DicomTree.h"
-#include "BitmapPanel.h"
-#include "TagSet.h"
-#include "TagDialog.h"
-#include "DicomFile.h"
-#include "config.h"
-#include "version.h"
-#include "MainFrame.h"
+#include <dicomsel/ipc.h>
+#include <dicomsel/DicomTree.h>
+#include <dicomsel/BitmapPanel.h>
+#include <dicomsel/TagSet.h>
+#include <dicomsel/TagDialog.h>
+#include <dicomsel/DicomFile.h>
+#include <dicomsel/MainFrame.h>
+
+
+#ifndef PACKAGE_STRING
+#define PACKAGE_STRING "DicomSel"
+#endif // !PACKAGE_STRING
+#ifndef PACKAGE_YEARS
+#define PACKAGE_YEARS "2005"
+#endif // !PACKAGE_YEARS
 
 
 namespace dicomsel
@@ -469,11 +481,11 @@ void MainFrame::OnMenuExportedTags( wxCommandEvent& WXUNUSED( event ) )
 
 void MainFrame::OnMenuAbout( wxCommandEvent& WXUNUSED( event ) )
 {
-    wxMessageBox( wxString( L"DicomSel " VERSION_STRING "\n"
-			     "Copyright (C) 2005 IRCAD\n\n"
-			     "Authors: Benjamin Gaillard, "
-			     "Marc-Aur\u00E8le M\u00F6rk, "
-			     "Guillaume Spitz", *wxConvCurrent ),
+    wxMessageBox( wxString( L"" PACKAGE_STRING "\n"
+			    "Copyright (C) " PACKAGE_YEARS " IRCAD\n\n"
+			    "Authors: Benjamin Gaillard, "
+			    "Marc-Aur\u00E8le M\u00F6rk, "
+			    "Guillaume Spitz", *wxConvCurrent ),
 		  wxT( "About DicomSel" ), wxOK | wxICON_INFORMATION, this );
 }
 

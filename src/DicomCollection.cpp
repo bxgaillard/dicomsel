@@ -3,12 +3,12 @@
  *
  * DicomSel: DICOM Image Selector
  *
- * Copyright (C) 2005 IRCAD
+ * Copyright (C) 2005, 2006 IRCAD
  * Authors: Benjamin Gaillard, Marc-Aurèle Mörk, Guillaume Spitz
  *
  * ---------------------------------------------------------------------------
  *
- * << LICENCE >>
+ * << LICENSE >>
  *
  * ---------------------------------------------------------------------------
  */
@@ -63,8 +63,8 @@
 #include <dicom/ExceptionDicom.h>
 
 // Current module
-#include "DicomTree.h"
-#include "DicomCollection.h"
+#include <dicomsel/DicomTree.h>
+#include <dicomsel/DicomCollection.h>
 
 
 namespace dicomsel

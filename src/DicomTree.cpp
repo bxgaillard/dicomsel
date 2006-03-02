@@ -3,12 +3,12 @@
  *
  * DicomSel: DICOM Image Selector
  *
- * Copyright (C) 2005 IRCAD
+ * Copyright (C) 2005, 2006 IRCAD
  * Authors: Benjamin Gaillard, Marc-Aurèle Mörk, Guillaume Spitz
  *
  * ---------------------------------------------------------------------------
  *
- * << LICENCE >>
+ * << LICENSE >>
  *
  * ---------------------------------------------------------------------------
  */
@@ -40,9 +40,9 @@
 #include <map>
 
 // Current module
-#include "DicomCollection.h"
-#include "DicomFile.h"
-#include "DicomTree.h"
+#include <dicomsel/DicomCollection.h>
+#include <dicomsel/DicomFile.h>
+#include <dicomsel/DicomTree.h>
 
 class wxBitmap;
 

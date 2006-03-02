@@ -198,10 +198,8 @@ unset CMD
 
 CONFIGURE="./configure --prefix=$(escape "$BUILD") \
 ${ARCH:+--host=$(escape "$ARCH") --target=$(escape "$ARCH")} \
-CFLAGS='-march=i386 -mtune=i686 -O2 -fweb -frename-registers \
--fomit-frame-pointer -pipe' \
-CXXFLAGS='-march=i386 -mtune=i686 -O2 -fweb -frename-registers \
--fomit-frame-pointer -pipe' \
+CFLAGS='-march=i386 -mtune=i686 -O2 -fomit-frame-pointer -pipe' \
+CXXFLAGS='-march=i386 -mtune=i686 -O2 -fomit-frame-pointer -pipe' \
 --with-msw $CONFIG_OPT"
 unset CC CXX CPP CFLAGS CXXFLAGS CPPFLAGS LDFLAGS
 unset MAKEFLAGS MAKELEVEL MFLAGS

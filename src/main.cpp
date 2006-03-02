@@ -3,12 +3,12 @@
  *
  * DicomSel: DICOM Image Selector
  *
- * Copyright (C) 2005 IRCAD
+ * Copyright (C) 2005, 2006 IRCAD
  * Authors: Benjamin Gaillard, Marc-Aurèle Mörk, Guillaume Spitz
  *
  * ---------------------------------------------------------------------------
  *
- * << LICENCE >>
+ * << LICENSE >>
  *
  * ---------------------------------------------------------------------------
  */
@@ -27,7 +27,7 @@
 #endif // !WX_PRECOMP
 
 // Current module
-#include "MainFrame.h"
+#include <dicomsel/MainFrame.h>
 
 namespace dicomsel
 {

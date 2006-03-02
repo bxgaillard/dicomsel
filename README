@@ -1,0 +1,126 @@
+DicomSel: DICOM Image Selector
+
+Copyright (C) 2005, 2006 IRCAD
+Authors: Benjamin Gaillard, Marc-Aurèle Mörk, Guillaume Spitz
+
+
+DESCRIPTION
+
+DicomSel is an application that permits you to view a series of DICOM images
+and to select one of them in order to export its tags to a text file.  This
+application is intended to be used alongside Radiofrequency to let you put the
+needle in the right place inside the liver.
+
+DicomSel can run on virtually any planform supported by the wxWidgets library
+on which it's based.
+
+
+REQUIREMENTS
+
+On non-Windows platforms (actually UNIX ones), the wxWidgets >= 2.6.0 library
+must be installed to compile DicomSel.  On Windows, this is not required,
+since it can be built automatically using "extra.mk".  But you have to
+download the sources and specify their location to the "extra.mk" makefile
+like this :
+    gmake -f extra.mk WXSRC=../wxWidgets-2.6.2.tar.bz2 win32
+
+
+COMPILATION
+
+DicomSel has been designed to be compatible with most compilers, although it
+has been exclusively developed with GCC.  It is written in plain standard C++,
+without using proprietary extensions, so it's expected to build against
+virtually all compilers.
+
+As of version 1.2.0, DicomSel is now compilable like other standard UNIX
+packages using the "configure" script.  So just make sure that wxWidgets is
+installed then launch "./configure" followed by "make".
+
+To build the sources under Windows, you need to install MinGW (included in
+Dev-Cpp) with its MSYS companion or Cygwin in order to launch the "configure"
+script.  Once it's done, just run "make" in the top directory (the one
+including this file).  The resulting executable program is located in the
+"src" directory: "src/dicomsel" ("src\dicomsel.exe" under Windows).
+Alternatively, on UNIX, you can install DicomSel by typing "make install".
+
+DicomSel should be compilable under Mac OS X.  Just launch "make" after
+"./configure" as under other Unices.  To compile universal binaries, add
+"-arch ppc -arch i386" to your CXXFLAGS/LDFLAGS.  For exemple, use the
+following command line:
+    ./configure \
+        CXXFLAGS="-arch ppc -arch i386 -O2 -fomit-frame-pointer -pipe" \
+        LDFLAGS="-arch ppc -arch i386 -s"
+Note that wxWidgets must be compiled and wx-config launchable with your
+current $PATH.  Refer to the wxWidget documentation for further informations.
+
+
+CROSS-COMPILATION
+
+As of version 1.1.0, DicomSel can be directly compiled for Windows in a UNIX
+environment (however, this has only been tested on Linux).  For this to work,
+you need the MinGW cross-compiler on your host platform.  Search for a package
+named "mingw" or "xmingw" for your distribution (under Gentoo Linux, try
+"emerge xmingw-runtime && emerge -1 xmingw-gcc && env-update" as root; do not
+forget to ". /etc/profile" to let xmingw be in your $PATH).
+
+Once this is done, test if the cross-compiler is available :
+    i386-mingw32msvc-gcc --version
+If the above command introduced gcc to you, you're able to cross-compile!
+
+Then just go to the root of the DicomSel sources and type
+"gmake -f extra.mk win32".
+
+
+FILE HIERARCHY DESCRIPTION
+
+Files are organized as follows:
+    dist:      final application executables and dependent libraries (not
+               present in the source package, it is created by making up this
+               directory; see below for more information on this).
+    doc:       some documentation.
+    head:      informations included at the top of each source file.
+    include:   DicomSel application headers.
+    libdicom:  DICOM reader library (libdicom).
+    rfsample:  IPC sample program for Radiofrequency integration.
+    src:       DicomSel application sources.
+    tools:     auxiliary tools (not part of the project).
+
+
+(CROSS-)BUILDING WXWIDGETS
+
+The "tools" directory hosts a script, "xbuildwx.sh", able to build wxWidgets
+very easily.  Use the following syntax:
+    /bin/bash tools/xbuildwx <path to the wxWidgets sources archive>
+                             -d <destination directory>
+
+You can also type "gmake -f extra.mk wxmsw" in the DicomSel sources root, this
+will build wxWidgets and copy the necessary files into "/wxmsw" automagically
+for you.  Note that the "xbuildwx.sh" script isn't used by the above command;
+it is only provided as an extra (it was once used by the former makefile
+system before the switch to GNU Autotools).
+
+
+MAKING UP THE DISTRIBUTION DIRECTORY
+
+By using "gmake -f extra.mk dist", provided that you have the necessary
+cross-compilation toolchain, you'll be able to make up the "dist" directory,
+which will contain ready-to-use binaries for Linux x86 and Windows.  If you
+want to add the Mac executables, run "gmake -f extra.mk mac" on a Mac; you
+will then have a complete "dist" directory.
+
+
+AUTHORS
+
+DicomSel:
+    For IRCAD (www.ircad.fr):
+        Benjamin Gaillard <b.gaillard@powercode.net>
+        Marc-Aurèle Mörk <ma.mort@gmail.com>
+        Guillaume Spitz <gui@resodrome67.net>
+
+libdicom:
+    Johan Moreau <Johan.Moreau@ircad.u-strasbg.fr>
+
+
+LAST WORDS
+
+We hope you'll enjoy our project!

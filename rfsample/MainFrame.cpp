@@ -3,12 +3,12 @@
  *
  * DicomSel: DICOM Image Selector
  *
- * Copyright (C) 2005 IRCAD
+ * Copyright (C) 2005, 2006 IRCAD
  * Authors: Benjamin Gaillard, Marc-Aurèle Mörk, Guillaume Spitz
  *
  * ---------------------------------------------------------------------------
  *
- * << LICENCE >>
+ * << LICENSE >>
  *
  * ---------------------------------------------------------------------------
  */
@@ -32,7 +32,7 @@
 #include <cstdio>
 #include <clocale>
 
-#include "../src/config.h"
+#include <dicomsel/ipc.h>
 #include "MainFrame.h"
 
 namespace radiofrequency

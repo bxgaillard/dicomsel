@@ -3,7 +3,7 @@
 # ----------------------------------------------------------------------------
 #
 # GenCom: Comment Generator for Source File Head
-# Copyright (C) 2005 Benjamin Gaillard
+# Copyright (C) 2005, 2006 Benjamin Gaillard
 #
 # ----------------------------------------------------------------------------
 #
@@ -25,7 +25,8 @@
 
 
 # Recognized filenames
-FILENAMES='Makefile makefile GNUmakefile *.mk *.c *.cpp *.h *.s *.rc'
+FILENAMES='Makefile makefile Makefile.am GNUmakefile *.mk configure.ac \
+*.c *.cpp *.h *.s *.rc'
 
 # Line length
 LENGTH=78
@@ -46,8 +47,8 @@ while [ $# -gt 0 ]; do
 	    infofile="$2"
 	    shift
 	    ;;
-	-l | --licence)
-	    licencefile="$2"
+	-l | --license)
+	    licensefile="$2"
 	    shift
 	    ;;
 	*)
@@ -61,9 +62,9 @@ while [ $# -gt 0 ]; do
     shift
 done
 
-if [ -z "$infofile" -o -z "$licencefile" -o -z "$dirs" ]; then
+if [ -z "$infofile" -o -z "$licensefile" -o -z "$dirs" ]; then
     echo "Syntax: $0" >&2
-    echo '        {-i|--info} <info file> {-l|--licence} <licence file>' >&2
+    echo '        {-i|--info} <info file> {-l|--license} <license file>' >&2
     echo '        <directory> [directory...]' >&2
     exit 1
 fi
@@ -72,13 +73,13 @@ if [ ! -f "$infofile" ]; then
     echo "Error: \"$infofile\" doesn't exist." >&2
     exit 2
 fi
-if [ ! -f "$licencefile" ]; then
-    echo "Error: \"$licencefile\" doesn't exist." >&2
+if [ ! -f "$licensefile" ]; then
+    echo "Error: \"$licensefile\" doesn't exist." >&2
     exit 3
 fi
 
 INFO="`cat "$infofile"`"
-LICENCE="`cat "$licencefile"`"
+LICENSE="`cat "$licensefile"`"
 
 for filename in $FILENAMES; do
     files="$files"$'\n'"`find $dirs -name "$filename"`"
@@ -91,12 +92,24 @@ IFS=$'\n'
 TMP="/tmp/`basename "$0"`.tmp"
 
 for file in $files; do
+    if [ ! -r "$file" ]; then
+	echo "${file}: ${RED}cannot open!${NORMAL}"
+	continue
+    fi
+
     case "`basename "$file"`" in
-	[Mm]akefile | GNUmakefile | *.mk)
+	[Mm]akefile | Makefile.am | GNUmakefile | *.mk)
 	    BEGIN=''
 	    LINE='#'
 	    END=''
 	    FILEEND='# End of File'
+	    ;;
+
+	configure.ac)
+	    BEGIN=''
+	    LINE='dnl'
+	    END=''
+	    FILEEND='dnl End of File'
 	    ;;
 
 	*.c | *.cpp | *.h | *.s | *.rc)
@@ -249,9 +262,9 @@ for file in $files; do
 		    echo "$LINE $SEP"
 		fi
 
-		# Licence
+		# License
 		echo "$LINE"
-		echo "$LICENCE" | while read -r iline; do
+		echo "$LICENSE" | while read -r iline; do
 		    if [ -n "$iline" ]; then
 			echo "$LINE $iline"
 		    else
