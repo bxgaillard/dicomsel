@@ -1,0 +1,24 @@
+# ----------------------------------------------------------------------------
+#
+# DicomSel: DICOM Image Selector
+#
+# Copyright (C) 2005, 2006 IRCAD
+# Authors: Benjamin Gaillard, Marc-Aurèle Mörk, Guillaume Spitz
+#
+# ----------------------------------------------------------------------------
+#
+# << LICENSE >>
+#
+# ----------------------------------------------------------------------------
+
+
+# Handled suffix
+SUFFIXES = .rc
+
+# Rule for compiling a Windows resource
+.rc.$(OBJEXT):
+	$(RC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
+	      $(AM_CPPFLAGS) $(CPPFLAGS) \
+	      -i $< -o $@
+
+# End of File

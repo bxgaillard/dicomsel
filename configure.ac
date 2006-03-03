@@ -22,10 +22,11 @@ dnl Process this file with autoconf to produce a configure script.
 
 dnl General settings
 AC_PREREQ(2.52g)
-AC_INIT([DicomSel], [1.2.0], [b.gaillard@powercode.net], [dicomsel])
-AM_INIT_AUTOMAKE([1.7 no-define dist-bzip2 -Wall])
+AC_INIT([DicomSel], [1.2.1], [b.gaillard@powercode.net], [dicomsel])
 AC_CONFIG_SRCDIR([src/main.cpp])
 AC_CONFIG_HEADER([config.h])
+AC_CONFIG_AUX_DIR([autotools])
+AM_INIT_AUTOMAKE([1.7 no-define dist-bzip2 -Wall])
 
 dnl Additional definitions
 AC_SUBST([PACKAGE_YEARS], ["2005, 2006"])
@@ -36,6 +37,8 @@ dnl Checks for programs
 AC_LANG([C++])
 AC_PROG_CXX
 AC_PROG_RANLIB
+AC_CHECK_TOOL([RC], [windres])
+AM_CONDITIONAL([HAVE_RC], [test "x$RC" != x])
 
 dnl Checks for standard library, headers and functions
 AC_HEADER_STDC

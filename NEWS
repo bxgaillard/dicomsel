@@ -1,6 +1,18 @@
 Change Log Summary
 
 
+1.2.1 ------------------------------------------------------------------------
+
+This version, released on 3rd March 2006, has some minor bugs corrected. Most
+notably, resources files were never compiler.
+
+* Resource files now compile under Windows.
+* "dist" directory renamed to "bin".
+* Autotools scripts moved from the main directory into "extra.mk".
+* Some other changes to the "extra.mk" file.
+* Changed the fake copyright sign by a real one in "/src/MainFrame.cpp".
+
+
 1.2.0 ------------------------------------------------------------------------
 
 This version was released on the 2nd March 2006.  The previous makefile system

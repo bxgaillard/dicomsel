@@ -17,6 +17,14 @@ AM_CPPFLAGS = -I$(top_srcdir)/include -I$(top_srcdir)/libdicom/include \
 	      -I$(top_srcdir)/libdicom/include/dicom $(WX_CPPFLAGS)
 AM_CXXFLAGS = $(WX_CXXFLAGS_ONLY)
 
+# Windows resource handling
+if HAVE_RC
+include $(top_srcdir)/rc.am
+RC_OBJECTS = resources.$(OBJEXT)
+else
+RC_OBJECTS =
+endif
+
 # Source files
 bin_PROGRAMS = dicomsel
 dicomsel_SOURCES = \
@@ -27,12 +35,14 @@ dicomsel_SOURCES = \
     DicomTree.cpp \
     MainFrame.cpp \
     TagDialog.cpp \
-    TagSet.cpp \
-    resources.rc
-dicomsel_LDADD = -L../libdicom/src -ldicom $(WX_LIBS)
+    TagSet.cpp
+dicomsel_DEPENDENCIES = \
+    $(RC_OBJECTS)
+dicomsel_LDADD = $(RC_OBJECTS) -L../libdicom/src -ldicom $(WX_LIBS)
 
 # Extra files to include into the distribution archive: icons
 EXTRA_DIST = \
+    resources.rc \
     README \
     images/README \
     images/dir.xpm \

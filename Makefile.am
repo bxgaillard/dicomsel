@@ -27,8 +27,6 @@ SUBDIRS = \
 
 # Extra files to include in the distribution archive
 EXTRA_DIST = \
-    autoclean.sh \
-    autogen.sh \
     extra.mk \
     head/README \
     head/license-gpl.txt \

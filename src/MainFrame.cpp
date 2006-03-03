@@ -482,7 +482,7 @@ void MainFrame::OnMenuExportedTags( wxCommandEvent& WXUNUSED( event ) )
 void MainFrame::OnMenuAbout( wxCommandEvent& WXUNUSED( event ) )
 {
     wxMessageBox( wxString( L"" PACKAGE_STRING "\n"
-			    "Copyright (C) " PACKAGE_YEARS " IRCAD\n\n"
+			    "Copyright \u00A9 " PACKAGE_YEARS " IRCAD\n\n"
 			    "Authors: Benjamin Gaillard, "
 			    "Marc-Aur\u00E8le M\u00F6rk, "
 			    "Guillaume Spitz", *wxConvCurrent ),

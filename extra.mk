@@ -20,25 +20,44 @@ CONFIGURE = ./configure
 
 CFLAGS = -march=i386 -mtune=i686 -O2 -fomit-frame-pointer -pipe
 CXXFLAGS = $(CFLAGS) -fno-rtti
-#WXFLAGS="--unicode=no --debug=no" unix
 
+BINDIR = bin
 BUILDDIR = build
 WXDIR = wxmsw
 PWD ?= $(shell pwd)
 PWD := $(PWD)
 
-.PHONY: linux win32 mac distclean head
+.PHONY: default all autogen autoclean dist linux win32 mac clean head
 
-# Flags for generic x86 builds
-dist: linux win32
+default: dist bin
+all: autogen default autoclean
+
+autogen:
+	test -d autotools || mkdir autotools
+	aclocal
+	autoconf
+	autoheader
+	automake -a -c
+
+autoclean:
+	test ! -f Makefile || make distclean
+	rm -rf autom4te.cache config.h.in `find -name Makefile.in` \
+	    aclocal.m4 configure autotools
+
+dist:
+	./configure
+	$(MAKE) dist-bzip2
+	$(MAKE) distclean
+
+bin: linux win32
 
 linux:
-	test -d dist || mkdir dist
+	test -d $(BINDIR) || mkdir $(BINDIR)
 	@echo "===================== Building for Linux ====================="
 	$(CONFIGURE) CFLAGS="$(CFLAGS)" CXXFLAGS="$(CXXFLAGS)" LDFLAGS="-s"
 	$(MAKE)
-	test -d dist/linux || mkdir -p dist/linux
-	$(CP) src/dicomsel rfsample/rf dist/linux
+	test -d $(BINDIR)/linux || mkdir -p $(BINDIR)/linux
+	$(CP) src/dicomsel rfsample/rf $(BINDIR)/linux
 	$(MAKE) distclean
 
 win32: wxmsw
@@ -49,8 +68,8 @@ win32: wxmsw
 		     CPPFLAGS="-DLITTLE_ENDIAN=1234 -DBIG_ENDIAN=4321 \
 			       -DBYTE_ORDER=1234" LDFLAGS="-s"
 	$(MAKE)
-	test -d dist/win32 || mkdir -p dist/win32
-	$(CP) src/dicomsel.exe rfsample/rf.exe dist/win32
+	test -d $(BINDIR)/win32 || mkdir -p $(BINDIR)/win32
+	$(CP) src/dicomsel.exe rfsample/rf.exe $(BINDIR)/win32
 	$(MAKE) distclean
 
 UNIV = -arch ppc -arch i386
@@ -60,36 +79,38 @@ mac: all
 		     CXXFLAGS="$(CXXFLAGS) $(UNIV)"
 		     LDFLAGS="$(UNIV) -s"
 	$(MAKE)
-	@echo "Creating Mac OS X .app directories under dist/mac..."
-	test -d dist/mac || mkdir -p dist/mac
-	$(RM) -r dist/mac/DicomSel.app
-	mkdir dist/mac/DicomSel.app
-	mkdir dist/mac/DicomSel.app/Contents
-	$(CP) src/Info.plist dist/mac/DicomSel.app/Contents
-	mkdir dist/mac/DicomSel.app/Contents/MacOS
-	$(CP) src/dicomsel dist/mac/DicomSel.app/Contents/MacOS
-	echo -n "APPL????" > dist/mac/DicomSel.app/Contents/PkgInfo
-	mkdir dist/mac/DicomSel.app/Contents/Resources
-	$(CP) src/images/icon.icns dist/mac/DicomSel.app/Contents/Resources
-	$(RM) -r "dist/mac/RadioFrequency Sample.app"
-	mkdir "dist/mac/Radiofrequency Sample.app"
-	mkdir "dist/mac/Radiofrequency Sample.app/Contents"
+	@echo "Creating Mac OS X .app directories under $(BINDIR)/mac..."
+	test -d $(BINDIR)/mac || mkdir -p $(BINDIR)/mac
+	$(RM) -r $(BINDIR)/mac/DicomSel.app
+	mkdir $(BINDIR)/mac/DicomSel.app
+	mkdir $(BINDIR)/mac/DicomSel.app/Contents
+	$(CP) src/Info.plist $(BINDIR)/mac/DicomSel.app/Contents
+	mkdir $(BINDIR)/mac/DicomSel.app/Contents/MacOS
+	$(CP) src/dicomsel $(BINDIR)/mac/DicomSel.app/Contents/MacOS
+	echo -n "APPL????" > $(BINDIR)/mac/DicomSel.app/Contents/PkgInfo
+	mkdir $(BINDIR)/mac/DicomSel.app/Contents/Resources
+	$(CP) src/images/icon.icns \
+	      $(BINDIR)/mac/DicomSel.app/Contents/Resources
+	$(RM) -r "$(BINDIR)/mac/RadioFrequency Sample.app"
+	mkdir "$(BINDIR)/mac/Radiofrequency Sample.app"
+	mkdir "$(BINDIR)/mac/Radiofrequency Sample.app/Contents"
 	$(CP) rfsample/Info.plist \
-	      "dist/mac/Radiofrequency Sample.app/Contents"
-	mkdir "dist/mac/Radiofrequency Sample.app/Contents/MacOS"
-	$(CP) rfsample/rf "dist/mac/Radiofrequency Sample.app/Contents/MacOS"
+	      "$(BINDIR)/mac/Radiofrequency Sample.app/Contents"
+	mkdir "$(BINDIR)/mac/Radiofrequency Sample.app/Contents/MacOS"
+	$(CP) rfsample/rf \
+	      "$(BINDIR)/mac/Radiofrequency Sample.app/Contents/MacOS"
 	echo -n "APPL????" \
-	     > "dist/mac/Radiofrequency Sample.app/Contents/PkgInfo"
+	     > "$(BINDIR)/mac/Radiofrequency Sample.app/Contents/PkgInfo"
 	$(MAKE) distclean
 
-distclean:
+clean:
 	@echo "Deleting distribution directory..."
-	$(RM) -r dist $(WXDIR) $(BUILDDIR)
+	$(RM) -r $(BINDIR) $(WXDIR) $(BUILDDIR)
 
 head:
 	@echo "Regenerating files head..."
 	/bin/bash tools/gencom.sh -i head/info.txt -l head/license.txt \
-		  configure.ac Makefile.am extra.mk doc/Makefile.am \
+		  configure.ac Makefile.am extra.mk rc.mk doc/Makefile.am \
 		  libdicom/Makefile.am libdicom/src/Makefile.am \
 		  src include rfsample
 
