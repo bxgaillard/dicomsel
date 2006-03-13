@@ -51,6 +51,9 @@
 
 #include <sstream>
 
+// Assertions
+#include <cassert>
+
 #include "Virtuals/Type.h"
 #include "Virtuals/mfo/mfo.h"
 

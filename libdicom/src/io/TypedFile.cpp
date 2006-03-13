@@ -6,6 +6,9 @@
  * add read function and the notion of endianess.
  */
 
+// Assertions
+#include <cassert>
+
 #include "Virtuals/Type.h"
 
 #include "io/SimpleFile.h"
@@ -22,7 +25,7 @@ namespace io
 #define TRIPLE_SIZE 16777216
 
 //////////////////////////////////////////////////////////
-CTypedFile::CTypedFile( const std::string _stringFullName, 
+CTypedFile::CTypedFile( const std::string _stringFullName,
 						const bool _bLittleEndian ):
     dicom::io::CSimpleFile	( _stringFullName ),
     m_bLittleEndian			( _bLittleEndian )

@@ -21,10 +21,10 @@
 #endif
 
 // wxWidgets
-#ifndef WX_PRECOMP
+//#ifndef WX_PRECOMP
 # include <wx/app.h>
 # include <wx/gdicmn.h>
-#endif // !WX_PRECOMP
+//#endif // !WX_PRECOMP
 
 // Current module
 #include <dicomsel/MainFrame.h>

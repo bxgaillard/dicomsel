@@ -55,4 +55,7 @@ libdicom_a_SOURCES = \
     visitor/CreateList.cpp \
     visitor/Dicom.cpp
 
+EXTRA_DIST = \
+    Makefile.msc
+
 # End of File

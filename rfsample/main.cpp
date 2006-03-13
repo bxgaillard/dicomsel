@@ -20,10 +20,10 @@
 # pragma hdrstop
 #endif
 
-#ifndef WX_PRECOMP
+//#ifndef WX_PRECOMP
 # include <wx/app.h>
 # include <wx/frame.h>
-#endif
+//#endif
 
 #include "MainFrame.h"
 

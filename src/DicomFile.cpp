@@ -19,12 +19,12 @@
 #ifdef __BORLANDC__
 # pragma hdrstop
 #endif
-#ifndef WX_PRECOMP
+//#ifndef WX_PRECOMP
 # include <wx/string.h>
 # include <wx/gdicmn.h>
 # include <wx/image.h>
 # include <wx/bitmap.h>
-#endif
+//#endif
 
 // STL
 #include <string>
@@ -33,6 +33,11 @@
 #include <cstdlib>
 #include <clocale>
 #include <sys/types.h>
+
+// Global
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif // HAVE_CONFIG_H
 
 // Virtuals basic types
 #include <Virtuals/Type.h>

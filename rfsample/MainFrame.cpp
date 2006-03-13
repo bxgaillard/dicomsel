@@ -18,7 +18,7 @@
 #ifdef __BORLANDC__
 # pragma hdrstop
 #endif
-#ifndef WX_PRECOMP
+//#ifndef WX_PRECOMP
 # include <wx/string.h>
 # include <wx/gdicmn.h>
 # include <wx/event.h>
@@ -27,7 +27,7 @@
 # include <wx/stattext.h>
 # include <wx/button.h>
 # include <wx/ipc.h>
-#endif
+//#endif
 
 #include <cstdio>
 #include <clocale>

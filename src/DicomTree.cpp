@@ -19,7 +19,7 @@
 #ifdef __BORLANDC__
 # pragma hdrstop
 #endif
-#ifndef WX_PRECOMP
+//#ifndef WX_PRECOMP
 # include <wx/string.h>
 # include <wx/filename.h>
 # include <wx/dir.h>
@@ -33,11 +33,15 @@
 # include <wx/msgdlg.h>
 # include <wx/image.h>
 # include <wx/bitmap.h>
-#endif
+//#endif
 
 // STL
 #include <vector>
 #include <map>
+#include <algorithm>
+
+// Assertions
+#include <cassert>
 
 // Current module
 #include <dicomsel/DicomCollection.h>

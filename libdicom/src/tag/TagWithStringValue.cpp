@@ -1,3 +1,6 @@
+// Assertions
+#include <cassert>
+
 #include "Virtuals/Type.h"
 
 #include "visitor/AbstractDicomFile.h"
@@ -21,7 +24,7 @@ CTagWithStringValue::CTagWithStringValue(	const int32 _i32Group, const int32 _i3
 const uint32 CTagWithStringValue::SetValue( dicom::io::CDicomFile & _file)
 {
 	assert( _file.IsOpen() );
-	assert( _file.GetOffset() + this->GetLength() < _file.GetSize() );   
+	assert( _file.GetOffset() + this->GetLength() < _file.GetSize() );
 	this->ReadMeIntoFile(_file);
 	assert( _file.GetOffset() + this->GetLength() <= _file.GetSize() );
 	return _file.GetOffset();

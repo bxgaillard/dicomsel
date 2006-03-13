@@ -27,16 +27,17 @@ endif
 # Source files
 noinst_PROGRAMS = rf
 rf_SOURCES = \
-    main.cpp \
     MainFrame.cpp \
-    MainFrame.h
+    MainFrame.h \
+    main.cpp
 rf_DEPENDENCIES = \
     $(RC_OBJECTS)
 rf_LDADD = $(WX_LIBS)
 
 # Extra files to include into the distribution archive: icons
 EXTRA_DIST = \
-    resources.rc \
-    README
+    Makefile.msc \
+    README \
+    resources.rc
 
 # End of File

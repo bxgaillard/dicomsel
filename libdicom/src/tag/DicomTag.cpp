@@ -1,3 +1,6 @@
+// Assertions
+#include <cassert>
+
 #include "Virtuals/Type.h"
 
 // used to visit a tag
@@ -77,7 +80,7 @@ void CDicomTag::ReadMeIntoFile( dicom::io::CDicomFile & _File )
 	assert( _File.IsOpen() );
 	assert( _File.GetOffset() + this->GetLength() < _File.GetSize() );
 
-    char* pi8Buff = new char[this->m_iLength+1]; 
+    char* pi8Buff = new char[this->m_iLength+1];
 	assert(pi8Buff != NULL);
 
 	_File.ReadAndMove(pi8Buff, this->m_iLength);

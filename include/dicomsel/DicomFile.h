@@ -18,13 +18,13 @@
 #define DICOMSEL_DICOMFILE_H
 
 // wxWidgets
-#ifndef WX_PRECOMP
+//#ifndef WX_PRECOMP
 # include <wx/string.h>
 # include <wx/gdicmn.h>
 # include <wx/treectrl.h>
 # include <wx/image.h>
 # include <wx/bitmap.h>
-#endif // !WX_PRECOMP
+//#endif // !WX_PRECOMP
 
 // Virtuals basic types
 #include <Virtuals/Type.h>
@@ -150,7 +150,7 @@ private:
     wxString*     m_tags;
 
     template< class Type >
-    void DicomFile::ConvertData( unsigned char* data, const Type* frame );
+    void ConvertData( unsigned char* data, const Type* frame );
 };
 
 } // namespace dicomsel

@@ -1,8 +1,11 @@
 #include <sys/stat.h> // to use struct stat or _stat
 
-#ifndef WIN32 //assuming this means the os is unix
+#ifndef _WIN32 //assuming this means the os is unix
 #include <unistd.h>
 #endif
+
+// Assertions
+#include <cassert>
 
 #include "Virtuals/Type.h"
 
@@ -36,8 +39,8 @@ void CSimpleFile::LoadInputFile( void )
 
     this->m_iFile.open(this->m_stringFullName.c_str(), std::ios::binary);
 
-	if(!this->m_iFile.is_open()) 
-		throw CFileException(this->m_stringFullName, 
+	if(!this->m_iFile.is_open())
+		throw CFileException(this->m_stringFullName,
 							dicom::exception::StringException::FileNotFound);
 
 	assert( this->m_iFile.is_open() );
@@ -100,7 +103,7 @@ void CSimpleFile::SetOffset( const uint32 & _ui32Offset )
 ////////////////////////////////////////
 void CSimpleFile::VerifyCreatePath(void) const
 {
-#ifdef WIN32
+#ifdef _WIN32
     struct _stat buf;
     int bError = _stat(this->m_stringFullName.c_str(), &buf);
 #else
@@ -111,19 +114,19 @@ void CSimpleFile::VerifyCreatePath(void) const
 
     if (bError == 0)
     {
-#ifdef WIN32
+#ifdef _WIN32
         if(!((buf.st_mode & _S_IFMT) != 0))
 #else
         if(!((buf.st_mode & S_IFMT) != 0))
 #endif
         {
-            throw CFileException(this->m_stringFullName, 
+            throw CFileException(this->m_stringFullName,
 								dicom::exception::StringException::FileNotFound);
         }
     }
     else
     {
-        throw CFileException(this->m_stringFullName, 
+        throw CFileException(this->m_stringFullName,
 							dicom::exception::StringException::FileNotFound);
     }
 }

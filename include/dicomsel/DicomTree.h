@@ -18,13 +18,13 @@
 #define DICOMSEL_DICOMTREE_H
 
 // wxWidgets
-#ifndef WX_PRECOMP
+//#ifndef WX_PRECOMP
 # include <wx/string.h>
 # include <wx/gdicmn.h>
 # include <wx/window.h>
 # include <wx/validate.h>
 # include <wx/treectrl.h>
-#endif // !WX_PRECOMP
+//#endif // !WX_PRECOMP
 
 // Current module
 #include <dicomsel/DicomCollection.h>

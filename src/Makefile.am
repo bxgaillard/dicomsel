@@ -28,22 +28,23 @@ endif
 # Source files
 bin_PROGRAMS = dicomsel
 dicomsel_SOURCES = \
-    main.cpp \
     BitmapPanel.cpp \
     DicomCollection.cpp \
     DicomFile.cpp \
     DicomTree.cpp \
     MainFrame.cpp \
     TagDialog.cpp \
-    TagSet.cpp
+    TagSet.cpp \
+    main.cpp
 dicomsel_DEPENDENCIES = \
     $(RC_OBJECTS)
 dicomsel_LDADD = $(RC_OBJECTS) -L../libdicom/src -ldicom $(WX_LIBS)
 
 # Extra files to include into the distribution archive: icons
 EXTRA_DIST = \
-    resources.rc \
+    Makefile.msc \
     README \
+    resources.rc \
     images/README \
     images/dir.xpm \
     images/icon.icns \

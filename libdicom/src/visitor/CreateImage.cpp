@@ -5,6 +5,9 @@
 #include <iostream>
 #include <exception>
 
+// Assertions
+#include <cassert>
+
 //      TAG     //
 //////////////////
 // all
@@ -118,12 +121,12 @@ CCreateImage::CCreateImage(const std::string& _sOutputFilename, mfo::CAcquisitio
 	// Modality ok ?
 	if	(
 				dicom::CSettingsDicom::s_bUseModality
-			&&	stingModality != "CT" 
+			&&	stingModality != "CT"
 			&&	stingModality != "MR"
 			&&	stingModality != "PT"
 		)
 	{
-		throw dicom::visitor::CDicom::CVisitorException(this->m_pFile->GetFullName(), 
+		throw dicom::visitor::CDicom::CVisitorException(this->m_pFile->GetFullName(),
 											dicom::exception::StringException::ModalityNotManaged
 											+ this->m_sModality);
 	}
@@ -138,7 +141,7 @@ CCreateImage::CCreateImage(const std::string& _sOutputFilename, mfo::CAcquisitio
     //    )
     //i_nfo.type=JPEG;
 
-	assert(		!dicom::CSettingsDicom::s_bUseModality 
+	assert(		!dicom::CSettingsDicom::s_bUseModality
 			||	stingModality == "CT"
 			||	stingModality == "MR"
 			||	stingModality == "PT"
@@ -235,8 +238,8 @@ void CCreateImage::VerifyImageValidity(mfo::CFrame & _TempFrame)
         throw dicom::visitor::CDicom::CVisitorException(this->m_pFile->GetFullName(), "Position tag is not present");
     }
 
-	assert(		_TempFrame.GetPosition(0) != POSITION_ERROR 
-			||	_TempFrame.GetPosition(1) != POSITION_ERROR 
+	assert(		_TempFrame.GetPosition(0) != POSITION_ERROR
+			||	_TempFrame.GetPosition(1) != POSITION_ERROR
 			||	_TempFrame.GetPosition(2) != POSITION_ERROR);
 	assert(_TempFrame.m_pData != NULL);
 	assert(this->m_bPicturePresent);

@@ -6,6 +6,9 @@
  * Description: .
  */
 
+// Assertions
+#include <cassert>
+
 //all
 #include "tag/DicomTag.h"
 //0x0002

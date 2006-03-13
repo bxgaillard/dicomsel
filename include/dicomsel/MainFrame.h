@@ -18,11 +18,11 @@
 #define DICOMSEL_MAINFRAME_H
 
 // wxWidgets
-#ifndef WX_PRECOMP
+//#ifndef WX_PRECOMP
 # include <wx/frame.h>
 # include <wx/gdicmn.h>
 # include <wx/string.h>
-#endif // !WX_PRECOMP
+//#endif // !WX_PRECOMP
 
 // Current module
 #include <dicomsel/TagSet.h>

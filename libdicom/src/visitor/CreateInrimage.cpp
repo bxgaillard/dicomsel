@@ -13,7 +13,10 @@
 #include <fstream>
 
 // fabs is include in :
-#include <math.h>
+#include <cmath>
+
+// Assertions
+#include <cassert>
 
 // Medimage Type (contains Inrimage)
 #include <MedImage/ii.h>
@@ -113,7 +116,7 @@ CCreateInrimage::~CCreateInrimage()
 const uint8 CCreateInrimage::GetTypeOfData( void )
 {
 	assert(		this->m_pAcquisition != NULL );
-	assert(		this->m_pAcquisition->GetBitsPerPixel() == 8 
+	assert(		this->m_pAcquisition->GetBitsPerPixel() == 8
 			||	this->m_pAcquisition->GetBitsPerPixel() == 16);
 
 	uint8 ui8Type;
@@ -239,8 +242,8 @@ void CCreateInrimage::SetAxeOfMove( void )
 
 #ifdef _DEBUG_STREAM
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-void CCreateInrimage::DisplaySpaceBetweenSliceInOuputStream(	const mfo::CFrame * const _pFrameFirst, 
-																const mfo::CFrame * const _pFrameSecond, 
+void CCreateInrimage::DisplaySpaceBetweenSliceInOuputStream(	const mfo::CFrame * const _pFrameFirst,
+																const mfo::CFrame * const _pFrameSecond,
 																const double _dSpaceBetweenSlice )
 {
 	this->m_ofsSBSLogFile << std::endl << " [ "
@@ -264,14 +267,14 @@ void CCreateInrimage::DisplaySpaceBetweenSliceInOuputStream(	const mfo::CFrame *
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-void CCreateInrimage::DisplayFinalSpaceBetweenSliceInOuputStream( 
+void CCreateInrimage::DisplayFinalSpaceBetweenSliceInOuputStream(
 								std::map<double, uint32, std::greater<uint32> >& _mapDifferentSpace )
 {
 	this->m_ofsSBSLogFile << std::endl << std::endl;
 	std::map<double, uint32, std::greater<uint32> >::iterator iterMapWrite = _mapDifferentSpace.begin();
 	while(iterMapWrite!=_mapDifferentSpace.end())
 	{
-		this->m_ofsSBSLogFile	<< "Space : " << (iterMapWrite->first) << " ---- Nb SBS : " 
+		this->m_ofsSBSLogFile	<< "Space : " << (iterMapWrite->first) << " ---- Nb SBS : "
 								<< iterMapWrite->second << std::endl;
 		++iterMapWrite;
 	}
@@ -290,20 +293,20 @@ void CCreateInrimage::InitializeListPointerFrame ( std::list<mfo::CPointerFrame>
 	assert(	this->m_pAcquisition != NULL );
 	assert(	_listPointerFrame.size() ==  this->m_pAcquisition->GetFrameList()->size());
 
-	std::list<mfo::CPointerFrame>::iterator iterPointer = 
+	std::list<mfo::CPointerFrame>::iterator iterPointer =
 									_listPointerFrame.begin();
-	std::list<mfo::CFrame*>::iterator iterFrame2 = 
+	std::list<mfo::CFrame*>::iterator iterFrame2 =
 									this->m_pAcquisition->GetFrameList()->begin();
 
     while(iterFrame2 != this->m_pAcquisition->GetFrameList()->end())
     {
         (iterPointer++)->m_pFrame = *(iterFrame2++); ////////////// FIXME !!!!!!!!!!!!!!!!!!!!!!!!!!
-        //(++iterPointer)->m_pFrame = *(++iterFrame2); 
+        //(++iterPointer)->m_pFrame = *(++iterFrame2);
     }
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-const double CCreateInrimage::ComputeSpaceBetweenSlice( std::list<mfo::CPointerFrame> & _listPointerFrame, 
+const double CCreateInrimage::ComputeSpaceBetweenSlice( std::list<mfo::CPointerFrame> & _listPointerFrame,
 											std::map<double, uint32, std::greater<uint32> >& _mapDifferentSpace )
 {
 	double dSpaceBetweenSlice = 0.0;
@@ -351,13 +354,13 @@ const double CCreateInrimage::ComputeSpaceBetweenSlice( std::list<mfo::CPointerF
 		else
 		{
 			std::pair<std::map<double, uint32, std::greater<uint32> >::iterator, bool> aPair;
-			aPair = _mapDifferentSpace.insert(std::map<double, uint32, 
+			aPair = _mapDifferentSpace.insert(std::map<double, uint32,
 									std::greater<uint32> >::value_type(double(10.0*dSpaceBetweenSlice),(uint32)1));
 #ifdef _DEBUG_STREAM
-			std::map<double, uint32, std::greater<uint32> >::iterator iterMapFind = 
+			std::map<double, uint32, std::greater<uint32> >::iterator iterMapFind =
 												_mapDifferentSpace.find(10*dSpaceBetweenSlice);
-			m_ofsSBSLogFile << "(not find) - " << iterMapFind->first << " - " 
-							<< iterMapFind->second << " Pair(" << aPair.first->first 
+			m_ofsSBSLogFile << "(not find) - " << iterMapFind->first << " - "
+							<< iterMapFind->second << " Pair(" << aPair.first->first
 							<< "," << aPair.first->second << ")";
 #endif
 		}
@@ -444,7 +447,7 @@ void CCreateInrimage::Convert( const bool _bCrypt )
 
     // Check paramater
     if (
-			(	
+			(
 					dicom::CSettingsDicom::s_bUseFramePosition
 				&&	(
 						this->m_pAcquisition->GetVoxelSize()[0]			== 0.0
@@ -561,7 +564,7 @@ void CCreateInrimage::Convert( const bool _bCrypt )
             while(p_iDataChar < p_iEndOfFile)
             {
 #ifdef _DEBUG
-				assert( p_iDataChar		>=	p_iStartPicture3D ) ; 
+				assert( p_iDataChar		>=	p_iStartPicture3D ) ;
 				assert( p_iDataChar		<	p_iEndPicture3D ) ;
  				assert( p_iDataChar		>=	&data.ptr[ui32Index][0][0] ) ;
  				assert( p_iDataChar		<	&data.ptr[ui32Index][0][0] + uiSizeFrame ) ;
@@ -582,7 +585,7 @@ void CCreateInrimage::Convert( const bool _bCrypt )
 
 ////////// A VIRER //////////////// FIXME ///////////// DELETEME
 //std::stringstream stringstreamVoxel;
-//stringstreamVoxel	
+//stringstreamVoxel
 //					<< "n"	<< m_pAcquisition->GetFrameList()->size()
 //					<< "[x" << m_pAcquisition->GetFrameList()->front()->GetPosition(0) << "]"
 //					<< "[y" << m_pAcquisition->GetFrameList()->front()->GetPosition(1) << "]"
@@ -598,13 +601,13 @@ void CCreateInrimage::Convert( const bool _bCrypt )
     // Write to the hard disk in the 'pFilename' file
 	if (inr.iiWriteImage(
 							(
-								(	
-									m_sOutputFilename 
-								+	m_pAcquisition->GetPath() 
-								+	".inr") 
+								(
+									m_sOutputFilename
+								+	m_pAcquisition->GetPath()
+								+	".inr")
 								+	((_bCrypt)?".gz":"")
 								).c_str()
-							) 
+							)
 							!= II_OK
 						)
 	{

@@ -12,6 +12,9 @@
 #include <iostream>
 #include <ostream>
 
+// Assertions
+#include <cassert>
+
 // Basic Virutals Type (macro & integer)
 #include "Virtuals/Type.h"
 
@@ -21,13 +24,13 @@
 // Medical Firmware Object
 namespace mfo
 {
-    
+
 /** \class CPatient
  *********************
  * Namespace : mfo
  *********************
  * This class defines a medical firmware
- * object. CPatient represents fundamental 
+ * object. CPatient represents fundamental
  * object in the patient folder. This class
  * defines patient's name, sex, Birthdate ..
  */
@@ -47,10 +50,10 @@ public:
 	 * @param const std::string & _strBirthdate	: Birthdate (Dicom format !!)
 	 * @param const int8 _i8Sex		: 'M' or 'F'
 	 */
-	CPatient::CPatient( 
-				const std::string & _strName, 
-				const std::string & _strIDDicom, 
-				const std::string & _strBirthdate, 
+	CPatient::CPatient(
+				const std::string & _strName,
+				const std::string & _strIDDicom,
+				const std::string & _strBirthdate,
 				const int8 _i8Sex
 			):
 		m_strIDDicom    (_strIDDicom),
@@ -79,11 +82,11 @@ public:
 	 * @param const bool _bSex					: Male is true
 	 * @param const std::string & _sParentBase	: eventual parent database. "" for local database
 	 */
-	CPatient::CPatient( 
-				const std::string & _strName, 
-				const std::string & _strIDDicom, 
-				const std::string & _strFirstname, 
-				const std::string & _strBirthdate, 
+	CPatient::CPatient(
+				const std::string & _strName,
+				const std::string & _strIDDicom,
+				const std::string & _strFirstname,
+				const std::string & _strBirthdate,
 				const bool _bSex,
 				const std::string _sParentBase
 			):
@@ -103,7 +106,7 @@ public:
 
 	/**
 	 * Constructor with three params.
-	 * Used to copy a total acquisition (acq + study + patient but 
+	 * Used to copy a total acquisition (acq + study + patient but
 	 * without copy child objects)
 	 *********************
 	 * @param const CPatient * const _pPatient		:
@@ -141,7 +144,7 @@ public:
 			if (_pStudy->GetDbID() != -1) pStudy->SetDbID(_pStudy->GetDbID());
 
 			if (_pAcquisition!=NULL)
-			{	
+			{
 				mfo::CAcquisition* pAcquisition = new mfo::CAcquisition(
 														_pAcquisition->GetIndex(),
 														_pAcquisition->GetDate(),
@@ -168,8 +171,8 @@ public:
 				pAcquisition->SetLaboID (_pAcquisition->GetLaboID ());
 
 				if (_pAcquisition->GetDbID() != -1) pAcquisition->SetDbID(_pAcquisition->GetDbID());
-				
-				
+
+
 				for (
 						std::list<mfo::CFrame*>::iterator iterFrame = const_cast<mfo::CAcquisition*>(_pAcquisition)->GetFrameList()->begin();
 						iterFrame != const_cast<mfo::CAcquisition*>(_pAcquisition)->GetFrameList()->end();
@@ -206,10 +209,10 @@ public:
 												);
 
 					if (pInitRec->GetDbID () != -1) pRecons->SetDbID (pInitRec->GetDbID ());
-													
+
 					pAcquisition->GetVectorReconstruction()->push_back(pRecons);
 				}
-														
+
 
 				pStudy->GetVectorAcquisition()->push_back(pAcquisition);
 			}
@@ -217,9 +220,9 @@ public:
 			this->m_vectorStudy.push_back(pStudy);
 		}
 	}
-	
+
 	/**
-	 * This destructor lists all data of the 
+	 * This destructor lists all data of the
 	 * m_vectorStudy member. For each data,
 	 * it calls the destructor.
 	 * This class not used another pointer.
@@ -236,20 +239,20 @@ public:
 			delete *iterDelete;
 			*iterDelete = NULL;
 			assert(*iterDelete == NULL);
-		}		
+		}
 		this->m_vectorStudy.clear();
-		assert(this->m_vectorStudy.size() == 0);		
+		assert(this->m_vectorStudy.size() == 0);
 	}
 
 	/**
 	 * @return const std::string : Fullname in the DICOM format (TOTO^titi)
-	 * -*- A new std::string is created, also it's not a reference which is 
+	 * -*- A new std::string is created, also it's not a reference which is
 	 * return.
 	 */
 	const std::string GetFullName ( void ) const
 	{
-	        return (this->m_strFirstname.length() == 0) ? 
-			this->m_strName.c_str() : 
+	        return (this->m_strFirstname.length() == 0) ?
+			this->m_strName.c_str() :
 			this->m_strName + "^" + this->m_strFirstname;
 	}
 
@@ -418,14 +421,14 @@ public:
 	 *********************
 	 * @param std::ostream& _oss : Previous stream
 	 * @param mfo::CPatient& _cPatient : Patient to serialze
-	 *********************	
+	 *********************
 	 * @return std::ostream& : Output stream
 	 */
 	friend std::ostream& operator<<(std::ostream& _oss, mfo::CPatient& _cPatient)
 	{
 		_oss << "|| >> Name : "		<< _cPatient.GetName()				<< std::endl
 			<< "|| >> Firstname : "		<< _cPatient.GetFirstname()			<< std::endl
-			<< "|| >> DICOM Name : "	<< _cPatient.GetFullName()			<< std::endl		
+			<< "|| >> DICOM Name : "	<< _cPatient.GetFullName()			<< std::endl
 			<< "|| >> DICOM ID : "		<< _cPatient.GetIDDicom()			<< std::endl
 			<< "|| >> Birth date : "	<< _cPatient.GetBirthdate()			<< std::endl
 			<< "|| >> Sex : "			<< _cPatient.GetSex()				<< std::endl
@@ -441,7 +444,7 @@ public:
 			_oss << (**iter);
 		}
 		_oss << "------------------------------------------" << std::endl;
-		
+
 		return _oss;
 	}
 
@@ -450,30 +453,30 @@ protected:
 	/**
 	 * Not used at this time.
 	 * If you need that you can create function in
-	 * a child object. 
+	 * a child object.
 	 */
-	CPatient( void )				
-	{ 
-		assert(false); 
+	CPatient( void )
+	{
+		assert(false);
 	}
 
 	/**
 	 * Not used at this time.
 	 * If you need that you can create function in
-	 * a child object. 
+	 * a child object.
 	 */
 	CPatient( const CPatient & )
-	{ 
-		assert(false); 
+	{
+		assert(false);
 	}
-	
+
 	/**
 	 * Not used at this time.
 	 * If you need that you can create function in
-	 * a child object. 
+	 * a child object.
 	 */
 	CPatient &operator=( const CPatient & )
-	{ 
+	{
 		assert(false);
 		return *this;
 	}
@@ -514,11 +517,11 @@ protected:
 	std::vector<mfo::CStudy*> m_vectorStudy;
 
 	/*
-	 **************	
+	 **************
 	 * USED IN DATABASE
 	 **************
 	 */
-	 
+
 	/**
 	 * Database indentifier
 	 */

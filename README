@@ -43,6 +43,19 @@ including this file).  The resulting executable program is located in the
 "src" directory: "src/dicomsel" ("src\dicomsel.exe" under Windows).
 Alternatively, on UNIX, you can install DicomSel by typing "make install".
 
+Beginning with version 1.2.2, DicomSel is compilable with the Microsoft Visual
+C++ compiler.  Just user the bundeled "Makefile.msc" files with NMAKE:
+    nmake /NOLOGO /f Makefile.msc
+You can use Wine to do this, this is automatically done with:
+    make -f extra.mk win32-msc
+Note that this is used by default when you type "make -f extra.mk win32".  The
+MinGW compiler can still be used with "make -f extra.mk win32-mingw".  If the
+"win32-msc" target fails, "win32-mingw" is tried instead automatically.
+
+WARNING: when building with MSVC++, it is assumed that wxWidgets is unarchived
+and built in the "..\wxWidgets" directory (the same directory where
+dicomsel-x.y.z resides).  To change its location, edit "msvc/flags.mak".
+
 DicomSel should be compilable under Mac OS X.  Just launch "make" after
 "./configure" as under other Unices.  To compile universal binaries, add
 "-arch ppc -arch i386" to your CXXFLAGS/LDFLAGS.  For exemple, use the

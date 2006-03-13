@@ -18,9 +18,9 @@
 #define DICOMSEL_DICOMCOLLECTION_H
 
 // wxWidgets
-#ifndef WX_PRECOMP
+//#ifndef WX_PRECOMP
 # include <wx/string.h>
-#endif // !WX_PRECOMP
+//#endif // !WX_PRECOMP
 
 // Virtuals basic types
 #include <Virtuals/Type.h>

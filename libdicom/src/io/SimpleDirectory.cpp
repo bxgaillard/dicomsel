@@ -3,6 +3,9 @@
 #include <cctype>
 #include <sys/stat.h>
 
+// Assertions
+#include <cassert>
+
 #ifndef _WIN32            //assuming this means the os is unix
 #include <unistd.h>
 #include <dirent.h>
@@ -56,11 +59,11 @@ CSimpleDirectory::~CSimpleDirectory()
 void CSimpleDirectory::LoadDirectory( void )
 {
 	std::string stringError = "";
-	
+
 	if (GetSize() > 0)
 		return;
 
-#ifdef WIN32
+#ifdef _WIN32
     long hFile = 0;
     struct _finddata_t fileInfo;
 
@@ -74,7 +77,7 @@ void CSimpleDirectory::LoadDirectory( void )
 	{
 		this->addFile(this->m_stringFullName, "", std::string(fileInfo.name));
 	}
-		
+
     while(_findnext(hFile, &fileInfo) == 0)
     {
         this->addFile(this->m_stringFullName, "", std::string(fileInfo.name));
@@ -110,7 +113,7 @@ void CSimpleDirectory::LoadDirectory( const std::string _stringPath )
 {
 	std::string stringError = "";
 
-#ifdef WIN32
+#ifdef _WIN32
     long hFile = 0;
     struct _finddata_t fileInfo;
 
@@ -122,14 +125,14 @@ void CSimpleDirectory::LoadDirectory( const std::string _stringPath )
 	}
 	else
 	{
-	    this->addFile(this->m_stringFullName, 
-				_stringPath.substr(this->m_stringFullName.length()+1, _stringPath.length()), 
+	    this->addFile(this->m_stringFullName,
+				_stringPath.substr(this->m_stringFullName.length()+1, _stringPath.length()),
 				std::string(fileInfo.name));
 	}
 
     while(_findnext(hFile, &fileInfo) == 0)
 	{
-        this->addFile(this->m_stringFullName, 
+        this->addFile(this->m_stringFullName,
 				_stringPath.substr(this->m_stringFullName.length()+1,
 				_stringPath.length()), std::string(fileInfo.name));
 	}
@@ -159,8 +162,8 @@ void CSimpleDirectory::LoadDirectory( const std::string _stringPath )
 }
 
 /////////////////////////////////////////////////////////////////////////////////////
-const std::string CSimpleDirectory::addFile(	const std::string _stringFolder, 
-												const std::string _stringRelatifName, 
+const std::string CSimpleDirectory::addFile(	const std::string _stringFolder,
+												const std::string _stringRelatifName,
 												const std::string _stringName )
 {
     assert(_stringFolder.size() >= 3);
@@ -171,7 +174,7 @@ const std::string CSimpleDirectory::addFile(	const std::string _stringFolder,
 		sString += _stringRelatifName + std::string("/");
 	sString += _stringName;
 
-#ifdef WIN32
+#ifdef _WIN32
     struct _stat buf;
     int err = _stat(sString.c_str(), &buf);
 #else
@@ -180,7 +183,7 @@ const std::string CSimpleDirectory::addFile(	const std::string _stringFolder,
 #endif
     if (!err)
     {
-#ifdef WIN32
+#ifdef _WIN32
         int flag = ((buf.st_mode & _S_IFDIR) != 0);
 #else
 	// NOTE: this isn't correct: int flag = ((buf.st_mode & S_IFDIR) != 0);
@@ -222,7 +225,7 @@ const std::string CSimpleDirectory::addFile(	const std::string _stringFolder,
         else
         {
 	    std::string original = sString;
-	    
+
             try
             {
 				std::transform (
@@ -302,7 +305,7 @@ const std::string CSimpleDirectory::addFile(	const std::string _stringFolder,
     {
         return ( (this->m_stringFullName + " : ") + dicom::exception::StringException::FileNotFound);
     }
-	
+
 	return ("");
 }
 

@@ -1,3 +1,6 @@
+// Assertions
+#include <cassert>
+
 // VIRTUALS basic type
 #include "Virtuals/Type.h"
 

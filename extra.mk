@@ -27,31 +27,34 @@ WXDIR = wxmsw
 PWD ?= $(shell pwd)
 PWD := $(PWD)
 
-.PHONY: default all autogen autoclean dist linux win32 mac clean head
+.PHONY: default all autogen autoclean clean head
+.PHONY: dist linux win32 win32-mingw win32-msc mac
 
 default: dist bin
-all: autogen default autoclean
+all: default autoclean
 
-autogen:
+configure:
 	test -d autotools || mkdir autotools
 	aclocal
 	autoconf
 	autoheader
 	automake -a -c
 
+autogen: configure
+
 autoclean:
 	test ! -f Makefile || make distclean
 	rm -rf autom4te.cache config.h.in `find -name Makefile.in` \
 	    aclocal.m4 configure autotools
 
-dist:
+dist: configure
 	./configure
 	$(MAKE) dist-bzip2
 	$(MAKE) distclean
 
 bin: linux win32
 
-linux:
+linux: configure
 	test -d $(BINDIR) || mkdir $(BINDIR)
 	@echo "===================== Building for Linux ====================="
 	$(CONFIGURE) CFLAGS="$(CFLAGS)" CXXFLAGS="$(CXXFLAGS)" LDFLAGS="-s"
@@ -60,8 +63,11 @@ linux:
 	$(CP) src/dicomsel rfsample/rf $(BINDIR)/linux
 	$(MAKE) distclean
 
-win32: wxmsw
+win32:
 	@echo "==================== Building for Windows ===================="
+	$(MAKE) -f extra.mk win32-msc || $(MAKE) -f extra.mk win32-mingw
+
+win32-mingw: configure wxmsw
 	$(CONFIGURE) --host=i386-mingw32msvc --target=i386-mingw32msvc \
 		     --with-wx-prefix=$(PWD)/wxmsw \
 		     CFLAGS="$(CFLAGS)" CXXFLAGS="$(CXXFLAGS)" \
@@ -72,8 +78,21 @@ win32: wxmsw
 	$(CP) src/dicomsel.exe rfsample/rf.exe $(BINDIR)/win32
 	$(MAKE) distclean
 
+win32-msc: msvc/config.h
+	env -u MAKEFLAGS wine nmake /NOLOGO /f Makefile.msc
+	test -d $(BINDIR)/win32 || mkdir -p $(BINDIR)/win32
+	$(CP) src/dicomsel.exe rfsample/rf.exe $(BINDIR)/win32
+	env -u MAKEFLAGS wine nmake /NOLOGO /f Makefile.msc clean
+
+msvc/config.h: msvc/config.h.in configure.ac
+	$(MAKE) -f extra.mk configure
+	$(CONFIGURE)
+	$(CP) $@ $@.save
+	$(MAKE) distclean
+	$(MV) $@.save $@
+
 UNIV = -arch ppc -arch i386
-mac: all
+mac: configure
 	@echo "=================== Building for Mac OS X ===================="
 	$(CONFIGURE) CFLAGS="$(CFLAGS) $(UNIV)" \
 		     CXXFLAGS="$(CXXFLAGS) $(UNIV)"
@@ -107,12 +126,20 @@ clean:
 	@echo "Deleting distribution directory..."
 	$(RM) -r $(BINDIR) $(WXDIR) $(BUILDDIR)
 
-head:
+head: head/info.txt
 	@echo "Regenerating files head..."
 	/bin/bash tools/gencom.sh -i head/info.txt -l head/license.txt \
-		  configure.ac Makefile.am extra.mk rc.mk doc/Makefile.am \
+		  configure.ac Makefile.am extra.mk rc.am doc/Makefile.am \
 		  libdicom/Makefile.am libdicom/src/Makefile.am \
+		  Makefile.msc libdicom/src/Makefile.msc msvc/flags.mak \
 		  src include rfsample
+
+head/info.txt: head/info.txt.in configure.ac
+	$(MAKE) -f extra.mk configure
+	$(CONFIGURE)
+	$(CP) $@ $@.save
+	$(MAKE) distclean
+	$(MV) $@.save $@
 
 # Works with Gentoo Linux only
 ifeq ($(WXSRC),)

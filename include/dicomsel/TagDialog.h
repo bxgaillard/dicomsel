@@ -18,10 +18,10 @@
 #define DICOMSEL_TAGDIALOG_H
 
 // wxWidgets
-#ifndef WX_PRECOMP
+//#ifndef WX_PRECOMP
 # include <wx/dialog.h>
 # include <wx/window.h>
-#endif // !WX_PRECOMP
+//#endif // !WX_PRECOMP
 
 // Current module
 #include <dicomsel/TagSet.h>

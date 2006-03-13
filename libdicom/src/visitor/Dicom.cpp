@@ -3,6 +3,9 @@
 #include <string>
 #include <ostream>
 
+// Assertions
+#include <cassert>
+
 // VIRTUALS basic type
 #include "Virtuals/Type.h"
 
@@ -91,7 +94,7 @@ void CDicom::ParseFile( dicom::io::CDicomFile & _file )
 	uint32 ui32Pos = 0 ;
 
 	// 1 tag min = i32Group+i32Element+i32ElementLength+(1 * int8)
-	uint32 ui32NbTagMax = _file.GetSize() / (sizeof(int32)*3+sizeof(int8)) ; 
+	uint32 ui32NbTagMax = _file.GetSize() / (sizeof(int32)*3+sizeof(int8)) ;
 	uint32 ui32NbTag = 0;
 
     while ( (ui32Pos < _file.GetSize()) && (ui32NbTag <= ui32NbTagMax) )
@@ -105,7 +108,7 @@ void CDicom::ParseFile( dicom::io::CDicomFile & _file )
 		this->ReadHeaderOfMyTag(_file, i32Group, i32Element, i32ElementLength, bFirstOne);
 
         // Create the tag with the dicom factory
-        dicom::tag::CDicomTag *pTag = 
+        dicom::tag::CDicomTag *pTag =
 					dicom::CDicomAbstractFactory::CreateTag( i32Group, i32Element,
 															i32ElementLength, _file, *this);
 		try
@@ -129,7 +132,7 @@ void CDicom::ParseFile( dicom::io::CDicomFile & _file )
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
-void CDicom::ReadHeaderOfMyTag(	dicom::io::CDicomFile & _file, int32 & _i32Group, 
+void CDicom::ReadHeaderOfMyTag(	dicom::io::CDicomFile & _file, int32 & _i32Group,
 						int32 & _i32Element, int32 & _i32ElementLength, bool & _bFirstOne)
 {
 	try
@@ -169,15 +172,15 @@ void CDicom::ParseDirectory( dicom::io::CSimpleDirectory & _Directory )
 	{
 		_Directory.LoadDirectory();
 	}
-    catch(const dicom::exception::CBase & e)   
+    catch(const dicom::exception::CBase & e)
     {// parse error
         ost << e.what() << std::endl;
     }
-    catch(const std::exception & e)           
+    catch(const std::exception & e)
     {// another exception
         ost << e.what() << std::endl;
     }
-    catch(...)								  
+    catch(...)
     {// another exception
         ost << "unknown exception in this directory" << std::endl;
     }
@@ -202,15 +205,15 @@ void CDicom::ParseDirectory( dicom::io::CSimpleDirectory & _Directory )
                 std::cout <<"Done"<< std::endl ;
 #endif
             }
-            catch(const dicom::exception::CBase & e)   
+            catch(const dicom::exception::CBase & e)
             {// parse error
                 ost << e.what() << std::endl;
             }
-            catch(const std::exception & e)           
+            catch(const std::exception & e)
             {// another exception
                 ost << tmpFile->GetFullName() << " : " << e.what() << std::endl;
             }
-            catch(...)								  
+            catch(...)
             {// another exception
                 ost << tmpFile->GetFullName() << " : " << "unknown exception in file of this directory" << std::endl;
             }

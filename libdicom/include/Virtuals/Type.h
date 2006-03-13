@@ -1,9 +1,12 @@
-#if defined( _MSC_VER )
+#ifndef VIRTUALS_TYPE_H
+#define VIRTUALS_TYPE_H
+
+#ifdef _MSC_VER
 // The Visual C++ debugger doesn't know string
 // larger than 255 char. STL often creates large
 // symbol. The following line cancels warning
 // created by Visual.
-#pragma warning (disable : 4786)
+# pragma warning (disable : 4786)
 // The following line prevents from this file to
 // be included several times by the compiler with
 // Visual C++. This makes compiling quicker, but
@@ -11,12 +14,12 @@
 // change depending on some macro definitions. In
 // the general case, leave these lines as they
 // are.
-#pragma once
+# pragma once
 // assert is not know by Visual (it's the ASSERT
 // macro which is used).
-#include <assert.h>
-#else
-#include <typeinfo>
+//# include <assert.h>
+//#else
+//# include <typeinfo>
 #endif
 
 #ifdef __STDC__
@@ -34,3 +37,5 @@ typedef unsigned int uint32;    // sizeof (uint32) must == 4
 typedef long int32;
 typedef unsigned long uint32;   // sizeof (uint32) must == 4
 #endif
+
+#endif // !VIRTUALS_TYPE_H

@@ -27,8 +27,10 @@ SUBDIRS = \
 
 # Extra files to include in the distribution archive
 EXTRA_DIST = \
+    Makefile.msc \
     extra.mk \
     head/README \
+    head/info.txt \
     head/license-gpl.txt \
     head/license.txt \
     include/dicomsel/README \
@@ -40,6 +42,10 @@ EXTRA_DIST = \
     include/dicomsel/TagDialog.h \
     include/dicomsel/TagSet.h \
     include/dicomsel/ipc.h \
+    msvc/README \
+    msvc/config.h \
+    msvc/config.h.in \
+    msvc/flags.mak \
     tools/README \
     tools/gencom.sh \
     tools/xbuildwx.sh

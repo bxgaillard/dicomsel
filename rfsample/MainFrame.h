@@ -18,12 +18,12 @@
 #define RADIOFREQUENCY_MAINFRAME_H
 
 // wxWidgets
-#ifndef WX_PRECOMP
+//#ifndef WX_PRECOMP
 # include <wx/frame.h>
 # include <wx/gdicmn.h>
 # include <wx/string.h>
 # include <wx/ipc.h>
-#endif // !WX_PRECOMP
+//#endif // !WX_PRECOMP
 
 class wxPanel;
 class wxStaticText;

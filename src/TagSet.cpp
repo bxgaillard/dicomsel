@@ -19,9 +19,9 @@
 #ifdef __BORLANDC__
 # pragma hdrstop
 #endif
-#ifndef WX_PRECOMP
+//#ifndef WX_PRECOMP
 # include <wx/string.h>
-#endif
+//#endif
 
 // Current module
 #include <dicomsel/TagSet.h>

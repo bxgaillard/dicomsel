@@ -11,6 +11,9 @@
 #include <vector>
 #include <string>
 
+// Assertions
+#include <cassert>
+
 // Basic Virutals Type (macro & integer)
 #include "Virtuals/Type.h"
 
@@ -26,7 +29,7 @@ class CPatient;
  * Namespace : mfo
  *********************
  * This class defines a medical firmware
- * object. CStudy represents fundamental 
+ * object. CStudy represents fundamental
  * object in the patient's study. This class
  * defines study's hospital, modality, acquisition zone..
  */
@@ -37,11 +40,11 @@ public:
 	/**
 	 * Constructor used by the DICOM parser
 	 */
-	CStudy::CStudy( 
-		const std::string& _sUID, 
-		mfo::CPatient* _pPatient, 
-		const std::string& _sHospital, 
-		const std::string& _sModality, 
+	CStudy::CStudy(
+		const std::string& _sUID,
+		mfo::CPatient* _pPatient,
+		const std::string& _sHospital,
+		const std::string& _sModality,
 		const std::string& _sAcquisitionZone,
 		const std::string& _sRISId
 	):
@@ -60,14 +63,14 @@ public:
 		assert(this->m_pPatient != NULL);
 		//assert(this->m_sAcquisitionZone.length() > 0); // FIXME !!!!! BDD used this string but it's not always provided
 	}
-	
+
 	/**
 	 * Constructor used by the database
 	 */
-	CStudy::CStudy( 
-		mfo::CPatient* _pPatient, 
-		const std::string& _sHospital, 
-		const std::string& _sModality, 
+	CStudy::CStudy(
+		mfo::CPatient* _pPatient,
+		const std::string& _sHospital,
+		const std::string& _sModality,
 		const std::string& _sAcquisitionZone,
 		const std::string& _sRISId
 	):
@@ -85,7 +88,7 @@ public:
 		assert(this->m_pPatient != NULL);
 		//assert(this->m_sAcquisitionZone.length() > 0); // FIXME !!!!! BDD used this string but it's not always provided
 	}
-	
+
 	/**
 	 * Destructor
 	 */
@@ -122,7 +125,7 @@ public:
 	{
 		this->m_sHospital = _sHospital;
 	}
-	
+
 	/**
 	 * @return const std::string& : the studie's modality
 	 **/
@@ -138,7 +141,7 @@ public:
 	{
 		this->m_sModality = _sModality;
 	}
-	
+
 	/**
 	 * @return const std::string& : the acquisition zone
 	 **/
@@ -154,7 +157,7 @@ public:
 	{
 		this->m_sAcquisitionZone = _sZone;
 	}
-	
+
 	/**
 	 * @return const std::string& : the DICOM UID
 	 **/
@@ -170,7 +173,7 @@ public:
 	{
 		this->m_sUID = _sUID;
 	}
-	
+
 	/**
 	 * @return mfo::CPatient* : the patient who passed this study
 	 **/
@@ -195,7 +198,7 @@ public:
 		assert (_i32DbID >= 0);
 		this->m_i32DbID = _i32DbID;
 	}
-	
+
 	/**
 	 * @return const std::string& : the RIS Id
 	 **/
@@ -211,7 +214,7 @@ public:
 	{
 		this->m_sRISId = _sRISId;
 	}
-	
+
 	/**
 	 * @return vector<mfo::CAcquisition*>* : acquisitions list
 	 */
@@ -219,25 +222,25 @@ public:
 	{
 		return &(this->m_vectorAcquisition);
 	}
-	
+
 	/**
 	 * Text serialize
 	 *********************
 	 * @param std::ostream& _oss : Previous stream
 	 * @param mfo::CStudy& _cStudy : Study to serialze
-	 *********************	
+	 *********************
 	 * @return std::ostream& : Output stream
-	 */	
+	 */
 	friend std::ostream& operator<<(std::ostream & _oss, mfo::CStudy& _cStudy)
 	{
-		_oss	<< "|| --------- >> Hospital : "			<< _cStudy.GetHospital()			<< std::endl		
+		_oss	<< "|| --------- >> Hospital : "			<< _cStudy.GetHospital()			<< std::endl
 				<< "|| --------- >> Modality : "			<< _cStudy.GetModality()			<< std::endl
 				<< "|| --------- >> Acquisition zone : "	<< _cStudy.GetAcquisitionZone()		<< std::endl
 				<< "|| --------- >> RIS Id : "				<< _cStudy.GetRISID()				<< std::endl
 				<< "|| --------- >> Study UID : "			<< _cStudy.GetUID()					<< std::endl
 				<< "|| --------- >> Patient DBId : "		<< _cStudy.GetDbID()				<< std::endl
 				<< "|| --------- >> Acquisition number : "	<< _cStudy.GetVectorAcquisition()->size() << std::endl;
-			
+
 		for(
 			std::vector<mfo::CAcquisition*>::reverse_iterator iter = _cStudy.GetVectorAcquisition()->rbegin();
 			iter != _cStudy.GetVectorAcquisition()->rend();
@@ -246,49 +249,49 @@ public:
 		{
 			 _oss << (**iter);
 		}
-		
+
 		return _oss;
 	}
-	
+
 protected:
 
 	/**
 	 * Not used at this time.
 	 * If you need that you can create function in
-	 * a child object. 
+	 * a child object.
 	 */
-	CStudy				( void )				
-	{ 
-		assert(false); 
-	}
-	
-	/**
-	 * Not used at this time.
-	 * If you need that you can create function in
-	 * a child object. 
-	 */
-	CStudy				( const CStudy & )				
-	{ 
-		assert(false); 
+	CStudy				( void )
+	{
+		assert(false);
 	}
 
 	/**
 	 * Not used at this time.
 	 * If you need that you can create function in
-	 * a child object. 
+	 * a child object.
 	 */
-	CStudy &operator=	( const CStudy & )				
-	{ 
-		assert(false); 
+	CStudy				( const CStudy & )
+	{
+		assert(false);
+	}
+
+	/**
+	 * Not used at this time.
+	 * If you need that you can create function in
+	 * a child object.
+	 */
+	CStudy &operator=	( const CStudy & )
+	{
+		assert(false);
 		return *this;
 	}
 
 	/*
-	 **************	
+	 **************
 	 * FRAMEWORK MEMBER OBJECT
 	 **************
-	 */ 
-	 	
+	 */
+
 	/**
 	 * Hospital name (eg : RADIOLOGIE URGENCE CHUV LAUSANNE)
 	 */
@@ -318,29 +321,29 @@ protected:
 	 * The RIS Id
 	 **/
 	std::string m_sRISId;
-		
+
 	/*
-	 **************	
+	 **************
 	 * USED IN THE DICOM PARSER
 	 **************
-	 */ 	
-	
+	 */
+
 	/**
 	 * Unique Identifier DICOM
 	 */
 	std::string m_sUID;
-	
-	
+
+
 	/*
-	 **************	
+	 **************
 	 * USED IN DATABASE
 	 **************
 	 */
-	 
+
 	/**
 	 * Database indentifier
 	 */
-	int32				m_i32DbID;	
+	int32				m_i32DbID;
 };
 
 }//end namespace 'mfo'

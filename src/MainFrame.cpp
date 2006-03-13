@@ -19,7 +19,7 @@
 #ifdef __BORLANDC__
 # pragma hdrstop
 #endif
-#ifndef WX_PRECOMP
+//#ifndef WX_PRECOMP
 # include <wx/string.h>
 # include <wx/strconv.h>
 # include <wx/gdicmn.h>
@@ -44,14 +44,14 @@
 # include <wx/msgdlg.h>
 # include <wx/ipc.h>
 # include <wx/image.h>
-#endif // !WX_PRECOMP
+//#endif // !WX_PRECOMP
 
 // Standard C library
 #include <cstring>
 
 // Global
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+# include <config.h>
 #endif // HAVE_CONFIG_H
 
 // Current module
@@ -65,11 +65,23 @@
 
 
 #ifndef PACKAGE_STRING
-#define PACKAGE_STRING "DicomSel"
+# define PACKAGE_STRING "DicomSel"
 #endif // !PACKAGE_STRING
 #ifndef PACKAGE_YEARS
-#define PACKAGE_YEARS "2005"
+# define PACKAGE_YEARS "2005"
 #endif // !PACKAGE_YEARS
+#ifndef PACKAGE_OWNER
+# define PACKAGE_OWNER "IRCAD"
+#endif // !PACKAGE_OWNER
+#ifndef PACKAGE_AUTHORS_UNICODE
+# define PACKAGE_AUTHORS_UNICODE PACKAGE_OWNER
+#endif // !PACKAGE_AUTHORS_UNICODE
+#ifndef PACKAGE_BUGREPORT
+# define PACKAGE_BUGREPORT "Johan.Moreau@ircad.u-strasbg.fr"
+#endif // !PACKAGE_BUGREPORT
+
+#define WIDIFY(string)  WIDIFY2(string)
+#define WIDIFY2(string) L ## string
 
 
 namespace dicomsel
@@ -481,11 +493,12 @@ void MainFrame::OnMenuExportedTags( wxCommandEvent& WXUNUSED( event ) )
 
 void MainFrame::OnMenuAbout( wxCommandEvent& WXUNUSED( event ) )
 {
-    wxMessageBox( wxString( L"" PACKAGE_STRING "\n"
-			    "Copyright \u00A9 " PACKAGE_YEARS " IRCAD\n\n"
-			    "Authors: Benjamin Gaillard, "
-			    "Marc-Aur\u00E8le M\u00F6rk, "
-			    "Guillaume Spitz", *wxConvCurrent ),
+    wxMessageBox( wxString( WIDIFY(PACKAGE_STRING) L"\n"
+			    L"Copyright \u00A9 " WIDIFY(PACKAGE_YEARS)
+			    L" " WIDIFY(PACKAGE_OWNER) L"\n\n"
+			    L"Authors: " WIDIFY(PACKAGE_AUTHORS_UNICODE)
+			    L"\n\nPlease report bugs to <"
+			    WIDIFY(PACKAGE_BUGREPORT) L">", *wxConvCurrent ),
 		  wxT( "About DicomSel" ), wxOK | wxICON_INFORMATION, this );
 }
 

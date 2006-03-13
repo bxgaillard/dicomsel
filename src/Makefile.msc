@@ -1,0 +1,47 @@
+# ----------------------------------------------------------------------------
+#
+# DicomSel: DICOM Image Selector
+#
+# Copyright (C) 2005, 2006 IRCAD
+# Authors: Benjamin Gaillard, Marc-Aurèle Mörk, Guillaume Spitz
+#
+# ----------------------------------------------------------------------------
+#
+# << LICENSE >>
+#
+# ----------------------------------------------------------------------------
+
+
+TOPDIR = ..
+!INCLUDE $(TOPDIR)\msvc\flags.mak
+
+DEFS     = /DDICOM_NODLL $(WX_DEFS)
+INCLUDES = /I..\include /I..\libdicom\include /I..\libdicom\include\dicom \
+	   $(WX_INCLUDES)
+RC_INCLS = $(WX_RC_INCLS)
+LIBS     = /LIBPATH:..\libdicom\src dicom.lib $(WX_LIBS)
+
+all: dicomsel.exe
+
+SRC = \
+    BitmapPanel.cpp \
+    DicomCollection.cpp \
+    DicomFile.cpp \
+    DicomTree.cpp \
+    MainFrame.cpp \
+    TagDialog.cpp \
+    TagSet.cpp \
+    main.cpp
+RCS = resources.rc
+
+OBJ = $(SRC:.cpp=.obj) $(RCS:.rc=.res)
+
+dicomsel.exe: $(OBJ)
+	$(LINK) $(LDFLAGS) /SUBSYSTEM:WINDOWS /OUT:$@ $** $(LIBS)
+
+clean:
+	-del *.obj
+	-del resources.res
+	-del dicomsel.exe
+
+# End of File

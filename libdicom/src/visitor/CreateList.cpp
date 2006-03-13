@@ -4,6 +4,9 @@
 // STL's stream
 #include <iostream>
 
+// Assertions
+#include <cassert>
+
 //      TAG     //
 //////////////////
 //all tag
@@ -307,12 +310,12 @@ void CCreateList::AddImageToList( void )
                                 iListAcquisition++
                                 )
                             {
-                                if ( 
+                                if (
                                         (
 												!dicom::CSettingsDicom::s_bUseAcquisitionDate
-											||	(*iListAcquisition)->GetIndex() == this->m_i32AcquisitionIndex	
+											||	(*iListAcquisition)->GetIndex() == this->m_i32AcquisitionIndex
 										)
-                                     && (*iListAcquisition)->GetImageType().compare(this->m_sImageType) == 0 
+                                     && (*iListAcquisition)->GetImageType().compare(this->m_sImageType) == 0
                                      && (
 												!dicom::CSettingsDicom::s_bUseSeriesUID
 											||	(*iListAcquisition)->GetSerieUID().compare(this->m_sUIDSeries) == 0

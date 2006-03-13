@@ -5,4 +5,11 @@ Corrections and improvements made to libdicom during DicomSel development:
 * Some corrections in directory parsing under non-Win32 platforms.
 * More tolerant code in file reader, allows scanning a directory with
   different file types (not only DICOM ones).
+* Preprocessor conditionals using WIN32 were replaced by ones using _WIN32,
+  which is far more portable accross compilers.
+* DLL-specific macros (DicomLib_API) in DicomLib.h and ExceptionDicom.h have
+  been commented out to let the Microsoft Visual C++ compiler build a static
+  library.
+* Missing "#include <cassert>" (which caused compilation failures with legacy
+  GCC versions < 3.4) have been added.
 * Some other minor corrections.

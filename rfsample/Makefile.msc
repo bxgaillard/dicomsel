@@ -1,0 +1,40 @@
+# ----------------------------------------------------------------------------
+#
+# DicomSel: DICOM Image Selector
+#
+# Copyright (C) 2005, 2006 IRCAD
+# Authors: Benjamin Gaillard, Marc-Aurèle Mörk, Guillaume Spitz
+#
+# ----------------------------------------------------------------------------
+#
+# << LICENSE >>
+#
+# ----------------------------------------------------------------------------
+
+
+TOPDIR = ..
+!INCLUDE $(TOPDIR)\msvc\flags.mak
+
+DEFS     = $(WX_DEFS)
+INCLUDES = /I..\include $(WX_INCLUDES)
+RC_INCLS = $(WX_RC_INCLS)
+LIBS     = $(WX_LIBS)
+
+all: rf.exe
+
+SRC = \
+    MainFrame.cpp \
+    main.cpp
+RCS = resources.rc
+
+OBJ = $(SRC:.cpp=.obj) $(RCS:.rc=.res)
+
+rf.exe: $(OBJ)
+	$(LINK) $(LDFLAGS) /SUBSYSTEM:WINDOWS /OUT:$@ $** $(LIBS)
+
+clean:
+	-del *.obj
+	-del resources.res
+	-del rf.exe
+
+# End of File

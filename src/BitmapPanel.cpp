@@ -19,7 +19,7 @@
 #ifdef __BORLANDC__
 # pragma hdrstop
 #endif
-#ifndef WX_PRECOMP
+//#ifndef WX_PRECOMP
 # include <wx/panel.h>
 # include <wx/window.h>
 # include <wx/gdicmn.h>
@@ -30,7 +30,7 @@
 # include <wx/image.h>
 # include <wx/bitmap.h>
 # include <wx/dcmemory.h>
-#endif
+//#endif
 
 // Current module
 #include <dicomsel/BitmapPanel.h>

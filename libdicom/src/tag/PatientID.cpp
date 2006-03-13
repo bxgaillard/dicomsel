@@ -1,3 +1,6 @@
+// Assertions
+#include <cassert>
+
 #include "io/DicomFile.h"
 
 #include "Virtuals/Type.h"

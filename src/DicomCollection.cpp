@@ -19,13 +19,16 @@
 #ifdef __BORLANDC__
 # pragma hdrstop
 #endif
-#ifndef WX_PRECOMP
+//#ifndef WX_PRECOMP
 # include <wx/string.h>
 # include <wx/strconv.h>
-#endif
+//#endif
 
 // STL
 #include <string>
+
+// Assertions
+#include <cassert>
 
 // Virtuals basic types
 #include <Virtuals/Type.h>

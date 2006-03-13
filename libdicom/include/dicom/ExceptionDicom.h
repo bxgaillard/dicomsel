@@ -8,13 +8,15 @@
 // that uses this DLL. This way any other project whose source files include this file see
 // DicomLib_API functions as being imported from a DLL, wheras this DLL sees symbols
 // defined with this macro as being exported.
-//#ifdef _MSC_VER
+#if defined(_MSC_VER) && !defined(DICOM_NODLL)
 #ifdef DICOM_EXPORTS
-#define DicomLib_API __declspec(dllexport)
+#define DicomLib_API // __declspec(dllexport) -- see CHANGES
 #else
-#define DicomLib_API __declspec(dllimport)
+#define DicomLib_API // __declspec(dllimport) -- see CHANGES
 #endif
-//#endif
+#else
+#define DicomLib_API
+#endif
 
 #include <string>
 /*#include <exception>
