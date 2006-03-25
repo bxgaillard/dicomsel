@@ -33,19 +33,19 @@ PWD := $(PWD)
 default: dist bin
 all: default autoclean
 
-configure:
+configure: autogen
+
+autogen:
 	test -d autotools || mkdir autotools
 	aclocal
 	autoconf
 	autoheader
 	automake -a -c
 
-autogen: configure
-
 autoclean:
 	test ! -f Makefile || make distclean
-	rm -rf autom4te.cache config.h.in `find -name Makefile.in` \
-	    aclocal.m4 configure autotools
+	rm -rf autom4te.cache config.h.in aclocal.m4 configure autotools \
+	    `find -name Makefile.in | grep -v ^\\./3rdparty`
 
 dist: configure
 	./configure

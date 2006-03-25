@@ -1,7 +1,21 @@
 Change Log Summary
 
 
-1.2.2 -- 2006-03-14 -----------------------------------------------------------
+1.9.0 -- 2006-03-25 ----------------------------------------------------------
+
+FIRST DEVELOPMENT MILESTONE OF VERSION 2.0
+Future 2.0 pre-releases will be versioned as 1.9.x.
+
+This development release introduces the DCMTK library integration.  It isn't
+entirely done yet (most notably MSVC++ compatibility), but it should be
+functionnal for UNIX-like systems.
+
+* Added "3rdparty/dcmtk-3.5.4", generated with "tools/mkdcmtk.sh".
+* Added "tools/mkdcmtk.sh" to make a simple DCMTK Autotools-compliant
+  file hierarchy.
+
+
+1.2.2 -- 2006-03-14 ----------------------------------------------------------
 
 This release is a bugfix version.  It also introduces full compatibility with
 the Microsoft Visual C++ compiler.
@@ -41,7 +55,7 @@ has entirely been replaced by one based on the GNU Autotools.
 * Added an empty ChangeLog file to make Automake happier.
 
 
-1.1.0 -- 2005-08-?? -----------------------------------------------------------
+1.1.0 -- 2005-08-?? ----------------------------------------------------------
 
 This release was created during August 2005 to fix some bugs.  It is intended
 to be integrated back to Radiofrequency soon.

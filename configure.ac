@@ -22,7 +22,7 @@ dnl Process this file with autoconf to produce a configure script.
 
 dnl General settings
 AC_PREREQ(2.52g)
-AC_INIT([DicomSel], [1.2.2], [b.gaillard@powercode.net], [dicomsel])
+AC_INIT([DicomSel], [1.9.0], [b.gaillard@powercode.net], [dicomsel])
 AC_CONFIG_SRCDIR([src/main.cpp])
 AC_CONFIG_HEADER([config.h])
 AC_CONFIG_AUX_DIR([autotools])
@@ -30,19 +30,27 @@ AM_INIT_AUTOMAKE([1.7 no-define dist-bzip2 -Wall])
 
 dnl Additional definitions
 AC_SUBST([PACKAGE_YEARS], ["2005, 2006"])
-AC_DEFINE_UNQUOTED([PACKAGE_YEARS], "$PACKAGE_YEARS",
+AC_DEFINE_UNQUOTED([PACKAGE_YEARS], ["$PACKAGE_YEARS"],
 		   [The years associated to the copyright notice.])
 AC_SUBST([PACKAGE_OWNER], ["IRCAD"])
-AC_DEFINE_UNQUOTED([PACKAGE_OWNER], "$PACKAGE_OWNER",
+AC_DEFINE_UNQUOTED([PACKAGE_OWNER], ["$PACKAGE_OWNER"],
 		   [The package owner (copyright holder).])
 AC_SUBST([PACKAGE_AUTHORS],
 	 ["Benjamin Gaillard, Marc-Aurèle Mörk, Guillaume Spitz"])
-AC_DEFINE_UNQUOTED([PACKAGE_AUTHORS], "$PACKAGE_AUTHORS",
+AC_DEFINE_UNQUOTED([PACKAGE_AUTHORS], ["$PACKAGE_AUTHORS"],
 		   [The package authors.])
 AC_SUBST([PACKAGE_AUTHORS_UNICODE],
 	 ["Benjamin Gaillard, Marc-Aur\\u00E8le M\\u00F6rk, Guillaume Spitz"])
-AC_DEFINE_UNQUOTED([PACKAGE_AUTHORS_UNICODE], "$PACKAGE_AUTHORS_UNICODE",
+AC_DEFINE_UNQUOTED([PACKAGE_AUTHORS_UNICODE], ["$PACKAGE_AUTHORS_UNICODE"],
 		   [The package authors.])
+
+dnl Definitions for other packages
+AC_DEFUN([DCMTK_AC_VERSION], [3.5.4])
+AC_SUBST([DCMTK_VERSION], DCMTK_AC_VERSION)
+AC_DEFUN([DCMTK_AC_DIR], [3rdparty/dcmtk-]DCMTK_AC_VERSION)
+AC_SUBST([DCMTK_DIR], DCMTK_AC_DIR)
+AC_DEFINE_UNQUOTED([DCMTK_VERSION], ["$DCMTK_VERSION"],
+		   [The bundled DCMTK version.])
 
 dnl Checks for programs
 AC_LANG([C++])
@@ -96,6 +104,11 @@ AC_CONFIG_FILES([
     head/info.txt
     msvc/config.h
 ])
+
+dnl Other packages configuration
+AC_CONFIG_SUBDIRS(DCMTK_AC_DIR)
+
+dnl Output configure files
 AC_OUTPUT
 
 dnl End of File

@@ -20,10 +20,12 @@
 
 # Subdirectories
 SUBDIRS = \
+    $(DCMTK_DIR) \
     libdicom \
     src \
     rfsample \
     doc
+DIST_SUBDIRS = $(SUBDIRS)
 
 # Extra files to include in the distribution archive
 EXTRA_DIST = \
@@ -48,6 +50,7 @@ EXTRA_DIST = \
     msvc/flags.mak \
     tools/README \
     tools/gencom.sh \
+    tools/mkdcmtk.sh \
     tools/xbuildwx.sh
 
 # End of File
