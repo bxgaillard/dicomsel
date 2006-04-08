@@ -1,0 +1,24 @@
+#ifndef DICOMSEL_CONFIG_H
+#define DICOMSEL_CONFIG_H
+
+#ifndef LITTLE_ENDIAN
+# define LITTLE_ENDIAN 1234
+#endif /* !LITTLE_ENDIAN */
+#ifndef BIG_ENDIAN
+# define BIG_ENDIAN    4321
+#endif /* !BIG_ENDIAN */
+#ifndef BYTE_ORDER
+# define BYTE_ORDER    1234
+#endif /* !BYTE_ORDER */
+
+#define PACKAGE_AUTHORS         "@PACKAGE_AUTHORS@"
+#define PACKAGE_AUTHORS_UNICODE "@PACKAGE_AUTHORS_UNICODE@"
+#define PACKAGE_BUGREPORT       "@PACKAGE_BUGREPORT@"
+#define PACKAGE_NAME            "@PACKAGE_NAME@"
+#define PACKAGE_OWNER           "@PACKAGE_OWNER@"
+#define PACKAGE_STRING          "@PACKAGE_STRING@"
+#define PACKAGE_TARNAME         "@PACKAGE_TARNAME@"
+#define PACKAGE_VERSION         "@PACKAGE_VERSION@"
+#define PACKAGE_YEARS           "@PACKAGE_YEARS@"
+
+#endif /* !DICOMSEL_CONFIG_H */

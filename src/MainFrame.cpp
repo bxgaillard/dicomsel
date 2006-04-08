@@ -8,7 +8,19 @@
  *
  * ---------------------------------------------------------------------------
  *
- * << LICENSE >>
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+ * more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc., 59
+ * Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * ---------------------------------------------------------------------------
  */
@@ -19,7 +31,7 @@
 #ifdef __BORLANDC__
 # pragma hdrstop
 #endif
-//#ifndef WX_PRECOMP
+#ifndef WX_PRECOMP
 # include <wx/string.h>
 # include <wx/strconv.h>
 # include <wx/gdicmn.h>
@@ -44,14 +56,15 @@
 # include <wx/msgdlg.h>
 # include <wx/ipc.h>
 # include <wx/image.h>
-//#endif // !WX_PRECOMP
+#include <wx/event.h>
+#endif // !WX_PRECOMP
 
 // Standard C library
 #include <cstring>
 
 // Global
 #ifdef HAVE_CONFIG_H
-# include <config.h>
+#include <config.h>
 #endif // HAVE_CONFIG_H
 
 // Current module
@@ -60,28 +73,18 @@
 #include <dicomsel/BitmapPanel.h>
 #include <dicomsel/TagSet.h>
 #include <dicomsel/TagDialog.h>
+#include <dicomsel/StoreDialog.h>
+#include <dicomsel/Store.h>
 #include <dicomsel/DicomFile.h>
 #include <dicomsel/MainFrame.h>
 
 
 #ifndef PACKAGE_STRING
-# define PACKAGE_STRING "DicomSel"
+#define PACKAGE_STRING "DicomSel"
 #endif // !PACKAGE_STRING
 #ifndef PACKAGE_YEARS
-# define PACKAGE_YEARS "2005"
+#define PACKAGE_YEARS "2005"
 #endif // !PACKAGE_YEARS
-#ifndef PACKAGE_OWNER
-# define PACKAGE_OWNER "IRCAD"
-#endif // !PACKAGE_OWNER
-#ifndef PACKAGE_AUTHORS_UNICODE
-# define PACKAGE_AUTHORS_UNICODE PACKAGE_OWNER
-#endif // !PACKAGE_AUTHORS_UNICODE
-#ifndef PACKAGE_BUGREPORT
-# define PACKAGE_BUGREPORT "Johan.Moreau@ircad.u-strasbg.fr"
-#endif // !PACKAGE_BUGREPORT
-
-#define WIDIFY(string)  WIDIFY2(string)
-#define WIDIFY2(string) L ## string
 
 
 namespace dicomsel
@@ -99,6 +102,20 @@ namespace dicomsel
 /*
  * Menu and widgets IDs
  */
+
+
+
+
+enum IDs
+{   
+    ID_MENU_RUN    = 1,
+   
+    ID_THREAD_ONE    = 55,
+};
+
+
+
+
 enum
 {
     // Standard menu IDs
@@ -108,10 +125,11 @@ enum
     MENU_ABOUT    = wxID_ABOUT,
 
     // Custom menu IDs
+    MENU_EXPORTED_TAGS,
     MENU_EXPORT = wxID_HIGHEST + 1,
     MENU_SEND,
     MENU_DISPLAYED_TAGS,
-    MENU_EXPORTED_TAGS,
+    MENU_RECOVER_FILE,
 
     // Custom widgets IDs
     WID_DICOMTREE,
@@ -125,12 +143,22 @@ enum
 /*
  * Event table
  */
+
+// Custome events go here
+DEFINE_EVENT_TYPE(SIGNAL_ME)
+
+
+
+
+
+
 BEGIN_EVENT_TABLE( MainFrame, wxFrame )
     // Frame events
     EVT_CLOSE( MainFrame::OnClose )
 
     // Menu events
     EVT_MENU( MENU_OPENDIR,        MainFrame::OnMenuOpenDir       )
+    EVT_MENU( MENU_RECOVER_FILE,   MainFrame::OnMenuRecoverFile   )
     EVT_MENU( MENU_CLOSEDIR,       MainFrame::OnMenuCloseDir      )
     EVT_MENU( MENU_EXPORT,         MainFrame::OnMenuExport        )
     EVT_MENU( MENU_SEND,           MainFrame::OnMenuSend          )
@@ -138,11 +166,14 @@ BEGIN_EVENT_TABLE( MainFrame, wxFrame )
     EVT_MENU( MENU_DISPLAYED_TAGS, MainFrame::OnMenuDisplayedTags )
     EVT_MENU( MENU_EXPORTED_TAGS,  MainFrame::OnMenuExportedTags  )
     EVT_MENU( MENU_ABOUT,          MainFrame::OnMenuAbout         )
+    EVT_MENU(ID_MENU_RUN,          MainFrame::OnThreadStart)
+    EVT_MENU(ID_THREAD_ONE,        MainFrame::OnThreadFinished)
 
     // Tree events
     EVT_TREE_SEL_CHANGED( WID_DICOMTREE, MainFrame::OnSelectionChanged )
-END_EVENT_TABLE()
 
+
+END_EVENT_TABLE()
 
 // Application icon (under Windows and OS/2 it's in resources)
 #if !defined( __WXMSW__ ) && !defined( __WXOS2__ )
@@ -178,6 +209,12 @@ MainFrame::MainFrame( const wxString& title, const wxPoint& pos,
 				   wxT( "Send the position of the currently "
 					"selected image to Radiofrequency") );
     m_sendMenu->Enable( false );
+    
+    fileMenu->AppendSeparator();
+    m_recoverMenu = fileMenu->Append( MENU_RECOVER_FILE, wxT( "&Retreive remote file\tCtrl-R" ),
+				   wxT( "Obtain a remote DICOM file") );
+					
+					
     fileMenu->AppendSeparator();
     fileMenu->Append( MENU_QUIT, wxT( "&Quit\tCtrl-Q" ),
 		      wxT( "Exit DicomSel" ) );
@@ -278,6 +315,12 @@ void MainFrame::LoadConfig( void )
 
     // Redraw tags
     RefreshDisplayedTags();
+
+
+    config.Read(wxT("Store/Address"),&Address,wxT("192.168.0.1"));
+    config.Read(wxT("Store/PortRcp"),&PortRcp,wxT("4006"));
+    config.Read(wxT("Store/PortSend"),&PortSend,wxT("4006"));
+    config.Read(wxT("Store/Check"),&Check,true);
 }
 
 void MainFrame::SaveConfig( void ) const
@@ -292,6 +335,11 @@ void MainFrame::SaveConfig( void ) const
 	config.Write( wxString( wxT( "Export/" ) ) + TagSet::GetTagID( tag ),
 		      m_exportedTags.IsIn( tag ) );
     }
+
+	config.Write(wxT("Store/Address"),Address);
+	config.Write(wxT("Store/PortRcp"),PortRcp);
+	config.Write(wxT("Store/PortSend"),PortSend);        
+	config.Write(wxT("Store/Check"),Check);   
 }
 
 void MainFrame::RefreshDisplayedTags( void )
@@ -365,7 +413,10 @@ void MainFrame::OnClose( wxCloseEvent& event )
 {
     SaveConfig();
     event.Skip();
+    serverStore->Destroy();
+    Destroy();
 }
+
 
 void MainFrame::OnMenuOpenDir( wxCommandEvent& WXUNUSED( event ) )
 {
@@ -469,6 +520,7 @@ void MainFrame::OnMenuExport( wxCommandEvent& WXUNUSED( event ) )
 void MainFrame::OnMenuQuit( wxCommandEvent& WXUNUSED( event ) )
 {
     Close();
+    serverStore->Destroy();
 }
 
 void MainFrame::OnMenuDisplayedTags( wxCommandEvent& WXUNUSED( event ) )
@@ -493,12 +545,11 @@ void MainFrame::OnMenuExportedTags( wxCommandEvent& WXUNUSED( event ) )
 
 void MainFrame::OnMenuAbout( wxCommandEvent& WXUNUSED( event ) )
 {
-    wxMessageBox( wxString( WIDIFY(PACKAGE_STRING) L"\n"
-			    L"Copyright \u00A9 " WIDIFY(PACKAGE_YEARS)
-			    L" " WIDIFY(PACKAGE_OWNER) L"\n\n"
-			    L"Authors: " WIDIFY(PACKAGE_AUTHORS_UNICODE)
-			    L"\n\nPlease report bugs to <"
-			    WIDIFY(PACKAGE_BUGREPORT) L">", *wxConvCurrent ),
+    wxMessageBox( wxString( L"" PACKAGE_STRING "\n"
+			    "Copyright \u00A9 " PACKAGE_YEARS " IRCAD\n\n"
+			    "Authors: Benjamin Gaillard, "
+			    "Marc-Aur\u00E8le M\u00F6rk, "
+			    "Guillaume Spitz", *wxConvCurrent ),
 		  wxT( "About DicomSel" ), wxOK | wxICON_INFORMATION, this );
 }
 
@@ -511,6 +562,95 @@ void MainFrame::OnSelectionChanged( wxTreeEvent& WXUNUSED( event ) )
     m_exportMenu->Enable( image.Ok() );
     m_sendMenu->Enable( image.Ok() );
 }
+
+
+void MainFrame::OnMenuRecoverFile( wxCommandEvent& WXUNUSED( event ) )
+{
+	
+	StoreDialog dialog( this, -1, wxT( "Dicom Store Options" ) );
+	dialog.SetCheck(Check);
+	dialog.IsConfigEnable();
+	dialog.SetPortRcp(PortRcp);
+	dialog.SetPortSend(PortSend);
+	dialog.SetAddressSend(Address);
+
+	if( dialog.ShowModal() == wxID_OK )
+	{
+		Address=dialog.GetAddressSend();
+		PortRcp=dialog.GetPortRcp();
+		PortSend=dialog.GetPortSend();
+		Check=dialog.IsCheck();
+		wxMessageBox("Configuration saved","Save");
+		serverStore =new Store(PortRcp,this,1,dialog.IsCheckTimeFile());
+		
+		if (Check)
+		{
+			// A appelé dans un thread
+ 			if (!serverStore->IsRunning())
+			{
+				//serverStore->Create();
+				serverStore->Run();
+			}
+		}
+		
+		else
+		{
+			if (serverStore->IsRunning()) /*serverStore->Delete()*/;
+		}
+
+	}
+
+}
+
+
+
+
+void MainFrame::OnThreadStart(wxCommandEvent& WXUNUSED( event ))
+{
+    if( !serverStore->IsRunning() )
+    {
+        printf("Starting New Thread!\n");
+        serverStore->Run();
+    }
+
+    else {
+        printf("Thread already running!\n");
+    }
+}
+
+
+void MainFrame::OnThreadFinished(wxCommandEvent& WXUNUSED( event ))
+{
+    printf("Back from thread!!\n");
+    if(wxMessageBox(
+             "A File was received with Dicom Store ! Open this file ? ",
+             "Dicom Store event",wxYES_NO ) == wxYES)
+	{
+	if( m_tree->OpenDirectory(wxT( "../reception/" ) ))
+	{ 
+	    m_bitmap->Clear();
+	    RefreshLabels();
+	    m_tree->SetFocus();
+	}
+	}
+
+}
+
+void MainFrame::SetDirPath(char *Dir)
+{
+	m_dirPath=Dir;
+}
+
+
+
+
+
+
+
+
+
+
+
 
 } // namespace dicomsel
 
