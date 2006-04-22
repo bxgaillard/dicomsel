@@ -170,12 +170,8 @@ cstore(T_ASC_Association *assoc, const OFString& fname);
 #define SHORTCOL 4
 #define LONGCOL 19
 
-
-////////////////////////////////   MAIN /////////////////////////////////////////////////////
-
-
 int
-send(int argc, char *argv[])
+main(int argc, char *argv[])
 {
     const char *opt_peer = NULL;
     OFCmdUnsignedInt opt_port = 104;

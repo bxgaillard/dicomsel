@@ -8,19 +8,7 @@
  *
  * ---------------------------------------------------------------------------
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
- *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
- * more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc., 59
- * Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * << LICENSE >>
  *
  * ---------------------------------------------------------------------------
  */
@@ -56,7 +44,7 @@
 namespace dicomsel
 {
 
-enum 
+enum
 {
     ID_EDIT_PORT,
     ID_EDIT_ADDRESS,
@@ -96,44 +84,44 @@ notebook1 = new wxNotebook(this,
 
 
 
-wxPanel *PageReception = new wxPanel(notebook1, 
-                              -1, 
+wxPanel *PageReception = new wxPanel(notebook1,
+                              -1,
                               wxDefaultPosition,
                               wxDefaultSize,
                               wxNO_BORDER);
 
-    
+
 wxPanel *PageSending = new wxPanel(notebook1, wxID_ANY);
 
 
 
 
-notebook1->AddPage(PageReception, "Reception",TRUE); 
-notebook1->AddPage(PageSending,"Sending",FALSE);
+notebook1->AddPage(PageReception, wxT( "Reception" ),TRUE);
+notebook1->AddPage(PageSending, wxT( "Sending" ),FALSE);
 
 /////RECEIVE
     wxBoxSizer *dialog_sizer = new wxBoxSizer(wxVERTICAL);
     dialog_sizer->Add(notebook1, 1, wxEXPAND|wxALL, 5);
 
     wxBoxSizer *PageReception_sizer = new wxBoxSizer(wxVERTICAL);
-    
 
-	m_checkBoxe = new wxCheckBox( PageReception, ID_ENABLE_CONFIG,"Active reception" );        	
+
+    m_checkBoxe = new wxCheckBox( PageReception, ID_ENABLE_CONFIG, wxT( "Active reception" ) );
  //PORT
-	wxStaticText *stPortRcp = new wxStaticText(PageReception, 
-                                             -1 , 
-                                             _T("Port"),
+	wxStaticText *stPortRcp = new wxStaticText(PageReception,
+                                             -1 ,
+                                             wxT("Port"),
                                              wxDefaultPosition,
-                                             wxDefaultSize);              
-	
-	pEditPortRcp = new wxTextCtrl(PageReception, 
-                               ID_EDIT_PORT, 
-                               _T("4006"), 
+                                             wxDefaultSize);
+
+	pEditPortRcp = new wxTextCtrl(PageReception,
+                               ID_EDIT_PORT,
+                               wxT("4006"),
                                wxDefaultPosition,
-                               wxSize(40, 20));                               
+                               wxSize(40, 20));
 
 	//m_checkBoxeTls = new wxCheckBox( PageReception, ID_ENABLE_CONFIG,"Active Tls transmission" );
-	m_checkBoxe_tn = new wxCheckBox( PageReception, ID_ENABLE_TIMEFILE," Generate filename from creation time" );
+	m_checkBoxe_tn = new wxCheckBox( PageReception, ID_ENABLE_TIMEFILE, wxT( "Generate filename from creation time" ) );
 	//m_checkBoxe_fe = new wxCheckBox( PageReception, ID_ENABLE_EXTENTION," Generate filename with .dcm extention" );
 
     PageReception_sizer->Add(m_checkBoxe, 0, wxALIGN_CENTER_VERTICAL|wxRIGHT|wxLEFT, 2);
@@ -154,49 +142,49 @@ notebook1->AddPage(PageSending,"Sending",FALSE);
     wxBoxSizer *PageSending_sizer = new wxBoxSizer(wxVERTICAL);
 
 //Adresses
-	wxStaticText *pAddressSend = new wxStaticText(PageSending, 
+	wxStaticText *pAddressSend = new wxStaticText(PageSending,
                                               -1 ,
-                                              _T("Addresse") ,
+                                              wxT("Addresse") ,
                                               wxDefaultPosition,
-                                              wxDefaultSize);                                              
+                                              wxDefaultSize);
 
-	pEditAddressSend = new wxTextCtrl(PageSending, 
-                                  ID_EDIT_ADDRESS, 
-                                  _T("192.168.0.1"),
+	pEditAddressSend = new wxTextCtrl(PageSending,
+                                  ID_EDIT_ADDRESS,
+                                  wxT("192.168.0.1"),
                                   wxDefaultPosition,
-                                  wxSize(110, 20));                                  
+                                  wxSize(110, 20));
 
 
 
 //PORT
-	wxStaticText *stPortSend = new wxStaticText(PageSending, 
-                                             -1 , 
-                                             _T("Port"),
+	wxStaticText *stPortSend = new wxStaticText(PageSending,
+                                             -1 ,
+                                             wxT("Port"),
                                              wxDefaultPosition,
-                                             wxDefaultSize);              
-	
-	pEditPortSend = new wxTextCtrl(PageSending, 
-                               ID_EDIT_PORT, 
-                               _T("4006"), 
+                                             wxDefaultSize);
+
+	pEditPortSend = new wxTextCtrl(PageSending,
+                               ID_EDIT_PORT,
+                               wxT("4006"),
                                wxDefaultPosition,
-                               wxSize(40, 20));                               
-	
-	
-	 wxButton *button2 = new wxButton(PageSending,ID_BROWSE_BUTTON, "Browse");
-	 wxButton *buttonSend = new wxButton(PageSending,ID_SEND_BUTTON, "Send");
-         wxStaticText *path = new wxStaticText(PageSending, 
-                                             -1 , 
-                                             _T("File to send : "),
-                                             wxDefaultPosition,
-                                             wxDefaultSize);              
-	 fileName = new wxStaticText(PageSending, 
-                                             -1 , 
-                                             _T("no file"),
-                                             wxDefaultPosition,
-                                             wxDefaultSize);              
+                               wxSize(40, 20));
 
 
-	
+	 wxButton *button2 = new wxButton(PageSending,ID_BROWSE_BUTTON, wxT( "Browse" ) );
+	 wxButton *buttonSend = new wxButton(PageSending,ID_SEND_BUTTON, wxT( "Send" ) );
+         wxStaticText *path = new wxStaticText(PageSending,
+                                             -1 ,
+                                             wxT("File to send : "),
+                                             wxDefaultPosition,
+                                             wxDefaultSize);
+	 fileName = new wxStaticText(PageSending,
+                                             -1 ,
+                                             wxT("no file"),
+                                             wxDefaultPosition,
+                                             wxDefaultSize);
+
+
+
     PageSending_sizer->Add(pAddressSend, 0, wxALIGN_CENTER_VERTICAL|wxRIGHT|wxLEFT, 2);
     PageSending_sizer->Add(pEditAddressSend, 0, wxALIGN_CENTER_VERTICAL|wxRIGHT|wxLEFT, 4);
     PageSending_sizer->Add(stPortSend, 0, wxALIGN_CENTER_VERTICAL|wxRIGHT|wxLEFT, 2);
@@ -228,7 +216,7 @@ notebook1->AddPage(PageSending,"Sending",FALSE);
   //boxSizer->Add(sizer1,1,wxALIGN_RIGHT);
   boxSizer->Add(CreateStdDialogButtonSizer( wxOK | wxCANCEL ), 0,
 	wxALL | wxEXPAND, 4 );
-  
+
   Psizer->Add( boxSizer, 1, wxALL | wxEXPAND, 4 );
 
   SetSizer(Psizer);
@@ -239,43 +227,43 @@ notebook1->AddPage(PageSending,"Sending",FALSE);
 }
 
 
-wxString StoreDialog::GetAddressSend() 
+wxString StoreDialog::GetAddressSend()
 {
   wxString ad = pEditAddressSend->GetValue();
   return ad;
 }
 
 
-wxString StoreDialog::GetPortSend()  
+wxString StoreDialog::GetPortSend()
 {
   wxString port = pEditPortSend->GetValue();
   return port;
 }
 
 
-void StoreDialog::SetAddressSend(wxString ad) 
+void StoreDialog::SetAddressSend(wxString ad)
 {
   pEditAddressSend->SetValue(ad);
 
 }
 
 
-void StoreDialog::SetPortSend(wxString port)  
+void StoreDialog::SetPortSend(wxString port)
 {
   pEditPortSend->SetValue(port);
-  
+
 }
 
 
 
 // Rcp
-wxString StoreDialog::GetPortRcp()  
+wxString StoreDialog::GetPortRcp()
 {
   wxString port = pEditPortRcp->GetValue();
   return port;
 }
 
-wxString StoreDialog::GetFileName()  
+wxString StoreDialog::GetFileName()
 {
   return m_fileName;
 }
@@ -283,32 +271,32 @@ wxString StoreDialog::GetFileName()
 
 
 
-void StoreDialog::SetPortRcp(wxString port)  
+void StoreDialog::SetPortRcp(wxString port)
 {
   pEditPortRcp->SetValue(port);
-  
+
 }
 
 
 
 
-bool StoreDialog::IsCheck()  
+bool StoreDialog::IsCheck()
 {
   return (m_checkBoxe->GetValue());
-  
+
 }
 
 
-bool StoreDialog::IsCheckTimeFile()  
+bool StoreDialog::IsCheckTimeFile()
 {
   return (m_checkBoxe_tn->GetValue());
-  
+
 }
 
 
-void StoreDialog::SetCheck(bool v)  
+void StoreDialog::SetCheck(bool v)
 {
-	m_checkBoxe->SetValue(v);  
+	m_checkBoxe->SetValue(v);
 }
 
 
@@ -316,7 +304,7 @@ void StoreDialog::SetCheck(bool v)
 void StoreDialog::IsConfigEnable()
 {
 	if( m_checkBoxe->GetValue() )
-	{	
+	{
 		 pEditPortRcp->Enable(true);
 		 m_checkBoxe_tn->Enable(true);
 		 //m_checkBoxe_fe->Enable(true);
@@ -343,18 +331,18 @@ void StoreDialog::OnEnableConfig(wxCommandEvent& WXUNUSED( event ))
 void StoreDialog::OnSelectFile(wxCommandEvent& WXUNUSED( event ))
 {
 
-	// Pour le bouton browse : r�upere le nom du fichier s��tionn�	
-	wxFileDialog* openFileDialog =new wxFileDialog ( this,"Open file","","","Dicom files (*.dcm)|*.dcm",wxOPEN,wxDefaultPosition);
+	// Pour le bouton browse : r�upere le nom du fichier s��tionn�
+	wxFileDialog* openFileDialog = new wxFileDialog( this, wxT( "Open file" ), wxT( "" ), wxT( "" ), wxT( "Dicom files (*.dcm)|*.dcm" ), wxOPEN, wxDefaultPosition );
 
 	if (openFileDialog->ShowModal() == wxID_OK)
-	{ 
+	{
 		const wxString path( openFileDialog->GetPath() );
 		wxString file=openFileDialog->GetFilename();
         	fileName->SetLabel(file);
 		m_fileName=path;
 		openFileDialog->Destroy();
 	}
-	
+
 }
 
 
@@ -365,7 +353,7 @@ void StoreDialog::OnSendFile(wxCommandEvent& WXUNUSED( event ))
 	sendStore=new Store(GetAddressSend(),GetPortSend(),GetFileName(),2);
 	sendStore->Run();
 
-	
+
 }
 
 

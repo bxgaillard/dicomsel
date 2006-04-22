@@ -7,19 +7,7 @@
 #
 # ----------------------------------------------------------------------------
 #
-# This program is free software; you can redistribute it and/or modify it
-# under the terms of the GNU General Public License as published by the Free
-# Software Foundation; either version 2 of the License, or (at your option)
-# any later version.
-#
-# This program is distributed in the hope that it will be useful, but WITHOUT
-# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-# FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-# more details.
-#
-# You should have received a copy of the GNU General Public License along
-# with this program; if not, write to the Free Software Foundation, Inc., 59
-# Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+# << LICENSE >>
 #
 # ----------------------------------------------------------------------------
 
@@ -30,8 +18,8 @@ AM_CPPFLAGS = -I$(top_srcdir)/include -I$(top_srcdir)/libdicom/include \
 	      -I$(top_srcdir)/libdicom/include/dicom $(WX_CPPFLAGS)
 AM_CXXFLAGS = $(WX_CXXFLAGS_ONLY)
 
-# DCMTK libs: put here which ones are used (-ldcmimage -ldcmnet...)
-DCMTK_LIBS = -ldcmimage -ldcmnet -ldcmdata -ldcmtls -lofstd
+# DCMTK libs: put here which ones are used (-ldcmimage -ldcmnet ...)
+DCMTK_LIBS = -ldcmnet -lofstd -ldcmdata
 
 # Windows resource handling
 if HAVE_RC
@@ -48,11 +36,13 @@ dicomsel_SOURCES = \
     DicomCollection.cpp \
     DicomFile.cpp \
     DicomTree.cpp \
-    StoreDialog.cpp \
     MainFrame.cpp \
+    Store.cpp \
+    StoreDialog.cpp \
+    StoreSCP.cpp \
+    StoreSCU.cpp \
     TagDialog.cpp \
     TagSet.cpp \
-    Store.cpp \
     main.cpp
 dicomsel_DEPENDENCIES = \
     $(RC_OBJECTS)
@@ -72,6 +62,8 @@ EXTRA_DIST = \
     images/image.xpm \
     images/patient.xpm \
     images/series.xpm \
-    images/study.xpm
+    images/study.xpm \
+    dcmtkapp/storescp.cc \
+    dcmtkapp/storescu.cc
 
 # End of File

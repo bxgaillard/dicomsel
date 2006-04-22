@@ -22,14 +22,11 @@
 # include <wx/frame.h>
 # include <wx/gdicmn.h>
 # include <wx/string.h>
-#include <wx/event.h>
-
+# include <wx/event.h>
 //#endif // !WX_PRECOMP
 
 // Current module
 #include <dicomsel/TagSet.h>
-#include <dicomsel/StoreDialog.h>
-#include <dicomsel/Store.h>
 
 class wxMenuItem;
 class wxPanel;
@@ -47,33 +44,30 @@ namespace dicomsel
 class DicomTree;
 class BitmapPanel;
 class Store;
+class StoreSCP;
 
-//const wxEventType EVT_GAME_NEW = wxNewEventType(); 
-
+DECLARE_EVENT_TYPE( EVT_THREAD_FINISHED, )
 
 class MainFrame : public wxFrame
 {
-
 public:
     MainFrame( const wxString& title = wxT( "DicomSel" ),
 	       const wxPoint& pos = wxDefaultPosition,
 	       const wxSize& size = wxDefaultSize );
     virtual ~MainFrame( void );
-	
-    void SetDirPath(char *Dir);
+
+    void SetDirPath( const wxString& path ) { m_dirPath = path; }
 
 private:
-    wxMenuItem*       m_closeMenu, * m_exportMenu, * m_sendMenu, * m_recoverMenu;
+    wxMenuItem*       m_closeMenu, * m_exportMenu, * m_sendMenu;
+    wxMenuItem*       m_retrieveMenu;
     DicomTree*        m_tree;
     wxPanel*          m_panel;
     BitmapPanel*      m_bitmap;
     wxStaticBoxSizer* m_infoSizer;
     wxFlexGridSizer*  m_grid;
     wxString          m_dirPath;
-    wxString	      Address;
-    wxString	      PortRcp;
-    wxString	      PortSend;
-    bool	      Check;
+
     TagSet m_displayedTags;
     TagSet m_exportedTags;
     struct
@@ -83,11 +77,11 @@ private:
     }
     m_labels[TagSet::TAG__LAST];
 
-    Store *serverStore;
+    wxString Address, PortRcp, PortSend;
+    bool     Check;
+    StoreSCP* m_server;
 
-
-
-    // No copy/affectation
+    // No copy/assignment
     MainFrame( const MainFrame& );
     MainFrame& operator =( const MainFrame& );
 
@@ -105,13 +99,12 @@ private:
     void OnMenuQuit         ( wxCommandEvent& event );
     void OnMenuDisplayedTags( wxCommandEvent& event );
     void OnMenuExportedTags ( wxCommandEvent& event );
+    void OnMenuRetrieveFile ( wxCommandEvent& event );
     void OnMenuAbout        ( wxCommandEvent& event );
     void OnSelectionChanged ( wxTreeEvent&    event );
-    void OnMenuRecoverFile  ( wxCommandEvent& event );
-    void OnThreadStart	    ( wxCommandEvent &event );
-    void OnThreadFinished   ( wxCommandEvent &event ); 
+    void OnThreadFinished   ( wxCommandEvent& event );
 
-
+protected:
     DECLARE_EVENT_TABLE()
 };
 

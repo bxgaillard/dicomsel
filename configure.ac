@@ -13,19 +13,7 @@ dnl Description: Autoconf Script
 dnl
 dnl --------------------------------------------------------------------------
 dnl
-dnl This program is free software; you can redistribute it and/or modify it
-dnl under the terms of the GNU General Public License as published by the Free
-dnl Software Foundation; either version 2 of the License, or (at your option)
-dnl any later version.
-dnl
-dnl This program is distributed in the hope that it will be useful, but WITHOUT
-dnl ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-dnl FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-dnl more details.
-dnl
-dnl You should have received a copy of the GNU General Public License along
-dnl with this program; if not, write to the Free Software Foundation, Inc., 59
-dnl Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+dnl << LICENSE >>
 dnl
 dnl --------------------------------------------------------------------------
 
@@ -34,7 +22,7 @@ dnl Process this file with autoconf to produce a configure script.
 
 dnl General settings
 AC_PREREQ(2.52g)
-AC_INIT([DicomSel], [1.9.0], [b.gaillard@powercode.net], [dicomsel])
+AC_INIT([DicomSel], [1.9.1], [Johan.Moreau@ircad.u-strasbg.fr], [dicomsel])
 AC_CONFIG_SRCDIR([src/main.cpp])
 AC_CONFIG_HEADER([config.h])
 AC_CONFIG_AUX_DIR([autotools])
@@ -116,6 +104,11 @@ AC_CONFIG_FILES([
     head/info.txt
     msvc/config.h
 ])
+
+dnl Disable DCMTK features by adding configure flags
+ac_configure_args="$ac_configure_args --without-openssl --without-zlib"
+ac_configure_args="$ac_configure_args --without-libtiff --without-libpng"
+ac_configure_args="$ac_configure_args --without-libxml --without-libwrap"
 
 dnl Other packages configuration
 AC_CONFIG_SUBDIRS(DCMTK_AC_DIR)

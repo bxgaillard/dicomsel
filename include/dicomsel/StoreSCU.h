@@ -14,6 +14,20 @@
  */
 
 
-#include <wx/msw/wx.rc>
+#ifndef DICOMSEL_STORESCU_H
+#define DICOMSEL_STORESCU_H
+
+namespace dicomsel
+{
+
+class StoreSCU
+{
+public:
+    static int Main( int argc, char *argv[] );
+};
+
+} // namespace dicomsel
+
+#endif // !DICOMSEL_STORESCU_H
 
 /* End of File */

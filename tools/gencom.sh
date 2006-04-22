@@ -25,8 +25,8 @@
 
 
 # Recognized filenames
-FILENAMES='Makefile makefile Makefile.* GNUmakefile *.mk *.mak *.am \
-configure.ac *.c *.cpp *.h *.s *.rc'
+FILENAMES='Makefile makefile Makefile.\* GNUmakefile \*.mk \*.mak \*.am
+configure.ac \*.c \*.cpp \*.h \*.s \*.rc'
 
 # Line length
 LENGTH=78
@@ -82,6 +82,7 @@ INFO="`cat "$infofile"`"
 LICENSE="`cat "$licensefile"`"
 
 for filename in $FILENAMES; do
+    filename="`echo $filename | tr -d '\'`"
     files="$files"$'\n'"`find $dirs -name "$filename"`"
 done
 files="`echo "$files" | sort | uniq`"

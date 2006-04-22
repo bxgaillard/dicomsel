@@ -24,6 +24,7 @@
 # include <wx/window.h>
 # include <wx/validate.h>
 # include <wx/treectrl.h>
+# include <wx/event.h>
 //#endif // !WX_PRECOMP
 
 // Current module
@@ -82,6 +83,7 @@ private:
 
     void OnSelectionChanged( wxTreeEvent& event );
 
+protected:
     DECLARE_EVENT_TABLE()
 };
 

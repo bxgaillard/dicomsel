@@ -25,6 +25,7 @@
 # include <wx/string.h>
 # include <wx/image.h>
 # include <wx/dcmemory.h>
+# include <wx/event.h>
 //#endif // !WX_PRECOMP
 
 class wxBitmap;
@@ -60,6 +61,7 @@ private:
     void OnPaint( wxPaintEvent& event );
     void OnSize ( wxSizeEvent&  event );
 
+protected:
     DECLARE_EVENT_TABLE()
 };
 

@@ -1,24 +1,37 @@
+/*
+ *
+ *  Copyright (C) 1994-2005, OFFIS
+ *
+ *  This software and supporting documentation were developed by
+ *
+ *    Kuratorium OFFIS e.V.
+ *    Healthcare Information and Communication Systems
+ *    Escherweg 2
+ *    D-26121 Oldenburg, Germany
+ *
+ *  THIS SOFTWARE IS MADE AVAILABLE,  AS IS,  AND OFFIS MAKES NO  WARRANTY
+ *  REGARDING  THE  SOFTWARE,  ITS  PERFORMANCE,  ITS  MERCHANTABILITY  OR
+ *  FITNESS FOR ANY PARTICULAR USE, FREEDOM FROM ANY COMPUTER DISEASES  OR
+ *  ITS CONFORMITY TO ANY SPECIFICATION. THE ENTIRE RISK AS TO QUALITY AND
+ *  PERFORMANCE OF THE SOFTWARE IS WITH THE USER.
+ *
+ *  Module:  dcmnet
+ *
+ *  Author:  Andrew Hewett
+ *
+ *  Purpose: Storage Service Class Provider (C-STORE operation)
+ *
+ *  Last Update:      $Author: joergr $
+ *  Update Date:      $Date: 2005/12/19 10:31:12 $
+ *  Source File:      $Source: /share/dicom/cvs-depot/dcmtk/dcmnet/apps/storescp.cc,v $
+ *  CVS/RCS Revision: $Revision: 1.89 $
+ *  Status:           $State: Exp $
+ *
+ *  CVS/RCS Log at end of file
+ *
+ */
+
 #include "dcmtk/config/osconfig.h"    /* make sure OS specific configuration is included first */
-
-#include <wx/msgdlg.h>
-#include <wx/thread.h>
-
-
-#include <dicomsel/ipc.h>
-#include <dicomsel/DicomTree.h>
-#include <dicomsel/BitmapPanel.h>
-#include <dicomsel/TagSet.h>
-#include <dicomsel/TagDialog.h>
-#include <dicomsel/StoreDialog.h>
-#include <dicomsel/Store.h>
-#include <dicomsel/DicomFile.h>
-#include <dicomsel/MainFrame.h>
-#include <wx/dirdlg.h>
-# include <wx/string.h>
-
-
-
-
 
 #define INCLUDE_CSTDLIB
 #define INCLUDE_CSTRING
@@ -49,26 +62,26 @@ END_EXTERN_C
 #endif
 
 
-#include <dcmtk/dcmnet/dimse.h>
-#include <dcmtk/dcmnet/diutil.h>
-#include <dcmtk/dcmdata/dcfilefo.h>
-#include <dcmtk/dcmdata/dcdebug.h>
-#include <dcmtk/dcmdata/dcuid.h>
-#include <dcmtk/dcmdata/dcdict.h>
-#include <dcmtk/dcmdata/cmdlnarg.h>
-#include <dcmtk/ofstd/ofconapp.h>
-#include <dcmtk/ofstd/ofstd.h>
-#include <dcmtk/ofstd/ofdatime.h>
-#include <dcmtk/dcmdata/dcuid.h>         /* for dcmtk version name */
-#include <dcmtk/dcmnet/dicom.h>         /* for DICOM_APPLICATION_ACCEPTOR */
-#include <dcmtk/dcmdata/dcdeftag.h>      /* for DCM_StudyInstanceUID */
-#include <dcmtk/dcmdata/dcostrmz.h>      /* for dcmZlibCompressionLevel */
-#include <dcmtk/dcmnet/dcasccfg.h>      /* for class DcmAssociationConfiguration */
-#include <dcmtk/dcmnet/dcasccff.h>      /* for class DcmAssociationConfigurationFile */
+#include "dcmtk/dcmnet/dimse.h"
+#include "dcmtk/dcmnet/diutil.h"
+#include "dcmtk/dcmdata/dcfilefo.h"
+#include "dcmtk/dcmdata/dcdebug.h"
+#include "dcmtk/dcmdata/dcuid.h"
+#include "dcmtk/dcmdata/dcdict.h"
+#include "dcmtk/dcmdata/cmdlnarg.h"
+#include "dcmtk/ofstd/ofconapp.h"
+#include "dcmtk/ofstd/ofstd.h"
+#include "dcmtk/ofstd/ofdatime.h"
+#include "dcmtk/dcmdata/dcuid.h"         /* for dcmtk version name */
+#include "dcmtk/dcmnet/dicom.h"         /* for DICOM_APPLICATION_ACCEPTOR */
+#include "dcmtk/dcmdata/dcdeftag.h"      /* for DCM_StudyInstanceUID */
+#include "dcmtk/dcmdata/dcostrmz.h"      /* for dcmZlibCompressionLevel */
+#include "dcmtk/dcmnet/dcasccfg.h"      /* for class DcmAssociationConfiguration */
+#include "dcmtk/dcmnet/dcasccff.h"      /* for class DcmAssociationConfigurationFile */
 
 #ifdef WITH_OPENSSL
-#include <dcmtk/dcmtls/tlstrans.h>
-#include <dcmtk/dcmtls/tlslayer.h>
+#include "dcmtk/dcmtls/tlstrans.h"
+#include "dcmtk/dcmtls/tlslayer.h"
 #endif
 
 #ifdef WITH_ZLIB
@@ -89,8 +102,6 @@ int mkstemp(char *);
 #endif
 
 
-
-
 #ifdef PRIVATE_STORESCP_DECLARATIONS
 PRIVATE_STORESCP_DECLARATIONS
 #else
@@ -106,22 +117,10 @@ static char rcsid[] = "$dcmtk: " OFFIS_CONSOLE_APPLICATION " v" OFFIS_DCMTK_VERS
 #define CALLING_AETITLE_PLACEHOLDER "#a"
 #define CALLED_AETITLE_PLACEHOLDER "#c"
 
-
-
-
-//////////////// oK
-
-namespace dicomsel
-{
-bool m_blnFinished;
-
-
-int event=0;
-
-static OFCondition processCommands(T_ASC_Association *assoc,MainFrame *frame);
-static OFCondition acceptAssociation(T_ASC_Network *net,MainFrame *frame);
+static OFCondition processCommands(T_ASC_Association *assoc);
+static OFCondition acceptAssociation(T_ASC_Network *net, DcmAssociationConfiguration& asccfg);
 static OFCondition echoSCP(T_ASC_Association * assoc, T_DIMSE_Message * msg, T_ASC_PresentationContextID presID);
-static OFCondition storeSCP(T_ASC_Association * assoc, T_DIMSE_Message * msg, T_ASC_PresentationContextID presID,MainFrame *frame);
+static OFCondition storeSCP(T_ASC_Association * assoc, T_DIMSE_Message * msg, T_ASC_PresentationContextID presID);
 static void executeOnReception();
 static void executeEndOfStudyEvents();
 static void executeOnEndOfStudy();
@@ -134,7 +133,7 @@ static OFCondition acceptUnknownContextsWithPreferredTransferSyntaxes(
          const char* transferSyntaxes[],
          int transferSyntaxCount,
          T_ASC_SC_ROLE acceptedRole = ASC_SC_ROLE_DEFAULT);
-
+static int makeTempFile();
 
 OFBool             opt_uniqueFilenames = OFFalse;
 OFString           opt_fileNameExtension;
@@ -168,7 +167,7 @@ OFString           callingaetitle;  // calling AE title will be stored here
 OFString           calledaetitle;   // called AE title will be stored here
 const char *       opt_respondingaetitle = APPLICATIONTITLE;
 static OFBool      opt_secureConnection = OFFalse;    // default: no secure connection
-static OFString    opt_outputDirectory("../reception");          // default: output directory equals "."
+static OFString    opt_outputDirectory(".");          // default: output directory equals "."
 static const char *opt_sortConcerningStudies = NULL;  // default: no sorting
 OFString           lastStudyInstanceUID;
 OFString           subdirectoryPathAndName;
@@ -180,8 +179,8 @@ OFString           lastStudySubdirectoryPathAndName;
 static OFBool      opt_renameOnEndOfStudy = OFFalse;  // default: don't rename any files on end of study
 static long        opt_endOfStudyTimeout = -1;        // default: no end of study timeout
 static OFBool      endOfStudyThroughTimeoutEvent = OFFalse;
-//static const char *opt_configFile = NULL;
-//static const char *opt_profileName = NULL;
+static const char *opt_configFile = NULL;
+static const char *opt_profileName = NULL;
 T_DIMSE_BlockingMode opt_blockMode = DIMSE_BLOCKING;
 int                opt_dimse_timeout = 0;
 int                opt_acse_timeout = 30;
@@ -232,18 +231,8 @@ extern "C" void sigChildHandler(int)
 #define SHORTCOL 4
 #define LONGCOL 21
 
-
-///////////////// DEBUT FONCTION ////////////////////
-
-
-int server(int argc, char *argv[],unsigned int port,MainFrame *frame)
+int main(int argc, char *argv[])
 {
-
-opt_port = port;
-
-//int debug=0;
-
-  // network struct, contains DICOM upper layer FSM etc.
   T_ASC_Network *net;
   DcmAssociationConfiguration asccfg;
 
@@ -260,26 +249,266 @@ opt_port = port;
   WSAStartup(winSockVersionNeeded, &winSockData);
 #endif
 
-  //char tempstr[20];
-  /*if(debug>1)*/OFConsoleApplication app(OFFIS_CONSOLE_APPLICATION , "Appel fonction DicomStore", rcsid);
+  char tempstr[20];
+  OFConsoleApplication app(OFFIS_CONSOLE_APPLICATION , "DICOM storage (C-STORE) SCP", rcsid);
   OFCommandLine cmd;
 
+  cmd.setParamColumn(LONGCOL+SHORTCOL+4);
+  cmd.addParam("port", "tcp/ip port number to listen on", OFCmdParam::PM_Optional);
+
+  cmd.setOptionColumns(LONGCOL, SHORTCOL);
+  cmd.addGroup("general options:", LONGCOL, SHORTCOL+2);
+    cmd.addOption("--help",                      "-h",       "print this help text and exit");
+    cmd.addOption("--version",                               "print version information and exit", OFTrue /* exclusive */);
+    cmd.addOption("--verbose",                   "-v",       "verbose mode, print processing details");
+    cmd.addOption("--debug",                     "-d",       "debug mode, print debug information");
+    OFString opt0 = "write output-files to (existing) directory p\n(default: ";
+    opt0 += opt_outputDirectory;
+    opt0 += ")";
+    cmd.addOption("--output-directory",          "-od",   1, "[p]ath: string", opt0.c_str());
+
+#if defined(HAVE_FORK) || defined(_WIN32)
+  cmd.addGroup("multi-process options:", LONGCOL, SHORTCOL+2);
+    cmd.addOption("--fork",                                  "fork child process for each association");
+#ifdef _WIN32
+    cmd.addOption("--forked-child",                          "process is forked child, internal use only");
+#endif
+#endif
+
+  cmd.addGroup("network options:");
+    cmd.addSubGroup("association negotiation profile from configuration file:");
+      cmd.addOption("--config-file",            "-xf",    2, "[f]ilename, [p]rofile: string",
+                                                             "use profile p from config file f");
+    cmd.addSubGroup("preferred network transfer syntaxes (not with --config-file):");
+      cmd.addOption("--prefer-uncompr",         "+x=",       "prefer explicit VR local byte order (default)");
+      cmd.addOption("--prefer-little",          "+xe",       "prefer explicit VR little endian TS");
+      cmd.addOption("--prefer-big",             "+xb",       "prefer explicit VR big endian TS");
+      cmd.addOption("--prefer-lossless",        "+xs",       "prefer default JPEG lossless TS");
+      cmd.addOption("--prefer-jpeg8",           "+xy",       "prefer default JPEG lossy TS for 8 bit data");
+      cmd.addOption("--prefer-jpeg12",          "+xx",       "prefer default JPEG lossy TS for 12 bit data");
+      cmd.addOption("--prefer-j2k-lossless",    "+xv",       "prefer JPEG 2000 lossless TS");
+      cmd.addOption("--prefer-j2k-lossy",       "+xw",       "prefer JPEG 2000 lossy TS");
+      cmd.addOption("--prefer-rle",             "+xr",       "prefer RLE lossless TS");
+#ifdef WITH_ZLIB
+      cmd.addOption("--prefer-deflated",        "+xd",       "prefer deflated expl. VR little endian TS");
+#endif
+
+      cmd.addOption("--implicit",               "+xi",       "accept implicit VR little endian TS only");
+
+#ifdef WITH_TCPWRAPPER
+    cmd.addSubGroup("network host access control (tcp wrapper) options:");
+      cmd.addOption("--access-full",            "-ac",       "accept connections from any host (default)");
+      cmd.addOption("--access-control",         "+ac",       "enforce host access control rules");
+#endif
+
+    cmd.addSubGroup("other network options:");
+#ifdef HAVE_CONFIG_H
+      // this option is only offered on Posix platforms
+      cmd.addOption("--inetd",                  "-id",       "run from inetd super server (not with --fork)");
+#endif
+
+      cmd.addOption("--acse-timeout",           "-ta", 1, "[s]econds: integer (default: 30)", "timeout for ACSE messages");
+      cmd.addOption("--dimse-timeout",          "-td", 1, "[s]econds: integer (default: unlimited)", "timeout for DIMSE messages");
+
+      OFString opt1 = "set my AE title (default: ";
+      opt1 += APPLICATIONTITLE;
+      opt1 += ")";
+      cmd.addOption("--aetitle",                "-aet",  1,  "aetitle: string", opt1.c_str());
+      OFString opt3 = "set max receive pdu to n bytes (def.: ";
+      sprintf(tempstr, "%ld", OFstatic_cast(long, ASC_DEFAULTMAXPDU));
+      opt3 += tempstr;
+      opt3 += ")";
+      OFString opt4 = "[n]umber of bytes: integer [";
+      sprintf(tempstr, "%ld", OFstatic_cast(long, ASC_MINIMUMPDUSIZE));
+      opt4 += tempstr;
+      opt4 += "..";
+      sprintf(tempstr, "%ld", OFstatic_cast(long, ASC_MAXIMUMPDUSIZE));
+      opt4 += tempstr;
+      opt4 += "]";
+      cmd.addOption("--max-pdu",                "-pdu",  1,  opt4.c_str(), opt3.c_str());
+      cmd.addOption("--disable-host-lookup",    "-dhl",      "disable hostname lookup");
+      cmd.addOption("--refuse",                              "refuse association");
+      cmd.addOption("--reject",                              "reject association if no implement. class UID");
+      cmd.addOption("--ignore",                              "ignore store data, receive but do not store");
+      cmd.addOption("--sleep-after",                     1,  "[s]econds: integer",
+                                                             "sleep s seconds after store (default: 0)");
+      cmd.addOption("--sleep-during",                    1,  "[s]econds: integer",
+                                                             "sleep s seconds during store (default: 0)");
+      cmd.addOption("--abort-after",                         "abort association after receipt of C-STORE-RQ\n(but before sending response)");
+      cmd.addOption("--abort-during",                        "abort association during receipt of C-STORE-RQ");
+      cmd.addOption("--promiscuous",            "-pm",       "promiscuous mode, accept unknown SOP classes\n(not with --config-file)");
+      cmd.addOption("--uid-padding",            "-up",       "silently correct space-padded UIDs");
+
+  cmd.addGroup("output options:");
+    cmd.addSubGroup("bit preserving mode:");
+      cmd.addOption("--normal",                 "-B",        "allow implicit format conversions (default)");
+      cmd.addOption("--bit-preserving",         "+B",        "write data exactly as read (not with -ss)");
+    cmd.addSubGroup("output file format:");
+      cmd.addOption("--write-file",             "+F",        "write file format (default)");
+      cmd.addOption("--write-dataset",          "-F",        "write data set without file meta information");
+    cmd.addSubGroup("output transfer syntax (not with --bit-preserving or compr. transmission):");
+      cmd.addOption("--write-xfer-same",        "+t=",       "write with same TS as input (default)");
+      cmd.addOption("--write-xfer-little",      "+te",       "write with explicit VR little endian TS");
+      cmd.addOption("--write-xfer-big",         "+tb",       "write with explicit VR big endian TS");
+      cmd.addOption("--write-xfer-implicit",    "+ti",       "write with implicit VR little endian TS");
+#ifdef WITH_ZLIB
+      cmd.addOption("--write-xfer-deflated",    "+td",       "write with deflated expl. VR little endian TS");
+#endif
+    cmd.addSubGroup("post-1993 value representations (not with --bit-preserving):");
+      cmd.addOption("--enable-new-vr",          "+u",        "enable support for new VRs (UN/UT) (default)");
+      cmd.addOption("--disable-new-vr",         "-u",        "disable support for new VRs, convert to OB");
+    cmd.addSubGroup("group length encoding (not with --bit-preserving):");
+      cmd.addOption("--group-length-recalc",    "+g=",       "recalculate group lengths if present (default)");
+      cmd.addOption("--group-length-create",    "+g",        "always write with group length elements");
+      cmd.addOption("--group-length-remove",    "-g",        "always write without group length elements");
+    cmd.addSubGroup("length encoding in sequences and items (not with --bit-preserving):");
+      cmd.addOption("--length-explicit",        "+e",        "write with explicit lengths (default)");
+      cmd.addOption("--length-undefined",       "-e",        "write with undefined lengths");
+    cmd.addSubGroup("data set trailing padding (not with --write-dataset or --bit-preserving):");
+      cmd.addOption("--padding-off",            "-p",        "no padding (default)");
+      cmd.addOption("--padding-create",         "+p",    2,  "[f]ile-pad [i]tem-pad: integer",
+                                                             "align file on multiple of f bytes and items\non multiple of i bytes");
+#ifdef WITH_ZLIB
+    cmd.addSubGroup("deflate compression level (not with --write-xfer-little/big/implicit):");
+      cmd.addOption("--compression-level",      "+cl",   1,  "compression level: 0-9 (default 6)",
+                                                             "0=uncompressed, 1=fastest, 9=best compression");
+#endif
+    cmd.addSubGroup("sorting into subdirectories (not with --bit-preserving):");
+      cmd.addOption("--sort-conc-studies",      "-ss",   1,  "[p]refix: string",
+                                                             "sort concerning studies into subdirectories\nthat start with prefix p" );
+    cmd.addSubGroup("filename generation:");
+      cmd.addOption("--default-filenames",      "-uf",       "generate filename from instance UID (default)");
+      cmd.addOption("--unique-filenames",       "+uf",       "generate unique filenames");
+      cmd.addOption("--timenames",              "-tn",       "generate filename from creation time");
+      cmd.addOption("--filename-extension",     "-fe",   1,  "[e]xtension: string",
+                                                             "append e to all filenames");
+
+  cmd.addGroup("event options:", LONGCOL, SHORTCOL+2);
+    cmd.addOption(  "--exec-on-reception",      "-xcr",  1,  "[c]ommand: string",
+                                                             "execute command c after having received and\nprocessed one C-STORE-Request message" );
+    cmd.addOption(  "--exec-on-eostudy",        "-xcs",  1,  "[c]ommand: string (only w/ -ss)",
+                                                             "execute command c after having received and\nprocessed all C-STORE-Request messages that\nbelong to one study" );
+    cmd.addOption(  "--rename-on-eostudy",      "-rns",      "(only w/ -ss) Having received and processed\nall C-STORE-Request messages that belong to\none study, rename output files according to\na certain pattern" );
+    cmd.addOption(  "--eostudy-timeout",        "-tos",  1,  "[t]imeout: integer (only w/ -ss, -xcs or -rns)",
+                                                             "specifies a timeout of t seconds for\nend-of-study determination" );
+#ifdef _WIN32
+    cmd.addOption(  "--exec-sync",              "-xs",       "execute command synchronously in foreground" );
+#endif
+
+#ifdef WITH_OPENSSL
+  cmd.addGroup("transport layer security (TLS) options:");
+    cmd.addSubGroup("transport protocol stack options:");
+      cmd.addOption("--disable-tls",            "-tls",      "use normal TCP/IP connection (default)");
+      cmd.addOption("--enable-tls",             "+tls",  2,  "[p]rivate key file, [c]ertificate file: string",
+                                                             "use authenticated secure TLS connection");
+    cmd.addSubGroup("private key password options (only with --enable-tls):");
+      cmd.addOption("--std-passwd",             "+ps",       "prompt user to type password on stdin (default)");
+      cmd.addOption("--use-passwd",             "+pw",   1,  "[p]assword: string ",
+                                                             "use specified password");
+      cmd.addOption("--null-passwd",            "-pw",       "use empty string as password");
+    cmd.addSubGroup("key and certificate file format options:");
+      cmd.addOption("--pem-keys",               "-pem",      "read keys and certificates as PEM file (def.)");
+      cmd.addOption("--der-keys",               "-der",      "read keys and certificates as DER file");
+    cmd.addSubGroup("certification authority options:");
+      cmd.addOption("--add-cert-file",         "+cf",    1,  "[c]ertificate filename: string",
+                                                             "add certificate file to list of certificates");
+      cmd.addOption("--add-cert-dir",          "+cd",    1,  "[c]ertificate directory: string",
+                                                             "add certificates in d to list of certificates");
+    cmd.addSubGroup("ciphersuite options:");
+      cmd.addOption("--cipher",                "+cs",    1,  "[c]iphersuite name: string",
+                                                             "add ciphersuite to list of negotiated suites");
+      cmd.addOption("--dhparam",               "+dp",    1,  "[f]ilename: string",
+                                                             "read DH parameters for DH/DSS ciphersuites");
+    cmd.addSubGroup("pseudo random generator options:");
+      cmd.addOption("--seed",                  "+rs",    1,  "[f]ilename: string",
+                                                             "seed random generator with contents of f");
+      cmd.addOption("--write-seed",            "+ws",        "write back modified seed (only with --seed)");
+      cmd.addOption("--write-seed-file",       "+wf",    1,  "[f]ilename: string (only with --seed)",
+                                                             "write modified seed to file f");
+    cmd.addSubGroup("peer authentication options:");
+      cmd.addOption("--require-peer-cert",     "-rc",        "verify peer certificate, fail if absent (def.)");
+      cmd.addOption("--verify-peer-cert",      "-vc",        "verify peer certificate if present");
+      cmd.addOption("--ignore-peer-cert",      "-ic",        "don't verify peer certificate");
+#endif
 
   /* evaluate command line */
   prepareCmdLineArgs(argc, argv, OFFIS_CONSOLE_APPLICATION);
   if (app.parseCommandLine(cmd, argc, argv, OFCommandLine::ExpandWildcards))
   {
     /* check exclusive options first */
-	if (cmd.getParamCount() == 0) //no options
-    	{
-		
-	}	
+
+    if (cmd.getParamCount() == 0)
+    {
+        if (cmd.findOption("--version"))
+        {
+            app.printHeader(OFTrue /*print host identifier*/);          // uses ofConsole.lockCerr()
+            CERR << endl << "External libraries used:";
+#if !defined(WITH_ZLIB) && !defined(WITH_OPENSSL)
+            CERR << " none" << endl;
+#else
+            CERR << endl;
+#endif
+#ifdef WITH_ZLIB
+            CERR << "- ZLIB, Version " << zlibVersion() << endl;
+#endif
+#ifdef WITH_OPENSSL
+            CERR << "- " << OPENSSL_VERSION_TEXT << endl;
+#endif
+            return 0;
+        }
+    }
 
     /* command line parameters */
 
     if (cmd.getParamCount() == 1)
-      app.checkParam(cmd.getParamAndCheckMinMax(1, opt_port/*int*/, 1, 65535));
+      app.checkParam(cmd.getParamAndCheckMinMax(1, opt_port, 1, 65535));
 
+#ifdef HAVE_CONFIG_H
+     if (cmd.findOption("--inetd"))
+     {
+       opt_inetd_mode = OFTrue;
+
+       // duplicate stdin, which is the socket passed by inetd
+       int inetd_fd = dup(0);
+       if (inetd_fd < 0) exit(99);
+
+       close(0); // close stdin
+       close(1); // close stdout
+       close(2); // close stderr
+
+       // open new file descriptor for stdin
+       int fd = open("/dev/null",O_RDONLY);
+       if (fd != 0) exit(99);
+
+       // create new file descriptor for stdout
+       fd = makeTempFile();
+       if (fd != 1) exit(99);
+
+       // create new file descriptor for stderr
+       fd = makeTempFile();
+       if (fd != 2) exit(99);
+
+       dcmExternalSocketHandle.set(inetd_fd);
+
+       // the port number is not really used. Set to non-privileged port number
+       // to avoid failing the privilege test.
+       opt_port = 1024;
+     }
+#endif
+
+#if defined(HAVE_FORK) || defined(_WIN32)
+      if (cmd.findOption("--fork"))
+      {
+        app.checkConflict("--inetd", "--fork", opt_inetd_mode);
+        opt_forkMode = OFTrue;
+      }
+#ifdef _WIN32
+      if (cmd.findOption("--forked-child"))
+      {
+        opt_forkedChild = OFTrue;
+      }
+#endif
+#endif
 
       if (cmd.findOption("--acse-timeout"))
       {
@@ -296,9 +525,20 @@ opt_port = port;
         opt_blockMode = DIMSE_NONBLOCKING;
       }
 
+    // omitting the port number is only allowed in inetd mode
+    if ((! opt_inetd_mode) && (cmd.getParamCount() == 0))
+    {
+          app.printError("Missing parameter port");
+    }
 
-    //if (cmd.findOption("--verbose")) opt_verbose=OFTrue;
-
+    if (cmd.findOption("--verbose")) opt_verbose=OFTrue;
+    if (cmd.findOption("--debug"))
+    {
+      opt_debug = OFTrue;
+      DUL_Debug(OFTrue);
+      DIMSE_debug(OFTrue);
+      SetDebugLevel(3);
+    }
     if (cmd.findOption("--output-directory")) app.checkValue(cmd.getValue(opt_outputDirectory));
 
     cmd.beginOptionBlock();
@@ -317,8 +557,6 @@ opt_port = port;
     if (cmd.findOption("--implicit"))            opt_networkTransferSyntax = EXS_LittleEndianImplicit;
     cmd.endOptionBlock();
 
-
-
     if (cmd.findOption("--aetitle")) app.checkValue(cmd.getValue(opt_respondingaetitle));
     if (cmd.findOption("--max-pdu")) app.checkValue(cmd.getValueAndCheckMinMax(opt_maxPDU, ASC_MINIMUMPDUSIZE, ASC_MAXIMUMPDUSIZE));
     if (cmd.findOption("--disable-host-lookup")) dcmDisableGethostbyaddr.set(OFTrue);
@@ -332,8 +570,66 @@ opt_port = port;
     if (cmd.findOption("--promiscuous")) opt_promiscuous = OFTrue;
     if (cmd.findOption("--uid-padding")) opt_correctUIDPadding = OFTrue;
 
+    if (cmd.findOption("--config-file"))
+    {
+      app.checkValue(cmd.getValue(opt_configFile));
+      app.checkValue(cmd.getValue(opt_profileName));
 
+      // check conflicts with other command line options
+      app.checkConflict("--config-file", "--prefer-little", (opt_networkTransferSyntax == EXS_LittleEndianExplicit));
+      app.checkConflict("--config-file", "--prefer-big", (opt_networkTransferSyntax == EXS_BigEndianExplicit));
+      app.checkConflict("--config-file", "--prefer-lossless", (opt_networkTransferSyntax == EXS_JPEGProcess14SV1TransferSyntax));
+      app.checkConflict("--config-file", "--prefer-jpeg8", (opt_networkTransferSyntax == EXS_JPEGProcess1TransferSyntax));
+      app.checkConflict("--config-file", "--prefer-jpeg12", (opt_networkTransferSyntax == EXS_JPEGProcess2_4TransferSyntax));
+      app.checkConflict("--config-file", "--prefer-rle", (opt_networkTransferSyntax == EXS_RLELossless));
+#ifdef WITH_ZLIB
+      app.checkConflict("--config-file", "--prefer-deflated", (opt_networkTransferSyntax == EXS_DeflatedLittleEndianExplicit));
+#endif
+      app.checkConflict("--config-file", "--implicit", (opt_networkTransferSyntax == EXS_LittleEndianImplicit));
+      app.checkConflict("--config-file", "--promiscuous", opt_promiscuous);
 
+      // read configuration file
+      OFCondition cond = DcmAssociationConfigurationFile::initialize(asccfg, opt_configFile);
+      if (cond.bad())
+      {
+        CERR << "error reading config file: "
+             << cond.text() << endl;
+        return 1;
+      }
+
+      /* perform name mangling for config file key */
+      OFString sprofile;
+      const char *c = opt_profileName;
+      while (*c)
+      {
+        if (! isspace(*c)) sprofile += OFstatic_cast(char, toupper(*c));
+        ++c;
+      }
+
+      if (!asccfg.isKnownProfile(sprofile.c_str()))
+      {
+        CERR << "unknown configuration profile name: "
+             << sprofile << endl;
+        return 1;
+      }
+
+      if (!asccfg.isValidSCPProfile(sprofile.c_str()))
+      {
+        CERR << "profile '"
+             << sprofile
+             << "' is not valid for SCP use, duplicate abstract syntaxes found."
+             << endl;
+        return 1;
+      }
+
+    }
+
+#ifdef WITH_TCPWRAPPER
+    cmd.beginOptionBlock();
+    if (cmd.findOption("--access-full")) dcmTCPWrapperDaemonName.set(NULL);
+    if (cmd.findOption("--access-control")) dcmTCPWrapperDaemonName.set(OFFIS_CONSOLE_APPLICATION);
+    cmd.endOptionBlock();
+#endif
 
     cmd.beginOptionBlock();
     if (cmd.findOption("--normal")) opt_bitPreserving = OFFalse;
@@ -395,7 +691,38 @@ opt_port = port;
 #endif
     cmd.endOptionBlock();
 
+    cmd.beginOptionBlock();
+    if (cmd.findOption("--enable-new-vr"))
+    {
+      app.checkConflict("--enable-new-vr", "--bit-preserving", opt_bitPreserving);
+      dcmEnableUnknownVRGeneration.set(OFTrue);
+      dcmEnableUnlimitedTextVRGeneration.set(OFTrue);
+    }
+    if (cmd.findOption("--disable-new-vr"))
+    {
+      app.checkConflict("--disable-new-vr", "--bit-preserving", opt_bitPreserving);
+      dcmEnableUnknownVRGeneration.set(OFFalse);
+      dcmEnableUnlimitedTextVRGeneration.set(OFFalse);
+    }
+    cmd.endOptionBlock();
 
+    cmd.beginOptionBlock();
+    if (cmd.findOption("--group-length-recalc"))
+    {
+      app.checkConflict("--group-length-recalc", "--bit-preserving", opt_bitPreserving);
+      opt_groupLength = EGL_recalcGL;
+    }
+    if (cmd.findOption("--group-length-create"))
+    {
+      app.checkConflict("--group-length-create", "--bit-preserving", opt_bitPreserving);
+      opt_groupLength = EGL_withGL;
+    }
+    if (cmd.findOption("--group-length-remove"))
+    {
+      app.checkConflict("--group-length-remove", "--bit-preserving", opt_bitPreserving);
+      opt_groupLength = EGL_withoutGL;
+    }
+    cmd.endOptionBlock();
 
     cmd.beginOptionBlock();
     if (cmd.findOption("--length-explicit"))
@@ -657,7 +984,7 @@ opt_port = port;
 #endif
 
   /* initialize network, i.e. create an instance of T_ASC_Network*. */
-  OFCondition cond = ASC_initializeNetwork(NET_ACCEPTOR, OFstatic_cast(int, opt_port), /* timeout */opt_acse_timeout, &net);
+  OFCondition cond = ASC_initializeNetwork(NET_ACCEPTOR, OFstatic_cast(int, opt_port), opt_acse_timeout, &net);
   if (cond.bad())
   {
     DimseCondition::dump(cond);
@@ -759,7 +1086,7 @@ opt_port = port;
   {
     /* receive an association and acknowledge or reject it. If the association was */
     /* acknowledged, offer corresponding services and invoke one or more if required. */
-	cond = acceptAssociation(net,frame);
+    cond = acceptAssociation(net, asccfg);
 
     /* remove zombie child processes */
     cleanChildren(-1, OFFalse);
@@ -812,7 +1139,7 @@ opt_port = port;
 
 
 
-static OFCondition acceptAssociation(T_ASC_Network *net,MainFrame *frame)
+static OFCondition acceptAssociation(T_ASC_Network *net, DcmAssociationConfiguration& asccfg)
 {
   char buf[BUFSIZ];
   T_ASC_Association *assoc;
@@ -1035,7 +1362,26 @@ static OFCondition acceptAssociation(T_ASC_Network *net,MainFrame *frame)
       break;
   }
 
+  if (opt_profileName)
+  {
+    /* perform name mangling for config file key */
+    const char *c = opt_profileName;
+    while (*c)
+    {
+      if (! isspace(*c)) sprofile += OFstatic_cast(char, toupper(*c));
+      ++c;
+    }
 
+    /* set presentation contexts as defined in config file */
+    cond = asccfg.evaluateAssociationParameters(sprofile.c_str(), *assoc);
+    if (cond.bad())
+    {
+      if (opt_verbose) DimseCondition::dump(cond);
+      goto cleanup;
+    }
+  }
+  else
+  {
     /* accept the Verification SOP Class if presented */
     cond = ASC_acceptContextsWithPreferredTransferSyntaxes( assoc->params, knownAbstractSyntaxes, DIM_OF(knownAbstractSyntaxes), transferSyntaxes, numTransferSyntaxes);
     if (cond.bad())
@@ -1063,7 +1409,7 @@ static OFCondition acceptAssociation(T_ASC_Network *net,MainFrame *frame)
         goto cleanup;
       }
     }
-  
+  }
 
   /* set our app title */
   ASC_setAPTitles(assoc->params, NULL, NULL, opt_respondingaetitle);
@@ -1165,14 +1511,12 @@ static OFCondition acceptAssociation(T_ASC_Network *net,MainFrame *frame)
   /* now do the real work, i.e. receive DIMSE commmands over the network connection */
   /* which was established and handle these commands correspondingly. In case of */
   /* storscp only C-ECHO-RQ and C-STORE-RQ commands can be processed. */
-  cond = processCommands(assoc,frame);
+  cond = processCommands(assoc);
 
   if (cond == DUL_PEERREQUESTEDRELEASE)
   {
-    printf("Association Release\n");
-    m_blnFinished = true; 
+    if (opt_verbose) printf("Association Release\n");
     cond = ASC_acknowledgeRelease(assoc);
-	
   }
   else if (cond == DUL_PEERABORTEDASSOCIATION)
   {
@@ -1201,8 +1545,6 @@ cleanup:
     DimseCondition::dump(cond);
     exit(1);
   }
-	
-
 
   return cond;
 }
@@ -1210,7 +1552,7 @@ cleanup:
 
 
 static OFCondition
-processCommands(T_ASC_Association * assoc,MainFrame *frame)
+processCommands(T_ASC_Association * assoc)
     /*
      * This function receives DIMSE commmands over the network connection
      * and handles these commands correspondingly. Note that in case of
@@ -1291,7 +1633,7 @@ processCommands(T_ASC_Association * assoc,MainFrame *frame)
           break;
         case DIMSE_C_STORE_RQ:
           // process C-STORE-Request
-          cond = storeSCP(assoc, &msg, presID,frame);
+          cond = storeSCP(assoc, &msg, presID);
           break;
         default:
           // we cannot handle this kind of message
@@ -1579,7 +1921,7 @@ storeSCPCallback(
 static OFCondition storeSCP(
   T_ASC_Association *assoc,
   T_DIMSE_Message *msg,
-  T_ASC_PresentationContextID presID,MainFrame *frame)
+  T_ASC_PresentationContextID presID)
     /*
      * This function processes a DIMSE C-STORE-RQ commmand that was
      * received over the network connection.
@@ -1670,8 +2012,6 @@ static OFCondition storeSCP(
     {
       // don't create new UID, use the study instance UID as found in object
       sprintf(imageFileName, "%s%c%s.%s%s", opt_outputDirectory.c_str(), PATH_SEPARATOR, dcmSOPClassUIDToModality(req->AffectedSOPClassUID), req->AffectedSOPInstanceUID, opt_fileNameExtension.c_str());
-	//frame->m_dirPath=imageFileName;
-	frame->SetDirPath(imageFileName);
     }
   }
 
@@ -2193,6 +2533,371 @@ static OFCondition acceptUnknownContextsWithPreferredTransferSyntaxes(
     return cond;
 }
 
+#ifdef HAVE_CONFIG_H
 
+static int makeTempFile()
+{
+    char tempfile[30];
+    OFStandard::strlcpy(tempfile, "/tmp/storescp_XXXXXX", 30);
+#ifdef HAVE_MKSTEMP
+    return mkstemp(tempfile);
+#else /* ! HAVE_MKSTEMP */
+    mktemp(tempfile);
+    return open(tempfile, O_WRONLY|O_CREAT|O_APPEND,0644);
+#endif
+}
 
-}//end scope
+#endif
+
+/*
+** CVS Log
+** $Log: storescp.cc,v $
+** Revision 1.89  2005/12/19 10:31:12  joergr
+** Changed printf() type for return value of getpid() to "%ld" and added
+** explicit typecast, needed for Solaris.
+**
+** Revision 1.88  2005/12/16 13:07:03  meichel
+** Changed type to size_t to make code safe on 64bit platforms
+**
+** Revision 1.87  2005/12/14 14:27:36  joergr
+** Added missing header file "fcntl.h", needed for Solaris.
+** Replaced "string::npos" by "OFString_npos".
+** Changed printf() type for return value of getpid() to "%d".
+**
+** Revision 1.86  2005/12/14 10:45:55  meichel
+** Including csignal if present, needed on Solaris.
+**
+** Revision 1.85  2005/12/08 15:44:21  meichel
+** Changed include path schema for all DCMTK header files
+**
+** Revision 1.84  2005/11/28 16:28:53  meichel
+** Fixed resource leak in Win32 command execution.
+**   Added option --exec-sync that causes synchronous command execution on Windows.
+**
+** Revision 1.83  2005/11/25 11:31:03  meichel
+** StoreSCP now supports multi-process mode both on Posix and Win32 platforms
+**   where a separate client process is forked for each incoming association.
+**
+** Revision 1.82  2005/11/23 16:10:23  meichel
+** Added support for AES ciphersuites in TLS module. All TLS-enabled
+**   tools now support the "AES TLS Secure Transport Connection Profile".
+**
+** Revision 1.81  2005/11/17 13:45:16  meichel
+** Added command line options for DIMSE and ACSE timeouts
+**
+** Revision 1.80  2005/11/16 14:58:07  meichel
+** Set association timeout in ASC_initializeNetwork to 30 seconds. This improves
+**   the responsiveness of the tools if the peer blocks during assoc negotiation.
+**
+** Revision 1.79  2005/11/11 16:09:00  onken
+** Added options for JPEG2000 support (lossy and lossless)
+**
+** Revision 1.78  2005/11/10 09:13:21  onken
+** Added option "--timenames" to support filenames based on timestamps.
+** Added option "--file-extension", that allows to append a suffix
+** to each filename.
+**
+** Revision 1.77  2005/10/25 08:55:43  meichel
+** Updated list of UIDs and added support for new transfer syntaxes
+**   and storage SOP classes.
+**
+** Revision 1.76  2005/08/30 08:35:23  meichel
+** Added command line option --inetd, which allows storescp to run from inetd.
+**
+** Revision 1.75  2005/02/22 09:40:54  meichel
+** Fixed two bugs in "bit-preserving" Store SCP code. Errors while creating or
+**   writing the DICOM file (e.g. file system full) now result in a DIMSE error
+**   response (out of resources) being sent back to the SCU.
+**
+** Revision 1.74  2004/08/03 16:46:00  meichel
+** Minor changes for platforms on which strchr/strrchr return a const pointer.
+**
+** Revision 1.73  2004/04/07 16:58:55  meichel
+** Added OFconst_cast, required on Win32
+**
+** Revision 1.72  2004/04/07 10:01:16  meichel
+** Removed call to system() and execl to /bin/false which does not exist
+**   on some BSD platforms.
+**
+** Revision 1.71  2004/04/07 09:42:34  meichel
+** Updated sorting and command execution code in storescp to use OFString
+**   and OFList. This will hopefully fix the remaining memory leaks.
+**
+** Revision 1.70  2004/04/06 18:11:24  joergr
+** Added missing suffix "TransferSyntax" to some transfer syntax constants.
+**
+** Revision 1.69  2004/02/25 12:18:06  meichel
+** Added a few dummy macros allowing for future private extensions
+**
+** Revision 1.68  2004/02/13 14:17:39  joergr
+** Removed acknowledgements with e-mail addresses from CVS log.
+**
+** Revision 1.67  2004/02/12 14:05:17  wilkens
+** Corrected bug in storescp that options "-xcr" and "+B" (or "--ignore") could
+** not be used together. Now they can.
+**
+** Revision 1.66  2003/08/14 10:58:47  meichel
+** Added check if association configuration profile is valid for SCP use
+**
+** Revision 1.65  2003/08/11 18:31:15  joergr
+** Included "ctype" header file required for gcc 3.2.3 on Debian Linux.
+**
+** Revision 1.64  2003/06/11 15:46:24  meichel
+** Added support for configuration file based association negotiation
+**   profiles
+**
+** Revision 1.63  2003/06/10 14:17:35  meichel
+** Added option to create unique filenames, even if receiving the same
+**   SOP instance multiple times. Exec options now allow to pass the calling
+**   and called aetitle on the command line.
+**
+** Revision 1.62  2003/06/10 14:05:57  meichel
+** Added support for TCP wrappers based host access control
+**
+** Revision 1.61  2003/06/06 09:44:40  meichel
+** Added static sleep function in class OFStandard. This replaces the various
+**   calls to sleep(), Sleep() and usleep() throughout the toolkit.
+**
+** Revision 1.60  2002/11/27 13:04:31  meichel
+** Adapted module dcmnet to use of new header file ofstdinc.h
+**
+** Revision 1.59  2002/11/26 08:43:21  meichel
+** Replaced all includes for "zlib.h" with <zlib.h>
+**   to avoid inclusion of zlib.h in the makefile dependencies.
+**
+** Revision 1.58  2002/11/25 18:00:19  meichel
+** Converted compile time option to leniently handle space padded UIDs
+**   in the Storage Service Class into command line / config file option.
+**
+** Revision 1.57  2002/09/23 17:53:47  joergr
+** Added new command line option "--version" which prints the name and version
+** number of external libraries used (incl. preparation for future support of
+** 'config.guess' host identifiers).
+**
+** Revision 1.56  2002/09/10 16:04:33  meichel
+** Added experimental "promiscuous" mode to storescp. In this mode,
+**   activated by the --promiscuous command line option, all presentation
+**   contexts not known not to be Storage SOP Classes are accepted.
+**
+** Revision 1.55  2002/09/02 15:35:57  meichel
+** Added --prefer-deflated, --write-xfer-deflated and --compression-level
+**   options to storescp
+**
+** Revision 1.54  2002/08/21 10:18:27  meichel
+** Adapted code to new loadFile and saveFile methods, thus removing direct
+**   use of the DICOM stream classes.
+**
+** Revision 1.53  2002/08/02 10:59:56  meichel
+** Execute options in storescp now clean up zombie child processes
+**   as they should.
+**
+** Revision 1.52  2002/04/19 10:46:11  joergr
+** Added new helper routines to get the milli and micro seconds part as well as
+** the integral value of seconds.
+**
+** Revision 1.51  2002/04/11 12:47:33  joergr
+** Replaced direct call of system routines by new standard date and time
+** functions.
+** Use the new standard file system routines like fileExists() etc.
+**
+** Revision 1.50  2001/12/19 09:59:43  meichel
+** Added prototype declaration for gettimeofday() for systems like Ultrix
+**   where the function is known but no prototype present in the system headers.
+**
+** Revision 1.49  2001/12/14 12:18:06  wilkens
+** Fixed a bug in storescp that prevented the application from working correctly
+** under Unix.
+**
+** Revision 1.48  2001/12/14 09:51:51  joergr
+** Modified use of time routines to keep gcc on Mac OS X happy.
+**
+** Revision 1.47  2001/12/11 15:12:01  joergr
+** Fixed warning reported by cygwin gcc compiler.
+**
+** Revision 1.46  2001/12/11 14:11:49  joergr
+** Replaced occurrences of strncpy by more secure strlcpy (see ofstd.h).
+** Added type cast to keep old Sun compilers quiet.
+** Modified description of command line option -tos.
+**
+** Revision 1.45  2001/12/06 14:11:11  joergr
+** Made description and layout of command line options more consistent.
+**
+** Revision 1.44  2001/11/30 10:01:34  wilkens
+** Changed description of command line options.
+**
+** Revision 1.43  2001/11/28 14:23:33  wilkens
+** Fixed a problem with storescp. Execution of batch-files through new options
+** --exec-on-reception and --exec-on-eostudy is now possible also for optimized
+** executable.
+**
+** Revision 1.41  2001/11/09 15:56:25  joergr
+** Renamed some of the getValue/getParam methods to avoid ambiguities reported
+** by certain compilers.
+**
+** Revision 1.40  2001/11/01 14:39:01  wilkens
+** Added lots of comments.
+**
+** Revision 1.39  2001/10/12 10:18:21  meichel
+** Replaced the CONDITION types, constants and functions in the dcmnet module
+**   by an OFCondition based implementation which eliminates the global condition
+**   stack.  This is a major change, caveat emptor!
+**
+** Revision 1.38  2001/09/28 13:21:41  joergr
+** Replaced "cerr" by "CERR".
+**
+** Revision 1.37  2001/06/01 15:50:02  meichel
+** Updated copyright header
+**
+** Revision 1.36  2001/06/01 11:01:57  meichel
+** Implemented global flag and command line option to disable reverse
+**   DNS hostname lookup using gethostbyaddr when accepting associations.
+**
+** Revision 1.35  2000/12/15 13:28:14  meichel
+** Global flag to enable/disable workaround code for some buggy Store SCUs
+**   in DIMSE_storeProvider().  If enabled, an illegal space-padding in the
+**   Affected SOP Instance UID field of the C-STORE-RQ message is retained
+**   in the corresponding C-STORE-RSP message.
+**
+** Revision 1.34  2000/11/10 18:07:43  meichel
+** Mixed up strcmp and strcpy - oops.
+**
+** Revision 1.33  2000/11/10 16:25:04  meichel
+** Fixed problem with DIMSE routines which attempted to delete /dev/null
+**   under certain circumstances, which could lead to disastrous results if
+**   tools were run with root permissions (what they shouldn't).
+**
+** Revision 1.32  2000/08/10 14:50:49  meichel
+** Added initial OpenSSL support.
+**
+** Revision 1.31  2000/06/07 13:56:18  meichel
+** Output stream now passed as mandatory parameter to ASC_dumpParameters.
+**
+** Revision 1.30  2000/04/14 16:29:27  meichel
+** Removed default value from output stream passed to print() method.
+**   Required for use in multi-thread environments.
+**
+** Revision 1.29  2000/03/08 16:43:16  meichel
+** Updated copyright header.
+**
+** Revision 1.28  2000/02/29 11:49:50  meichel
+** Removed support for VS value representation. This was proposed in CP 101
+**   but never became part of the standard.
+**
+** Revision 1.27  2000/02/23 15:12:21  meichel
+** Corrected macro for Borland C++ Builder 4 workaround.
+**
+** Revision 1.26  2000/02/03 11:50:09  meichel
+** Moved UID related functions from dcmnet (diutil.h) to dcmdata (dcuid.h)
+**   where they belong. Renamed access functions to dcmSOPClassUIDToModality
+**   and dcmGuessModalityBytes.
+**
+** Revision 1.25  2000/02/01 10:24:03  meichel
+** Avoiding to include <stdlib.h> as extern "C" on Borland C++ Builder 4,
+**   workaround for bug in compiler header files.
+**
+** Revision 1.24  1999/10/07 17:26:19  meichel
+** Corrected typo in storescup error message
+**
+** Revision 1.23  1999/04/29 10:02:54  meichel
+** Adapted findscu to new command line option scheme
+**
+** Revision 1.22  1999/04/28 08:29:07  meichel
+** Adapted storescp to new command line option scheme.
+**   Added support for transmission of compressed images.
+**
+** Revision 1.21  1999/04/27 17:24:40  meichel
+** Adapted storescp to new command line option scheme.
+**   Added support for transmission of compressed images.
+**
+** Revision 1.20  1999/03/29 11:19:55  meichel
+** Cleaned up dcmnet code for char* to const char* assignments.
+**
+** Revision 1.19  1998/08/10 08:53:36  meichel
+** renamed member variable in DIMSE structures from "Status" to
+**   "DimseStatus". This is required if dcmnet is used together with
+**   <X11/Xlib.h> where Status is #define'd as int.
+**
+** Revision 1.18  1998/02/06 15:07:30  meichel
+** Removed many minor problems (name clashes, unreached code)
+**   reported by Sun CC4 with "+w" or Sun CC2.
+**
+** Revision 1.17  1998/01/14 14:35:55  hewett
+** Modified existing -u command line option to also disable generation
+** of UT and VS (previously just disabled generation of UN).
+**
+** Revision 1.16  1997/09/12 13:21:50  meichel
+** Command line option '-h' in storescp now works correctly.
+**
+** Revision 1.15  1997/08/05 07:36:21  andreas
+** - Corrected error in DUL finite state machine
+**   SCPs shall close sockets after the SCU have closed the socket in
+**   a normal association release. Therfore, an ARTIM timer is described
+**   in DICOM part 8 that is not implemented correctly in the
+**   DUL. Since the whole DUL finite state machine is affected, we
+**   decided to solve the proble outside the fsm. Now it is necessary to call the
+**   ASC_DropSCPAssociation() after the calling ASC_acknowledgeRelease().
+** - Change needed version number of WINSOCK to 1.1
+**   to support WINDOWS 95
+**
+** Revision 1.14  1997/07/24 13:10:55  andreas
+** - Removed Warnings from SUN CC 2.0.1
+**
+** Revision 1.13  1997/07/21 08:37:04  andreas
+** - Replace all boolean types (BOOLEAN, CTNBOOLEAN, DICOM_BOOL, BOOL)
+**   with one unique boolean type OFBool.
+**
+** Revision 1.12  1997/05/29 15:52:57  meichel
+** Added constant for dcmtk release date in dcuid.h.
+** All dcmtk applications now contain a version string
+** which is displayed with the command line options ("usage" message)
+** and which can be queried in the binary with the "ident" command.
+**
+** Revision 1.11  1997/05/27 15:44:53  meichel
+** Corrected typo in storescp help texts.
+**
+** Revision 1.10  1997/05/23 10:44:20  meichel
+** Major rewrite of storescp application. See CHANGES for details.
+** Changes to interfaces of some DIMSE functions.
+**
+** Revision 1.9  1997/05/22 13:29:59  hewett
+** Modified the test for presence of a data dictionary to use the
+** method DcmDataDictionary::isDictionaryLoaded().
+**
+** Revision 1.8  1997/05/16 08:31:34  andreas
+** - Revised handling of GroupLength elements and support of
+**   DataSetTrailingPadding elements. The enumeratio E_GrpLenEncoding
+**   got additional enumeration values (for a description see dctypes.h).
+**   addGroupLength and removeGroupLength methods are replaced by
+**   computeGroupLengthAndPadding. To support Padding, the parameters of
+**   element and sequence write functions changed.
+**
+** Revision 1.7  1997/03/27 16:11:27  hewett
+** Added command line switches allowing generation of UN to
+** be disabled (it is enabled by default).
+**
+** Revision 1.6  1996/12/16 15:14:00  hewett
+** Added bugfix for WINSOCK support.  The required WINSOCK version
+** number was being incorrectly set to version 0.1.  The fixed
+** WINSOCK initialisation now uses the MAKEWORD macro to correctly
+** set the required version number. This bugfix was contributed
+** by Dr. Yongjian Bao of Innomed GmbH, Germany.
+**
+** Revision 1.5  1996/09/27 14:05:05  hewett
+** Added calls to initialise WINSOCK library for Win32 environment.  Only
+** compiled in if HAVE_WINSOCK_H
+**
+** Revision 1.4  1996/09/27 08:24:30  hewett
+** System header files now enclosed with BEGIN_EXTERN_C/END_EXTERN_C
+**
+** Revision 1.3  1996/09/24 16:20:32  hewett
+** Now uses global table of Storage SOP Class UIDs (from dcuid.h).
+** Added preliminary support for the Macintosh environment (GUSI library).
+**
+** Revision 1.2  1996/09/03 11:39:03  hewett
+** Added copyright information.
+**
+** Revision 1.1.1.1  1996/03/26 18:38:44  hewett
+** Initial Release.
+**
+**
+*/
