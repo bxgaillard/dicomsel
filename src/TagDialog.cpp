@@ -19,15 +19,13 @@
 #ifdef __BORLANDC__
 # pragma hdrstop
 #endif
-//#ifndef WX_PRECOMP
-# include <wx/dialog.h>
-# include <wx/window.h>
-# include <wx/gdicmn.h>
-# include <wx/string.h>
-# include <wx/sizer.h>
-# include <wx/statbox.h>
-# include <wx/checkbox.h>
-//#endif
+#include <wx/dialog.h>
+#include <wx/window.h>
+#include <wx/gdicmn.h>
+#include <wx/string.h>
+#include <wx/sizer.h>
+#include <wx/statbox.h>
+#include <wx/checkbox.h>
 
 // Current module
 #include <dicomsel/TagSet.h>

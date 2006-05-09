@@ -17,25 +17,32 @@
 # For a release build
 CFLAGS = /Ox /W4 /Wp64
 CXXFLAGS = /Ox /W4 /Wp64 /EHsc
-CPPFLAGS = /DNDEBUG /DHAVE_CONFIG_H /I$(TOPDIR)\msvc
+CPPFLAGS = /DNDEBUG /DHAVE_CONFIG_H /I$(TOPDIR)\msvc /I$(TOPDIR)
 
 # For a debug build
 #CFLAGS = /W4 /Wp64 /Zi
 #CXXFLAGS = /W4 /Wp64 /EHsc /Zi
-#CPPFLAGS = /DDEBUG /DHAVE_CONFIG_H /I$(TOPDIR)\msvc
+#CPPFLAGS = /DDEBUG /DHAVE_CONFIG_H /I$(TOPDIR)\msvc /I$(TOPDIR)
 
 # Path to the wxWidgets main directory
 WX_PATH = $(TOPDIR)\..\wxWidgets
 
 # Please do not change anything below this line
 
+# DCMTK
+DCMTK_VERSION = 3.5.4
+DCMTK_DIR_NIX = 3rdparty/dcmtk-3.5.4
+DCMTK_DIR     = $(DCMTK_DIR_NIX:/=\)
+
 CC   = cl /TC $(CLFLAGS)
 CXX  = cl /TP $(CLFLAGS)
 LINK = link /NOLOGO
 RC   = rc
-CLFLAGS = /nologo /ML
+#CLFLAGS = /nologo /ML
+CLFLAGS = /nologo /MT
+LDFLAGS = /OPT:REF,ICF
 
-WX_DEFS     = /DWIN32 /DwxNO_EXCEPTIONS /DwxNO_RTTI /DwxNO_THREADS
+WX_DEFS     = /DWIN32 /DwxNO_EXCEPTIONS /DwxNO_RTTI
 WX_INCLUDES = /I$(WX_PATH)\include /I$(WX_PATH)\lib\vc_lib\msw
 WX_RC_INCLS = /i$(WX_PATH)\include /i$(WX_PATH)\lib\vc_lib\msw
 WX_LIBS     = /LIBPATH:$(WX_PATH)\lib\vc_lib wxbase26.lib wxmsw26_core.lib \

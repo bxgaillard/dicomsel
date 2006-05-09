@@ -239,7 +239,7 @@ public:
 				<< "|| --------- >> RIS Id : "				<< _cStudy.GetRISID()				<< std::endl
 				<< "|| --------- >> Study UID : "			<< _cStudy.GetUID()					<< std::endl
 				<< "|| --------- >> Patient DBId : "		<< _cStudy.GetDbID()				<< std::endl
-				<< "|| --------- >> Acquisition number : "	<< _cStudy.GetVectorAcquisition()->size() << std::endl;
+				<< "|| --------- >> Acquisition number : "	<< static_cast<unsigned int>(_cStudy.GetVectorAcquisition()->size()) << std::endl;
 
 		for(
 			std::vector<mfo::CAcquisition*>::reverse_iterator iter = _cStudy.GetVectorAcquisition()->rbegin();

@@ -19,23 +19,24 @@
 #ifdef __BORLANDC__
 # pragma hdrstop
 #endif
-//#ifndef WX_PRECOMP
-# include <wx/string.h>
-# include <wx/filename.h>
-# include <wx/dir.h>
-# include <wx/gdicmn.h>
-# include <wx/window.h>
-# include <wx/utils.h>
-# include <wx/validate.h>
-# include <wx/imaglist.h>
-# include <wx/treectrl.h>
-# include <wx/progdlg.h>
-# include <wx/msgdlg.h>
-# include <wx/image.h>
-# include <wx/bitmap.h>
-//#endif
+#include <wx/string.h>
+#include <wx/dir.h>
+#include <wx/gdicmn.h>
+#include <wx/window.h>
+#include <wx/utils.h>
+#include <wx/validate.h>
+#include <wx/imaglist.h>
+#include <wx/treectrl.h>
+#include <wx/progdlg.h>
+#include <wx/msgdlg.h>
+#include <wx/image.h>
+#include <wx/bitmap.h>
 
 // STL
+// Disable MSVC warnings generated in buggy MSVC STL implementation
+#ifdef _MSC_VER
+# pragma warning( disable: 4702 )
+#endif // _MSC_VER
 #include <vector>
 #include <map>
 #include <algorithm>
@@ -45,7 +46,11 @@
 
 // Current module
 #include <dicomsel/DicomCollection.h>
+#include <dicomsel/LibDicomCollection.h>
+#include <dicomsel/DcmtkCollection.h>
 #include <dicomsel/DicomFile.h>
+#include <dicomsel/LibDicomFile.h>
+#include <dicomsel/DcmtkFile.h>
 #include <dicomsel/DicomTree.h>
 
 class wxBitmap;
@@ -64,7 +69,7 @@ namespace dicomsel
 enum { PROGRESS_TOTAL = 1 << (sizeof( int ) * 4 - 2) };
 
 BEGIN_EVENT_TABLE( DicomTree, wxTreeCtrl )
-    EVT_TREE_SEL_CHANGED( -1, DicomTree::OnSelectionChanged )
+    EVT_TREE_SEL_CHANGED( wxID_ANY, DicomTree::OnSelectionChanged )
 END_EVENT_TABLE()
 
 
@@ -83,7 +88,7 @@ public:
 	     element != m_files.end();
 	     ++element )
 	{
-	    DicomFile* const file = new DicomFile( *element );
+	    DicomFile* const file = new LibDicomFile( *element );
 	    file->SetId( tree->AppendItem( parent,
 					   wxString::Format( wxT( "%d" ),
 							     ++i ),
@@ -126,7 +131,7 @@ public:
 
     int getSize( void ) const
     {
-	return m_map.size();
+	return static_cast< int >( m_map.size() );
     }
 
     void BuildTree( wxTreeCtrl* const tree, const wxTreeItemId& parent,
@@ -157,6 +162,7 @@ DicomTree::DicomTree( wxWindow* parent, wxWindowID id, const wxPoint& pos,
 		      const wxSize& size, long style,
 		      const wxValidator& validator, const wxString& name )
 :   wxTreeCtrl      ( parent, id, pos, size, style, validator, name ),
+    m_library       ( LIB__FIRST ),
     m_files         ( NULL ),
     m_currentFile   ( NULL ),
     m_total         ( 0 ),
@@ -185,6 +191,22 @@ DicomTree::~DicomTree( void )
     if( m_files != NULL ) delete m_files;
 }
 
+void DicomTree::SetLibrary( const Library lib )
+{
+    if( lib != m_library )
+    {
+	m_library = lib;
+
+	wxTreeItemId item = GetSelection();
+	if( item.IsOk() )
+	{
+	    wxTreeEvent event( wxEVT_COMMAND_TREE_SEL_CHANGED, GetId() );
+	    event.SetItem( item );
+	    ProcessEvent( event );
+	}
+    }
+}
+
 bool DicomTree::OpenDirectory( const wxString& name )
 {
     bool ret = false;
@@ -195,12 +217,22 @@ bool DicomTree::OpenDirectory( const wxString& name )
 	wxBeginBusyCursor();
 	m_files = new TreeMap< TreeMap< TreeMap< Files > > >;
 
+	DicomCollection* collection;
+	switch( m_library )
 	{
-	    DicomCollection collection( this );
-	    collection.ScanDirectory( name );
+	    case LIB_LIBDICOM:
+	    default:
+		collection = new LibDicomCollection( this );
+		break;
+
+	    case LIB_DCMTK:
+		collection = new DcmtkCollection( this );
 	}
 
-	if( m_files != NULL)
+	const bool result = collection->ScanDirectory( name );
+	delete collection;
+
+	if( result && m_files != NULL )
 	{
 	    if( m_files->getSize() != 0 )
 	    {
@@ -342,8 +374,30 @@ void DicomTree::OnSelectionChanged( wxTreeEvent& event )
     if( m_currentFile != NULL ) m_currentFile->Free();
 
     const wxTreeItemId item = event.GetItem();
-    m_currentFile = item.IsOk() ?
-	reinterpret_cast< DicomFile* >( GetItemData( item ) ) : NULL;
+    if( item.IsOk() )
+    {
+	m_currentFile = reinterpret_cast< DicomFile* >( GetItemData( item ) );
+	if( m_currentFile != NULL &&
+	    m_currentFile->GetLibrary() != m_library )
+	{
+	    const wxString filename = m_currentFile->GetFilename();
+	    delete m_currentFile;
+
+	    switch( m_library )
+	    {
+		case LIB_LIBDICOM:
+		default:
+		    m_currentFile = new LibDicomFile( filename );
+		    break;
+
+		case LIB_DCMTK:
+		    m_currentFile = new DcmtkFile( filename );
+	    }
+
+	    SetItemData( item, m_currentFile );
+	}
+    }
+    else m_currentFile = NULL;
 
     event.Skip();
 }

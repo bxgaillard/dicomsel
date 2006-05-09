@@ -16,9 +16,9 @@
 #define PACKAGE_BUGREPORT       "Johan.Moreau@ircad.u-strasbg.fr"
 #define PACKAGE_NAME            "DicomSel"
 #define PACKAGE_OWNER           "IRCAD"
-#define PACKAGE_STRING          "DicomSel 1.9.1"
+#define PACKAGE_STRING          "DicomSel 1.9.2"
 #define PACKAGE_TARNAME         "dicomsel"
-#define PACKAGE_VERSION         "1.9.1"
+#define PACKAGE_VERSION         "1.9.2"
 #define PACKAGE_YEARS           "2005, 2006"
 
 #endif /* !DICOMSEL_CONFIG_H */

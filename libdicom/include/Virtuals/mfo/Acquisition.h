@@ -654,7 +654,7 @@ public :
 	 */
 	const uint32 GetFrameNumber(void) const
 	{
-		return this->m_listFrame.size();
+		return static_cast<uint32>(this->m_listFrame.size());
 	}
 
 	/**
@@ -670,7 +670,7 @@ public :
 	 */
 	const uint32 GetNumberReconstruction ( void ) const
 	{
-		return this->m_vectorReconstruction.size();
+		return static_cast<uint32>(this->m_vectorReconstruction.size());
 	}
 
 	/**

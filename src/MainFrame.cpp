@@ -19,32 +19,29 @@
 #ifdef __BORLANDC__
 # pragma hdrstop
 #endif
-//#ifndef WX_PRECOMP
-# include <wx/string.h>
-# include <wx/strconv.h>
-# include <wx/gdicmn.h>
-# include <wx/frame.h>
-# include <wx/event.h>
-# include <wx/icon.h>
-# include <wx/menu.h>
-# include <wx/menuitem.h>
-# include <wx/statusbr.h>
-# include <wx/splitter.h>
-# include <wx/panel.h>
-# include <wx/sizer.h>
-# include <wx/statbox.h>
-# include <wx/config.h>
-# include <wx/stattext.h>
-# include <wx/filename.h>
-# include <wx/dirdlg.h>
-# include <wx/filedlg.h>
-# include <wx/wfstream.h>
-# include <wx/textfile.h>
-# include <wx/buffer.h>
-# include <wx/msgdlg.h>
-# include <wx/ipc.h>
-# include <wx/image.h>
-//#endif // !WX_PRECOMP
+#include <wx/string.h>
+#include <wx/strconv.h>
+#include <wx/gdicmn.h>
+#include <wx/frame.h>
+#include <wx/event.h>
+#include <wx/icon.h>
+#include <wx/menu.h>
+#include <wx/menuitem.h>
+#include <wx/statusbr.h>
+#include <wx/splitter.h>
+#include <wx/panel.h>
+#include <wx/sizer.h>
+#include <wx/statbox.h>
+#include <wx/config.h>
+#include <wx/stattext.h>
+#include <wx/filename.h>
+#include <wx/dirdlg.h>
+#include <wx/filedlg.h>
+#include <wx/file.h>
+#include <wx/textbuf.h>
+#include <wx/msgdlg.h>
+#include <wx/ipc.h>
+#include <wx/image.h>
 
 // Standard C library
 #include <cstring>
@@ -83,21 +80,12 @@
 # define PACKAGE_BUGREPORT "Johan.Moreau@ircad.u-strasbg.fr"
 #endif // !PACKAGE_BUGREPORT
 
-#define WIDIFY(string)  WIDIFY2(string)
-#define WIDIFY2(string) L ## string
+#define WIDIFY( string )  WIDIFY2( string )
+#define WIDIFY2( string ) L ## string
 
 
 namespace dicomsel
 {
-
-// Line break is platform-specific
-#if defined( __WXMSW__ ) || defined( __WXOS2__ )
-# define LINE_BREAK "\r\n"
-#elif defined( __WXMAC__ )
-# define LINE_BREAK '\r'
-#else
-# define LINE_BREAK '\n'
-#endif
 
 /*
  * Menu and widgets IDs
@@ -116,6 +104,9 @@ enum
     MENU_DISPLAYED_TAGS,
     MENU_EXPORTED_TAGS,
     MENU_RETRIEVE_FILE,
+    MENU_LIB,
+    MENU_LIB_LIBDICOM,
+    MENU_LIB_DCMTK,
 
     // Custom widgets IDs
     WID_DICOMTREE,
@@ -146,6 +137,8 @@ BEGIN_EVENT_TABLE( MainFrame, wxFrame )
     EVT_MENU( MENU_QUIT,           MainFrame::OnMenuQuit          )
     EVT_MENU( MENU_DISPLAYED_TAGS, MainFrame::OnMenuDisplayedTags )
     EVT_MENU( MENU_EXPORTED_TAGS,  MainFrame::OnMenuExportedTags  )
+    EVT_MENU( MENU_LIB_LIBDICOM,   MainFrame::OnMenuLibrary       )
+    EVT_MENU( MENU_LIB_DCMTK,      MainFrame::OnMenuLibrary       )
     EVT_MENU( MENU_RETRIEVE_FILE,  MainFrame::OnMenuRetrieveFile  )
     EVT_MENU( MENU_ABOUT,          MainFrame::OnMenuAbout         )
 
@@ -154,7 +147,7 @@ BEGIN_EVENT_TABLE( MainFrame, wxFrame )
 
     // Custom events
     EVT_COMMAND( wxID_ANY, EVT_THREAD_FINISHED, MainFrame::OnThreadFinished )
-    EVT_COMMAND( wxID_ANY, EVT_FILE_RECEIVED, MainFrame::OnThreadFinished )
+    EVT_COMMAND( wxID_ANY, EVT_FILE_RECEIVED,   MainFrame::OnThreadFinished )
 END_EVENT_TABLE()
 
 
@@ -166,15 +159,14 @@ END_EVENT_TABLE()
 
 MainFrame::MainFrame( const wxString& title, const wxPoint& pos,
 		      const wxSize& size )
-:   wxFrame( NULL, -1, title, pos, size, wxDEFAULT_FRAME_STYLE ),
-    m_grid( NULL ),
+:   wxFrame  ( NULL, -1, title, pos, size, wxDEFAULT_FRAME_STYLE ),
+    m_grid   ( NULL ),
     m_dirPath( wxGetCwd() ),
-    m_server( NULL )
+    m_server ( NULL )
 {
     SetMinSize( wxSize( 300, 200 ) );
     SetIcon( wxICON( icon ) );
 
-#if wxUSE_MENUS
     // File menu
     wxMenu* const fileMenu = new wxMenu;
     fileMenu->Append( MENU_OPENDIR, wxT( "&Open directory...\tCtrl-O" ),
@@ -212,6 +204,18 @@ MainFrame::MainFrame( const wxString& title, const wxPoint& pos,
 			 wxT( "Select which DICOM tags should be exported "
 			      "to a file" ) );
 
+    // DICOM library selection
+    wxMenu* const libraryMenu = new wxMenu;
+    m_libMenus[DicomTree::LIB_LIBDICOM] = libraryMenu->AppendRadioItem(
+	MENU_LIB_LIBDICOM, wxT( "&LibDicom (IRCAD)\tCtrl-L" ),
+	wxT( "Use the IRCAD's LibDicom library" ) );
+    m_libMenus[DicomTree::LIB_DCMTK] = libraryMenu->AppendRadioItem(
+	MENU_LIB_DCMTK, wxT( "&DCMTK (OFFIS)\tCtrl-M" ),
+	wxT( "Use the OFFIS' DCMTK library" ) );
+    optionsMenu->AppendSeparator();
+    optionsMenu->Append( MENU_LIB, wxT( "DICOM &library" ), libraryMenu,
+			 wxT( "Select the DICOM library to use" ) );
+
     // Help menu
     wxMenu* const helpMenu = new wxMenu;
     helpMenu->Append( MENU_ABOUT, wxT( "&About..." ),
@@ -223,7 +227,6 @@ MainFrame::MainFrame( const wxString& title, const wxPoint& pos,
     menuBar->Append( optionsMenu, wxT( "&Options" ) );
     menuBar->Append( helpMenu, wxT( "&Help" ) );
     SetMenuBar( menuBar );
-#endif // wxUSE_MENUS
 
 #if wxUSE_STATUSBAR
     // Status bar
@@ -272,12 +275,29 @@ MainFrame::~MainFrame( void )
 
 void MainFrame::LoadConfig( void )
 {
-    wxConfig config( wxT( "DicomSel" ) );
+    wxConfig config( wxT( PACKAGE_NAME ) );
+
+    long lib;
+    config.Read( wxT( "Config/Library" ), &lib,
+		 static_cast< long >( DicomTree::LIB__FIRST ) );
+    DicomTree::Library library = static_cast< DicomTree::Library >( lib );
+    if( library < DicomTree::LIB__FIRST || library >> DicomTree::LIB__LAST )
+    {
+	library = DicomTree::LIB__FIRST;
+    }
+    for( int i = DicomTree::LIB__FIRST; i < DicomTree::LIB__LAST; i++ )
+    {
+	m_libMenus[i]->Check(
+	    library == static_cast< DicomTree::Library >( i ) );
+    }
+    m_tree->SetLibrary( library );
+
+    config.Read( wxT( "Config/LastDirectory" ), &m_dirPath );
 
     m_displayedTags.Clear();
     m_exportedTags.Clear();
 
-    for( int i = TagSet::TAG__FIRST; i < TagSet::TAG__LAST; i++ )
+    for( int i = TagSet::TAG__FIRST; i < TagSet::TAG__LAST; ++i )
     {
 	const TagSet::TagID tag = static_cast< TagSet::TagID >( i );
 	if( config.Read( wxString( wxT( "Display/" ) ) +
@@ -308,9 +328,13 @@ void MainFrame::LoadConfig( void )
 
 void MainFrame::SaveConfig( void ) const
 {
-    wxConfig config( wxT( "DicomSel" ) );
+    wxConfig config( wxT( PACKAGE_NAME ) );
 
-    for( int i = TagSet::TAG__FIRST; i < TagSet::TAG__LAST; i++ )
+    config.Write( wxT( "Config/Library" ),
+		  static_cast< long >( m_tree->GetLibrary() ) );
+    config.Write( wxT( "Config/LastDirectory" ), m_dirPath );
+
+    for( int i = TagSet::TAG__FIRST; i < TagSet::TAG__LAST; ++i )
     {
 	const TagSet::TagID tag = static_cast< TagSet::TagID >( i );
 	config.Write( wxString( wxT( "Display/" ) ) + TagSet::GetTagID( tag ),
@@ -348,7 +372,7 @@ void MainFrame::RefreshDisplayedTags( void )
 						     wxALIGN_RIGHT
 						     | wxST_NO_AUTORESIZE );
 		m_labels[i].value =
-		    new wxStaticText( m_panel, -1, wxEmptyString );
+		    new wxStaticText( m_panel, -1, *wxEmptyString );
 	    }
 	    else
 	    {
@@ -374,17 +398,30 @@ void MainFrame::RefreshDisplayedTags( void )
 
 void MainFrame::RefreshLabels( void )
 {
-    const DicomFile& file = m_tree->GetFile();
+    DicomFile& file = m_tree->GetFile();
     m_displayedTags.Rewind();
     TagSet::TagID tag;
 
-    while( (tag = m_displayedTags.GetNext()) != TagSet::TAG__LAST )
+    if( &file != NULL )
     {
-	if( m_labels[tag].value != NULL )
+	file.Read();
+
+	while( (tag = m_displayedTags.GetNext()) != TagSet::TAG__LAST )
 	{
-	    m_labels[tag].value->SetLabel( &file != NULL ?
-					   file.GetTagString( tag ) :
-					   *wxEmptyString );
+	    if( m_labels[tag].value != NULL )
+	    {
+		m_labels[tag].value->SetLabel( file.GetTagString( tag ) );
+	    }
+	}
+    }
+    else
+    {
+	while( (tag = m_displayedTags.GetNext()) != TagSet::TAG__LAST )
+	{
+	    if( m_labels[tag].value != NULL )
+	    {
+		m_labels[tag].value->SetLabel( *wxEmptyString );
+	    }
 	}
     }
 
@@ -450,7 +487,8 @@ void MainFrame::OnMenuSend( wxCommandEvent& WXUNUSED( event ) )
 	wxCharBuffer data = str.mb_str( wxConvUTF8 );
 	conn->Poke( wxT( IPC_ITEM ),
 		    reinterpret_cast< wxChar* >( data.data() ),
-		    std::strlen( data ) + 1, wxIPC_TEXT );
+		    static_cast< int >( std::strlen( data ) ) + 1,
+		    wxIPC_TEXT );
 	conn->Disconnect();
 	delete conn;
     }
@@ -475,20 +513,17 @@ void MainFrame::OnMenuExport( wxCommandEvent& WXUNUSED( event ) )
 
     if( dialog->ShowModal() == wxID_OK )
     {
-	wxFileOutputStream file( dialog->GetPath() );
-	if( file.Ok() )
+	wxFile file( dialog->GetPath(), wxFile::write );
+	if( file.IsOpened() )
 	{
 	    m_exportedTags.Rewind();
 	    TagSet::TagID tag;
-	    wxString str;
-	    const wxString eol = wxTextFile::GetEOL();
+	    const wxString eol = wxTextBuffer::GetEOL();
 
 	    while( (tag = m_exportedTags.GetNext()) != TagSet::TAG__LAST )
 	    {
-		str = TagSet::GetTagID( tag ) + wxT( '=' )
-		    + dfile.GetTagString( tag ) + eol;
-		const wxCharBuffer data = str.mb_str( wxConvUTF8 );
-		file.Write( data, std::strlen( data ) );
+		file.Write( TagSet::GetTagID( tag ) + wxT( '=' ) +
+			    dfile.GetTagString( tag ) + eol );
 	    }
 	}
 	file.Close();
@@ -522,22 +557,36 @@ void MainFrame::OnMenuExportedTags( wxCommandEvent& WXUNUSED( event ) )
     if( dialog.ShowModal() == wxID_OK ) dialog.GetTags( m_exportedTags );
 }
 
+void MainFrame::OnMenuLibrary( wxCommandEvent& event )
+{
+    for( int i = DicomTree::LIB__FIRST; i < DicomTree::LIB__LAST; i++ )
+    {
+	if( m_libMenus[i]->GetId() == event.GetId() )
+	{
+	    m_tree->SetLibrary( static_cast< DicomTree::Library >( i ) );
+	    m_libMenus[i]->Check();
+	}
+	else m_libMenus[i]->Check( false );
+    }
+}
+
 void MainFrame::OnMenuAbout( wxCommandEvent& WXUNUSED( event ) )
 {
-    wxMessageBox( wxString( WIDIFY(PACKAGE_STRING) L"\n"
-			    L"Copyright \u00A9 " WIDIFY(PACKAGE_YEARS)
-			    L" " WIDIFY(PACKAGE_OWNER) L"\n\n"
-			    L"Authors: " WIDIFY(PACKAGE_AUTHORS_UNICODE)
+    wxMessageBox( wxString( WIDIFY( PACKAGE_STRING ) L"\n"
+			    L"Copyright \u00A9 " WIDIFY( PACKAGE_YEARS )
+			    L" " WIDIFY( PACKAGE_OWNER ) L"\n\n"
+			    L"Authors: " WIDIFY( PACKAGE_AUTHORS_UNICODE )
 			    L"\n\nPlease report bugs to <"
-			    WIDIFY(PACKAGE_BUGREPORT) L">", *wxConvCurrent ),
+			    WIDIFY( PACKAGE_BUGREPORT ) L">",
+			    *wxConvCurrent ),
 		  wxT( "About DicomSel" ), wxOK | wxICON_INFORMATION, this );
 }
 
 void MainFrame::OnSelectionChanged( wxTreeEvent& WXUNUSED( event ) )
 {
     const wxImage& image = m_tree->GetImage();
-    m_bitmap->SetImage( image );
     RefreshLabels();
+    m_bitmap->SetImage( image );
 
     m_exportMenu->Enable( image.Ok() );
     m_sendMenu->Enable( image.Ok() );

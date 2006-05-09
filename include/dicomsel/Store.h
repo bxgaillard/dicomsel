@@ -40,7 +40,6 @@ private:
     MainFrame *Frame;
 
 public:
-    Store(wxString Port,MainFrame *frame_,int type,bool timeFile);
     Store(wxString Address_,wxString Port_,wxString FileName_, int type_ );
     //virtual _~Store( void );
     void        Run();

@@ -28,9 +28,9 @@ PWD ?= $(shell pwd)
 PWD := $(PWD)
 
 .PHONY: default all autogen autoclean clean head
-.PHONY: dist linux win32 win32-mingw win32-msc mac
+.PHONY: dist bindist linux win32 win32-mingw win32-msc mac
 
-default: dist bin
+default: dist bindist autoclean
 all: default autoclean
 
 configure: autogen
@@ -54,13 +54,19 @@ dist: configure
 
 bin: linux win32
 
+bin.zip: bin
+	find $< | LC_ALL=C sort | zip -9 -@ $@
+
+bindist: bin.zip
+	rm -rf bin
+
 linux: configure
 	test -d $(BINDIR) || mkdir $(BINDIR)
 	@echo "===================== Building for Linux ====================="
 	$(CONFIGURE) CFLAGS="$(CFLAGS)" CXXFLAGS="$(CXXFLAGS)" LDFLAGS="-s"
 	$(MAKE)
 	test -d $(BINDIR)/linux || mkdir -p $(BINDIR)/linux
-	$(CP) src/dicomsel rfsample/rf $(BINDIR)/linux
+	$(CP) src/dicomsel $(BINDIR)/linux
 	$(MAKE) distclean
 
 win32:
@@ -75,21 +81,23 @@ win32-mingw: configure wxmsw
 			       -DBYTE_ORDER=1234" LDFLAGS="-s"
 	$(MAKE)
 	test -d $(BINDIR)/win32 || mkdir -p $(BINDIR)/win32
-	$(CP) src/dicomsel.exe rfsample/rf.exe $(BINDIR)/win32
+	$(CP) src/dicomsel.exe $(BINDIR)/win32
 	$(MAKE) distclean
 
-win32-msc: msvc/config.h
+win32-msc: msvc/config.h msvc/flags.mak
 	env -u MAKEFLAGS wine nmake /NOLOGO /f Makefile.msc
 	test -d $(BINDIR)/win32 || mkdir -p $(BINDIR)/win32
-	$(CP) src/dicomsel.exe rfsample/rf.exe $(BINDIR)/win32
+	$(CP) src/dicomsel.exe $(BINDIR)/win32
 	env -u MAKEFLAGS wine nmake /NOLOGO /f Makefile.msc clean
 
-msvc/config.h: msvc/config.h.in configure.ac
+msvc/config.h msvc/flags.mak: msvc/config.h.in msvc/flags.mak.in configure.ac
 	$(MAKE) -f extra.mk configure
 	$(CONFIGURE)
-	$(CP) $@ $@.save
+	$(CP) msvc/config.h msvc/config.h.save
+	$(CP) msvc/flags.mak msvc/flags.mak.save
 	$(MAKE) distclean
-	$(MV) $@.save $@
+	$(MV) msvc/config.h.save msvc/config.h
+	$(MV) msvc/flags.mak.save msvc/flags.mak
 
 UNIV = -arch ppc -arch i386
 mac: configure
@@ -110,17 +118,17 @@ mac: configure
 	mkdir $(BINDIR)/mac/DicomSel.app/Contents/Resources
 	$(CP) src/images/icon.icns \
 	      $(BINDIR)/mac/DicomSel.app/Contents/Resources
-	$(RM) -r "$(BINDIR)/mac/RadioFrequency Sample.app"
-	mkdir "$(BINDIR)/mac/Radiofrequency Sample.app"
-	mkdir "$(BINDIR)/mac/Radiofrequency Sample.app/Contents"
-	$(CP) rfsample/Info.plist \
-	      "$(BINDIR)/mac/Radiofrequency Sample.app/Contents"
-	mkdir "$(BINDIR)/mac/Radiofrequency Sample.app/Contents/MacOS"
-	$(CP) rfsample/rf \
-	      "$(BINDIR)/mac/Radiofrequency Sample.app/Contents/MacOS"
-	echo -n "APPL????" \
-	     > "$(BINDIR)/mac/Radiofrequency Sample.app/Contents/PkgInfo"
-	$(MAKE) distclean
+#	$(RM) -r "$(BINDIR)/mac/RadioFrequency Sample.app"
+#	mkdir "$(BINDIR)/mac/Radiofrequency Sample.app"
+#	mkdir "$(BINDIR)/mac/Radiofrequency Sample.app/Contents"
+#	$(CP) rfsample/Info.plist \
+#	      "$(BINDIR)/mac/Radiofrequency Sample.app/Contents"
+#	mkdir "$(BINDIR)/mac/Radiofrequency Sample.app/Contents/MacOS"
+#	$(CP) rfsample/rf \
+#	      "$(BINDIR)/mac/Radiofrequency Sample.app/Contents/MacOS"
+#	echo -n "APPL????" \
+#	     > "$(BINDIR)/mac/Radiofrequency Sample.app/Contents/PkgInfo"
+#	$(MAKE) distclean
 
 clean:
 	@echo "Deleting distribution directory..."

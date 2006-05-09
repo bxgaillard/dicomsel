@@ -18,15 +18,13 @@
 #define DICOMSEL_BITMAPPANEL_H
 
 // wxWidgets
-//#ifndef WX_PRECOMP
-# include <wx/panel.h>
-# include <wx/window.h>
-# include <wx/gdicmn.h>
-# include <wx/string.h>
-# include <wx/image.h>
-# include <wx/dcmemory.h>
-# include <wx/event.h>
-//#endif // !WX_PRECOMP
+#include <wx/panel.h>
+#include <wx/window.h>
+#include <wx/gdicmn.h>
+#include <wx/string.h>
+#include <wx/image.h>
+#include <wx/dcmemory.h>
+#include <wx/event.h>
 
 class wxBitmap;
 class wxPaintEvent;

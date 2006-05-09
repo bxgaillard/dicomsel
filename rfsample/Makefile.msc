@@ -22,12 +22,10 @@ LIBS     = $(WX_LIBS)
 
 all: rf.exe
 
-SRC = \
-    MainFrame.cpp \
-    main.cpp
-RCS = resources.rc
-
-OBJ = $(SRC:.cpp=.obj) $(RCS:.rc=.res)
+OBJ = \
+    MainFrame.obj \
+    main.obj \
+    resources.res
 
 rf.exe: $(OBJ)
 	$(LINK) $(LDFLAGS) /SUBSYSTEM:WINDOWS /OUT:$@ $** $(LIBS)

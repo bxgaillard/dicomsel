@@ -1,6 +1,7 @@
 AUTOMAKE_OPTIONS = subdir-objects
 
-AM_CPPFLAGS = -I$(srcdir)/include \
+AM_CPPFLAGS = \
+    -I$(srcdir)/include \
     -I$(srcdir)/dcmjpeg/libijg12 \
     -I$(srcdir)/dcmjpeg/libijg16 \
     -I$(srcdir)/dcmjpeg/libijg8
@@ -980,5 +981,6 @@ libofstd_a_SOURCES = \
     include/dcmtk/ofstd/ofuoset.h
 
 EXTRA_DIST = \
+    Makefile.msc \
     include/dcmtk/config/cfwin32.h \
     include/dcmtk/config/osconfig.h

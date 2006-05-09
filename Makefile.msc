@@ -12,20 +12,27 @@
 # ----------------------------------------------------------------------------
 
 
+TOPDIR = .
+!INCLUDE $(TOPDIR)\msvc\flags.mak
+
 all:
 	cd "$(MAKEDIR)\libdicom\src"
 	$(MAKE) /NOLOGO /f Makefile.msc
+	cd "$(MAKEDIR)\$(DCMTK_DIR)"
+	$(MAKE) /NOLOGO /f Makefile.msc
 	cd "$(MAKEDIR)\src"
 	$(MAKE) /NOLOGO /f Makefile.msc
-	cd "$(MAKEDIR)\rfsample"
-	$(MAKE) /NOLOGO /f Makefile.msc
+#	cd "$(MAKEDIR)\rfsample"
+#	$(MAKE) /NOLOGO /f Makefile.msc
 
 clean:
 	cd "$(MAKEDIR)\libdicom\src"
 	$(MAKE) /NOLOGO /f Makefile.msc clean
+	cd "$(MAKEDIR)\$(DCMTK_DIR)"
+	$(MAKE) /NOLOGO /f Makefile.msc clean
 	cd "$(MAKEDIR)\src"
 	$(MAKE) /NOLOGO /f Makefile.msc clean
-	cd "$(MAKEDIR)\rfsample"
-	$(MAKE) /NOLOGO /f Makefile.msc clean
+#	cd "$(MAKEDIR)\rfsample"
+#	$(MAKE) /NOLOGO /f Makefile.msc clean
 
 # End of File

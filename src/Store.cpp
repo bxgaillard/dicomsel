@@ -37,16 +37,8 @@ static const char send_error_msg[] = "";
 #define send main_storescu
 
 BEGIN_EVENT_TABLE(Store, wxEvtHandler)
-    EVT_TIMER(wxID_ANY,         Store::OnTimer)
+    EVT_TIMER(wxID_ANY, Store::OnTimer)
 END_EVENT_TABLE()
-
-// constructor for receive
-Store::Store( wxString WXUNUSED( Port ), MainFrame* WXUNUSED( frame_ ),
-	      int WXUNUSED( type_ ), bool WXUNUSED( timeFile_ ) )
-{
-    abort();
-}
-
 
 //constructor for send
 Store::Store(wxString Address_,wxString Port_,wxString FileName_,int type_)

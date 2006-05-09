@@ -57,8 +57,11 @@ public:
     TagSet( void );
 
     static const TagID     GetTagCount( void ) { return TAG__LAST; }
-    static const wxString& GetTagID    ( TagID tag );
-    static const wxString& GetTagName  ( TagID tag );
+    static const wxString& GetTagID   ( TagID tag );
+    static const wxString& GetTagName ( TagID tag );
+
+    static const unsigned short GetTagGroup( TagID tag );
+    static const unsigned short GetTagElement( TagID tag );
 
     void Clear( void );
     void Add( TagID tag );
@@ -70,15 +73,16 @@ public:
     TagID GetNext( void );
 
 private:
-    struct TagSpec;
+    struct TagUID;
 
     bool m_tags[TAG__LAST];
     int  m_count;
     int  m_cursor;
-    static const TagSpec m_tagNames[];
+
+    static const TagUID TagUIDS[TAG__LAST + 1];
 };
 
-} // namespace dicomsel 
+} // namespace dicomsel
 
 #endif // DICOMSEL_TAGSET_H
 

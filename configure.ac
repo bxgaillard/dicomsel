@@ -22,7 +22,7 @@ dnl Process this file with autoconf to produce a configure script.
 
 dnl General settings
 AC_PREREQ(2.52g)
-AC_INIT([DicomSel], [1.9.1], [Johan.Moreau@ircad.u-strasbg.fr], [dicomsel])
+AC_INIT([DicomSel], [1.9.2], [Johan.Moreau@ircad.u-strasbg.fr], [dicomsel])
 AC_CONFIG_SRCDIR([src/main.cpp])
 AC_CONFIG_HEADER([config.h])
 AC_CONFIG_AUX_DIR([autotools])
@@ -70,17 +70,21 @@ AC_STRUCT_TM
 
 dnl Checks for libraries
 AM_OPTIONS_WXCONFIG
-AM_PATH_WXCONFIG([2.6.0], [wxWin=1], [wxWin=0], [core,net,base])
+AM_PATH_WXCONFIG([2.6.0], [wxWin=1], [wxWin=0],
+		 [core,net,base], [--unicode=no])
 if test "x$wxWin" != x1; then
-    AC_MSG_ERROR([
-	wxWidgets must be installed on your system
-	but wx-config script couldn't be found.
+    AM_PATH_WXCONFIG([2.6.0], [wxWin=1], [wxWin=0], [core,net,base])
+    if test "x$wxWin" != x1; then
+	AC_MSG_ERROR([
+	    wxWidgets must be installed on your system
+	    but wx-config script couldn't be found.
 
-	Please check that wx-config is in path, the directory
-	where wxWidgets libraries are installed (returned by
-	'wx-config --libs' command) is in LD_LIBRARY_PATH or
-	equivalent variable and wxWidgets version is 2.3.4 or above.
-    ])
+	    Please check that wx-config is in path, the directory
+	    where wxWidgets libraries are installed (returned by
+	    'wx-config --libs' command) is in LD_LIBRARY_PATH or
+	    equivalent variable and wxWidgets version is 2.3.4 or above.
+	])
+    fi
 fi
 
 dnl Enable GCC/G++ warnings
@@ -103,6 +107,7 @@ AC_CONFIG_FILES([
     doc/Makefile
     head/info.txt
     msvc/config.h
+    msvc/flags.mak
 ])
 
 dnl Disable DCMTK features by adding configure flags

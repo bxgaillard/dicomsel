@@ -18,17 +18,16 @@
 #define DICOMSEL_DICOMTREE_H
 
 // wxWidgets
-//#ifndef WX_PRECOMP
-# include <wx/string.h>
-# include <wx/gdicmn.h>
-# include <wx/window.h>
-# include <wx/validate.h>
-# include <wx/treectrl.h>
-# include <wx/event.h>
-//#endif // !WX_PRECOMP
+#include <wx/string.h>
+#include <wx/gdicmn.h>
+#include <wx/window.h>
+#include <wx/validate.h>
+#include <wx/treectrl.h>
+#include <wx/event.h>
 
 // Current module
 #include <dicomsel/DicomCollection.h>
+
 
 class wxImage;
 class wxBitmap;
@@ -50,11 +49,16 @@ public:
 	       const wxString& name = wxT( "DicomTree" ) );
     virtual ~DicomTree( void );
 
+    enum Library { LIB__FIRST = 0, LIB_LIBDICOM = 0, LIB_DCMTK, LIB__LAST };
+
+    Library GetLibrary( void ) const { return m_library; }
+    void SetLibrary( const Library lib );
+
     bool OpenDirectory( const wxString& name );
     void CloseDirectory( void );
     wxImage GetImage( void );
     wxBitmap GetBitmap( void );
-    const DicomFile& GetFile( void ) { return *m_currentFile; };
+    DicomFile& GetFile( void ) { return *m_currentFile; };
 
 protected:
     virtual int OnCompareItems( const wxTreeItemId& item1,
@@ -72,12 +76,14 @@ private:
     class Files;
     template< class Type > class TreeMap;
 
+    Library m_library;
+
     TreeMap< TreeMap< TreeMap< Files > > >* m_files;
     DicomFile* m_currentFile;
     int m_total, m_progress;
     wxProgressDialog* m_progressDialog;
 
-    // No copy/affectation
+    // No copy/assignment
     DicomTree( const DicomTree& );
     DicomTree& operator =( const DicomTree& );
 

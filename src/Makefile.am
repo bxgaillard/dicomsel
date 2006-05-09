@@ -14,7 +14,8 @@
 
 # Additional flags
 AM_CPPFLAGS = -I$(top_srcdir)/include -I$(top_srcdir)/libdicom/include \
-	      -I$(top_srcdir)/3rdparty/dcmtk-$(DCMTK_VERSION)/include \
+	      -I$(top_srcdir)/$(DCMTK_DIR)/include \
+	      -I../$(DCMTK_DIR)/include/dcmtk/config \
 	      -I$(top_srcdir)/libdicom/include/dicom $(WX_CPPFLAGS)
 AM_CXXFLAGS = $(WX_CXXFLAGS_ONLY)
 
@@ -33,9 +34,13 @@ endif
 bin_PROGRAMS = dicomsel
 dicomsel_SOURCES = \
     BitmapPanel.cpp \
+    DcmtkCollection.cpp \
+    DcmtkFile.cpp \
     DicomCollection.cpp \
     DicomFile.cpp \
     DicomTree.cpp \
+    LibDicomCollection.cpp \
+    LibDicomFile.cpp \
     MainFrame.cpp \
     Store.cpp \
     StoreDialog.cpp \

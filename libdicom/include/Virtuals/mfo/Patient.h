@@ -433,7 +433,7 @@ public:
 			<< "|| >> Birth date : "	<< _cPatient.GetBirthdate()			<< std::endl
 			<< "|| >> Sex : "			<< _cPatient.GetSex()				<< std::endl
 			<< "|| >> Patient DBId : "	<< _cPatient.GetDbID()				<< std::endl
-			<< "|| >> Study number : "	<< _cPatient.GetVectorStudy()->size()<< std::endl;
+			<< "|| >> Study number : "	<< static_cast<unsigned int>(_cPatient.GetVectorStudy()->size()) << std::endl;
 
 		for(
 			std::vector<mfo::CStudy*>::reverse_iterator iter = _cPatient.GetVectorStudy()->rbegin();

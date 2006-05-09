@@ -14,17 +14,13 @@
  */
 
 
+// wxWidgets
 #include <wx/wxprec.h>
-
 #ifdef __BORLANDC__
 # pragma hdrstop
 #endif
-
-// wxWidgets
-//#ifndef WX_PRECOMP
-# include <wx/app.h>
-# include <wx/gdicmn.h>
-//#endif // !WX_PRECOMP
+#include <wx/app.h>
+#include <wx/gdicmn.h>
 
 // Standard C Library
 #include <cstdio>
@@ -45,13 +41,13 @@ public:
 
 bool DicomSelApp::OnInit( void )
 {
-    // Prevent DCMTK code to output messages
-    std::fclose( stdin  );
-    std::fclose( stdout );
+    // Prevent DCMTK code from outputting error messages
     std::fclose( stderr );
 
     // Make default dialog buttons display in English
+#ifdef LC_MESSAGES
     std::setlocale( LC_MESSAGES, "C" );
+#endif // LC_MESSAGES
 
     MainFrame* frame = new MainFrame( wxT( "DicomSel" ), wxDefaultPosition,
 				      wxSize( 600, 450 ) );

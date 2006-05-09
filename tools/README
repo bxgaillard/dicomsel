@@ -5,5 +5,7 @@ This directory contains auxiliary tools for the project:
       every single source file;
     * "mkdcmtk.sh", which is a Bash script used to reorganize a DCMTK
       distribution (fully Autotools-compliant);
+    * "wxmsvc.sh", which is a Bash script used to cross-compile wxWidgets for
+      Windows using Wine and the Microsoft Visual C++ compiler;
     * "xbuildwx.sh", which is a Bash script used to (cross-)compile wxWidgets
-      for Windows.
+      for Windows using GCC.

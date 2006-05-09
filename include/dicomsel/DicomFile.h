@@ -18,139 +18,85 @@
 #define DICOMSEL_DICOMFILE_H
 
 // wxWidgets
-//#ifndef WX_PRECOMP
-# include <wx/string.h>
-# include <wx/gdicmn.h>
-# include <wx/treectrl.h>
-# include <wx/image.h>
-# include <wx/bitmap.h>
-//#endif // !WX_PRECOMP
-
-// Virtuals basic types
-#include <Virtuals/Type.h>
-
-// DICOM visitor
-#include <dicom/visitor/Dicom.h>
+#include <wx/string.h>
+#include <wx/gdicmn.h>
+#include <wx/treectrl.h>
+#include <wx/image.h>
+#include <wx/bitmap.h>
 
 // Current module
+#include <dicomsel/DicomTree.h>
 #include <dicomsel/TagSet.h>
 
 
 class wxImage;
 class wxBitmap;
 
-namespace dicom
-{
-    namespace io
-    {
-	class CSimpleDirectory;
-	class CDicomFile;
-    } // namespace io
-
-    namespace tag
-    {
-	class CDicomTag;
-	class CAcquisitionDate;
-	class CAcquisitionNumber;
-	class CAcquisitionTime;
-	class CAcquisitionZone;
-	class CBirthday;
-	class CBitsAllocated;
-	class CColumns;
-	class CHospital;
-	class CImagePosition;
-	class CImageType;
-	class CModality;
-	class CName;
-	class CPatientID;
-	class CPixelData;
-	class CPixelRepresentation;
-	class CPixelSpacing;
-	class CRows;
-	class CSeriesUID;
-	class CSexe;
-	class CSliceThickness;
-	class CStudyUID;
-	class CTransfertSyntax;
-    } // namespace tag
-} // namespace dicom
-
 
 namespace dicomsel
 {
 
-class DicomFile : public wxTreeItemData, public dicom::visitor::CDicom
+class DicomFile : public wxTreeItemData
 {
 public:
     DicomFile( const wxString& filename );
-    virtual ~DicomFile( void );
+    virtual ~DicomFile( void ) = 0;
 
-    const wxString& getFilename( void ) const { return m_filename; }
-    const wxSize&   getSize( void )     const { return m_size; }
+    virtual DicomTree::Library GetLibrary( void ) = 0;
 
+    const wxString& GetFilename( void ) const { return m_filename; }
+    const wxSize&   GetSize( void )     const { return m_size; }
+    const wxString& GetTagString( TagSet::TagID tag ) const;
     wxImage GetImage( void );
     wxBitmap GetBitmap( void );
-
-    const wxString& GetTagString( TagSet::TagID tag ) const;
 
     bool Read( void );
     void Free( void );
 
-    virtual const bool IsCreateImage( void ) const;
-    virtual void VisitDicomDirectory( dicom::io::CSimpleDirectory& dir );
-    virtual void VisitDicomFile( dicom::io::CDicomFile& file );
+protected:
+    enum FrameFormat { FF_U8, FF_S8, FF_U16, FF_S16 };
 
-// Macro for generating tag visitors
-#define DECLARE_TAG_VISITOR( name, suffix ) \
-    virtual const uint32 VisitDicom ## name ## suffix( \
-	dicom::tag::C ## name& tag )
+    void SetTagString( const TagSet::TagID tag, const wxString& str )
+    {
+	if( tag >= TagSet::TAG__FIRST && tag < TagSet::TAG__LAST )
+	{
+	    m_tags[tag] = str;
+	}
+    }
 
-// Some implementation flaws? ;-)
-#define DECLARE_TAG_VISITOR1( name ) DECLARE_TAG_VISITOR( name, Tag )
-#define DECLARE_TAG_VISITOR2( name ) DECLARE_TAG_VISITOR( name,     )
+    void SetSize( const int width, const int height )
+    {
+	m_size.Set( width, height );
+    }
 
-    DECLARE_TAG_VISITOR1( AcquisitionDate     );
-    DECLARE_TAG_VISITOR1( AcquisitionNumber   );
-    DECLARE_TAG_VISITOR1( AcquisitionTime     );
-    DECLARE_TAG_VISITOR1( AcquisitionZone     );
-    DECLARE_TAG_VISITOR1( Birthday            );
-    DECLARE_TAG_VISITOR1( BitsAllocated       );
-    DECLARE_TAG_VISITOR1( Columns             );
-    DECLARE_TAG_VISITOR1( Hospital            );
-    DECLARE_TAG_VISITOR1( ImagePosition       );
-    DECLARE_TAG_VISITOR1( ImageType           );
-    DECLARE_TAG_VISITOR1( Modality            );
-    DECLARE_TAG_VISITOR1( Name                );
-    DECLARE_TAG_VISITOR1( PatientID           );
-    DECLARE_TAG_VISITOR1( PixelData           );
-    DECLARE_TAG_VISITOR2( PixelRepresentation );
-    DECLARE_TAG_VISITOR1( PixelSpacing        );
-    DECLARE_TAG_VISITOR1( Rows                );
-    DECLARE_TAG_VISITOR1( SeriesUID           );
-    DECLARE_TAG_VISITOR1( Sexe                );
-    DECLARE_TAG_VISITOR1( SliceThickness      );
-    DECLARE_TAG_VISITOR1( StudyUID            );
-    DECLARE_TAG_VISITOR2( TransfertSyntax     );
+    void SetFrame( char* const frame, const FrameFormat format )
+    {
+	FreeFrame();
+	m_frame = frame;
+	m_format = format;
+    }
 
-// Remove macros to avoid potential conflict with other modules defines
-#undef DECLARE_TAG_VISITOR
-#undef DECLARE_TAG_VISITOR1
-#undef DECLARE_TAG_VISITOR2
+    virtual bool ReadFile( const wxString& filename ) = 0;
 
 private:
-    wxString      m_filename;
-    bool          m_loaded;
-    bool          m_valid;
-    unsigned char m_bitsPerPixel;
-    bool          m_unsigned;
-    bool          m_littleEndian;
-    wxSize        m_size;
-    char*         m_frame;
+    wxString    m_filename;
+    bool        m_loaded;
+    protected:
+    bool        m_valid;
+    wxString*   m_tags;
+    wxSize      m_size;
+    private:
+    FrameFormat m_format;
+    char*       m_frame;
 
-    wxString*     m_tags;
+    void FreeFrame( void )
+    {
+	if( m_frame != NULL ) delete[] m_frame;
+	m_frame = NULL;
+    }
 
     template< class Type >
-    void ConvertData( unsigned char* data, const Type* frame );
+    void ConvertData( unsigned char* data, const Type* frame ) const;
 };
 
 } // namespace dicomsel

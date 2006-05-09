@@ -1,6 +1,18 @@
-#ifdef _WIN32
-# undef HAVE_CONFIG_H
-#endif // _WIN32
+/*
+ * ---------------------------------------------------------------------------
+ *
+ * DicomSel: DICOM Image Selector
+ *
+ * Copyright (C) 2005, 2006 IRCAD
+ * Authors: Benjamin Gaillard, Marc-Aurèle Mörk, Guillaume Spitz
+ *
+ * ---------------------------------------------------------------------------
+ *
+ * << LICENSE >>
+ *
+ * ---------------------------------------------------------------------------
+ */
+
 
 #include <cstdio>
 #include <cstring>
@@ -10,9 +22,11 @@
 #include <wx/arrstr.h>
 #include <wx/event.h>
 
+#include <dicomsel/dcmtk.h>
 #include <dcmtk/dcmnet/assoc.h>
 
 #include <dicomsel/StoreSCP.h>
+
 
 static dicomsel::StoreSCP* ptrStoreSCP;
 
@@ -21,6 +35,7 @@ storescp_ASC_acknowledgeRelease( T_ASC_Association* association )
 {
     const OFCondition cond = ASC_acknowledgeRelease( association );
     ptrStoreSCP->OnAcknowledgeRelease();
+    return cond;
 }
 
 #define ASC_acknowledgeRelease storescp_ASC_acknowledgeRelease
@@ -30,13 +45,25 @@ storescp_ASC_acknowledgeRelease( T_ASC_Association* association )
 #define main                   storescp_main
 
 static int main( int argc, char *argv[] );
+
+#ifdef _MSC_VER
+# pragma warning( disable: 4267 4100 )
+#endif // _MSC_VER
 #include "dcmtkapp/storescp.cc"
+#ifdef _MSC_VER
+# pragma warning( default: 4267 4100 )
+#endif // _MSC_VER
 
 #undef ASC_acknowledgeRelease
 #undef opt_acse_timeout
 #undef opt_dimse_timeout
 #undef opt_blockMode
 #undef main
+
+#if defined( _WIN32 ) && (defined( _MSC_VER ) || defined( __MINGW32__ ))
+namespace std { using ::_snprintf; }
+# define snprintf _snprintf
+#endif // _WIN32 && (_MSC_VER || __MINGW32__)
 
 namespace dicomsel
 {
@@ -78,7 +105,8 @@ bool StoreSCP::IsRunning( void )
 void StoreSCP::OnAcknowledgeRelease( void )
 {
     OFListIterator( OFString ) last = outputFileNameArray.end();
-    const int count = outputFileNameArray.size() - m_lastCount;
+    const int count =
+	    static_cast< int >( outputFileNameArray.size() ) - m_lastCount;
     wxArrayString array;
     array.Alloc( count );
 
@@ -87,10 +115,10 @@ void StoreSCP::OnAcknowledgeRelease( void )
 	array[i] = wxString( (*--last).c_str(), *wxConvFileName );
     }
 
-    m_lastCount = outputFileNameArray.size();
+    m_lastCount = static_cast< int >( outputFileNameArray.size() );
 
     // TODO: do something useful here
-    for( unsigned int i = 0; i < array.GetCount(); ++i )
+    for( int i = 0; i < count; ++i )
     {
 	std::puts( array[i].fn_str() );
     }
@@ -115,7 +143,12 @@ wxThread::ExitCode StoreSCP::Entry( void )
 
     const int code = storescp_main( sizeof( argv ) / sizeof( *argv ), argv );
     delete dir;
-    return reinterpret_cast< wxThread::ExitCode >( code );
+
+    // Cast to unsigned long long makes MSVC happier
+    return reinterpret_cast< wxThread::ExitCode >
+	    ( static_cast< unsigned long long >( code ) );
 }
 
 } // namespace dicomsel
+
+/* End of File */
