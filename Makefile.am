@@ -22,6 +22,7 @@
 SUBDIRS = \
     libdicom \
     $(DCMTK_DIR) \
+    $(OPENJPEG_DIR) \
     src \
     doc
 DIST_SUBDIRS = \

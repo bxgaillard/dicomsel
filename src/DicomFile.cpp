@@ -147,17 +147,20 @@ void DicomFile::ConvertData( unsigned char* data, const Type* frame ) const
     }
 
     const unsigned int diff = static_cast< unsigned int >( max - min );
-    unsigned int val;
-
-    for( int i = 0; i < total; i++ )
+    if( diff != 0 )
     {
-	for( int j = 0; j < 3; j++ )
+	unsigned int val;
+
+	for( int i = 0; i < total; i++ )
 	{
-	    val = static_cast< unsigned int >( *frame - min );
-	    *(data++) = static_cast< unsigned char >(
-		((val << 8) - val) / diff );
+	    for( int j = 0; j < 3; j++ )
+	    {
+		val = static_cast< unsigned int >( *frame - min );
+		*(data++) = static_cast< unsigned char >(
+		    ((val << 8) - val) / diff );
+	    }
+	    frame++;
 	}
-	frame++;
     }
 }
 

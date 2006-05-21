@@ -22,7 +22,7 @@ dnl Process this file with autoconf to produce a configure script.
 
 dnl General settings
 AC_PREREQ(2.52g)
-AC_INIT([DicomSel], [1.9.2], [Johan.Moreau@ircad.u-strasbg.fr], [dicomsel])
+AC_INIT([DicomSel], [1.9.3], [Johan.Moreau@ircad.u-strasbg.fr], [dicomsel])
 AC_CONFIG_SRCDIR([src/main.cpp])
 AC_CONFIG_HEADER([config.h])
 AC_CONFIG_AUX_DIR([autotools])
@@ -51,9 +51,16 @@ AC_DEFUN([DCMTK_AC_DIR], [3rdparty/dcmtk-]DCMTK_AC_VERSION)
 AC_SUBST([DCMTK_DIR], DCMTK_AC_DIR)
 AC_DEFINE_UNQUOTED([DCMTK_VERSION], ["$DCMTK_VERSION"],
 		   [The bundled DCMTK version.])
+AC_DEFUN([OPENJPEG_AC_VERSION], [1.0])
+AC_SUBST([OPENJPEG_VERSION], OPENJPEG_AC_VERSION)
+AC_DEFUN([OPENJPEG_AC_DIR], [3rdparty/openjpeg-]OPENJPEG_AC_VERSION)
+AC_SUBST([OPENJPEG_DIR], OPENJPEG_AC_DIR)
+AC_DEFINE_UNQUOTED([OPENJPEG_VERSION], ["$OPENJPEG_VERSION"],
+		   [The bundled OpenJPEG version.])
 
 dnl Checks for programs
 AC_LANG([C++])
+AC_PROG_CC
 AC_PROG_CXX
 AC_PROG_RANLIB
 AC_CHECK_TOOL([RC], [windres])
@@ -89,7 +96,7 @@ fi
 
 dnl Enable GCC/G++ warnings
 if test "x$GCC" = xyes; then
-    CFLAGS="-ansi -pedantic -Wall -W $CFLAGS"
+    CFLAGS="-pedantic -Wall -W $CFLAGS"
 fi
 if test "x$GXX" = xyes; then
     CXXFLAGS="-Wall -W $CXXFLAGS"
@@ -108,6 +115,9 @@ AC_CONFIG_FILES([
     head/info.txt
     msvc/config.h
     msvc/flags.mak
+    ]OPENJPEG_AC_DIR[/Makefile
+    ]OPENJPEG_AC_DIR[/src/Makefile
+    ]OPENJPEG_AC_DIR[/include/Makefile
 ])
 
 dnl Disable DCMTK features by adding configure flags

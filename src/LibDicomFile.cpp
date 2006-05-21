@@ -27,6 +27,7 @@
 
 // C standard library
 #include <cstdlib>
+#include <cstring>
 #include <clocale>
 #include <sys/types.h>
 
@@ -68,6 +69,10 @@
 
 // DICOM parser exceptions
 #include <dicom/ExceptionDicom.h>
+
+// OpenJPEG
+#undef OPENJPEG_VERSION
+#include <openjpeg.h>
 
 // Current module
 #include <dicomsel/DicomTree.h>
@@ -222,6 +227,31 @@ const uint32 LibDicomFile::VisitDicomRowsTag( dicom::tag::CRows& tag )
     return pos;
 }
 
+#if 0
+extern "C" {
+/**
+sample error callback expecting a FILE* client object
+ */
+void error_callback(const char *msg, void *client_data) {
+    FILE *stream = (FILE*)client_data;
+    fprintf(stream, "[ERROR] %s", msg);
+}
+/**
+sample warning callback expecting a FILE* client object
+ */
+void warning_callback(const char *msg, void *client_data) {
+    FILE *stream = (FILE*)client_data;
+    fprintf(stream, "[WARNING] %s", msg);
+}
+/**
+sample debug callback expecting no client object
+ */
+void info_callback(const char *msg, void *client_data) {
+    fprintf(stdout, "[INFO] %s", msg);
+}
+}
+#endif
+
 const uint32 LibDicomFile::VisitDicomPixelDataTag(
     dicom::tag::CPixelData& tag )
 {
@@ -230,13 +260,71 @@ const uint32 LibDicomFile::VisitDicomPixelDataTag(
 
     if( canRead )
     {
-	const int size = m_size.GetHeight() * m_size.GetWidth()
-			 * (m_bitsPerPixel / 8);
+	int size = tag.GetLength();
+	if( size < 0 )
+	{
+	    size = m_pFile->GetSize() - m_pFile->GetOffset();
+	}
 	tag.SetSize( size );
 	pos = tag.SetValue( *this->m_pFile );
 
-	if( m_frame == NULL ) m_frame = tag.GetBuffer();
-	else                  m_valid = false;
+	if( m_frame == NULL )
+        {
+	    const wxString& syntax = m_tags[TagSet::TAG_TRANSFERT_SYNTAX];
+
+	    if( syntax == "1.2.840.10008.1.2.4.90" ||
+		syntax == "1.2.840.10008.1.2.4.91" )
+	    {
+		opj_dinfo_t* const dinfo = opj_create_decompress( CODEC_J2K );
+
+		/*
+		opj_event_mgr_t event_mgr;
+		std::memset( &event_mgr, 0, sizeof( opj_event_mgr_t ) );
+		event_mgr.error_handler = error_callback;
+		event_mgr.warning_handler = warning_callback;
+		event_mgr.info_handler = info_callback;
+		opj_set_event_mgr( reinterpret_cast< opj_common_ptr >( dinfo ),
+				   &event_mgr, stderr );
+		*/
+
+		opj_dparameters_t parameters;
+		opj_set_default_decoder_parameters(&parameters);
+		opj_setup_decoder( dinfo, &parameters );
+		opj_cio_t* const cio =
+			opj_cio_open( reinterpret_cast< opj_common_ptr >( dinfo ),
+				      reinterpret_cast< unsigned char* >( tag.GetBuffer()) ,
+				      size );
+
+		opj_image_t* const image = opj_decode( dinfo, cio );
+
+		if( image != NULL )
+		{
+		    opj_cio_close(cio);
+		    delete[] tag.GetBuffer();
+		    m_frame = new char[m_size.GetHeight() * m_size.GetWidth()
+			    * (m_bitsPerPixel / 8)];
+		    std::cout << "valid!!" << std::endl;
+		}
+		else
+		{
+		    opj_destroy_decompress(dinfo);
+		    opj_cio_close(cio);
+		    delete[] tag.GetBuffer();
+
+		    m_valid = false;
+		}
+	    }
+	    else
+	    {
+		if( size == m_size.GetHeight() * m_size.GetWidth()
+			    * (m_bitsPerPixel / 8) )
+		{
+		    m_frame = tag.GetBuffer();
+		}
+		else m_valid = false;
+	    }
+        }
+	else m_valid = false;
     }
     else pos = tag.SetValue( *this->m_pFile );
 

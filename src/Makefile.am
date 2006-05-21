@@ -16,7 +16,9 @@
 AM_CPPFLAGS = -I$(top_srcdir)/include -I$(top_srcdir)/libdicom/include \
 	      -I$(top_srcdir)/$(DCMTK_DIR)/include \
 	      -I../$(DCMTK_DIR)/include/dcmtk/config \
-	      -I$(top_srcdir)/libdicom/include/dicom $(WX_CPPFLAGS)
+	      -I$(top_srcdir)/libdicom/include/dicom \
+	      -I$(top_srcdir)/$(OPENJPEG_DIR)/include \
+	      $(WX_CPPFLAGS)
 AM_CXXFLAGS = $(WX_CXXFLAGS_ONLY)
 
 # DCMTK libs: put here which ones are used (-ldcmimage -ldcmnet ...)
@@ -52,7 +54,9 @@ dicomsel_SOURCES = \
 dicomsel_DEPENDENCIES = \
     $(RC_OBJECTS)
 dicomsel_LDADD = $(RC_OBJECTS) -L../3rdparty/dcmtk-$(DCMTK_VERSION) \
-		 $(DCMTK_LIBS) -L../libdicom/src -ldicom $(WX_LIBS)
+		 $(DCMTK_LIBS) -L../libdicom/src -ldicom \
+		 -L../$(OPENJPEG_DIR)/src -lopenjpeg \
+		 $(WX_LIBS)
 
 # Extra files to include into the distribution archive: icons
 EXTRA_DIST = \

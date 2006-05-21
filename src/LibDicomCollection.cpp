@@ -223,7 +223,9 @@ const uint32 LibDicomCollection::DefaultTagVisit( dicom::tag::CDicomTag& tag )
     const
 {
     // Pass this tag
-    const uint32 pos = m_pFile->GetOffset() + tag.GetLength();
+    uint32 pos;
+    if( tag.GetLength() >= 0) pos = m_pFile->GetOffset() + tag.GetLength();
+    else                      pos = m_pFile->GetSize();
     m_pFile->SetOffset( pos );
 
     // Return new offset in file
