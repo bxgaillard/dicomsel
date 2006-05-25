@@ -44,20 +44,26 @@ END_EVENT_TABLE()
 Store::Store(wxString Address_,wxString Port_,wxString FileName_,int type_)
 {
     Type=type_;
-    Address=(char*)malloc(Address_.Len());
-    strcpy( Address, (const char*)Address_.mb_str(wxConvUTF8) );
-    Port=(char*)malloc(Port_.Len());
-    strcpy( Port, (const char*)Port_.mb_str(wxConvUTF8) );
-    FileName=(char*)malloc(FileName_.Len());
-    strcpy( FileName, (const char*)FileName_.mb_str(wxConvUTF8) );
+    Address=Address_;
+    Port=Port_;
+    FileName=FileName_;
     m_tmrRunning = new wxTimer(this);
+
+}
+
+
+Store::~Store( void )
+{
+    delete(Address);
+    delete(Port);
+    delete(FileName);
 }
 
 
 
 wxThread::ExitCode Store::Entry()
 {
-    char* argv[] = { "storescu", Address, Port, FileName };
+    char* argv[] = { "storescu", (char*)Address.mb_str(wxConvUTF8), (char*)Port.mb_str(wxConvUTF8), (char*)FileName.mb_str(wxConvUTF8) };
     send_ok = StoreSCU::Main( sizeof( argv ) / sizeof( *argv ), argv )
 	    == 0;
     m_blnFinished = true;
@@ -90,14 +96,17 @@ void Store::OnTimer( wxTimerEvent& WXUNUSED( event ) )
 	{
 	    m_tmrRunning->Stop();
 	    m_blnFinished = false;
-	    wxMessageBox( wxT( "File sent." ), wxT( "DICOM Store" ) );
+	    wxMessageBox( wxT( "File sent" ), wxT( "DICOM Store" ),wxICON_INFORMATION);
 	}
 	else
 	{
 	    m_tmrRunning->Stop();
-	    wxMessageBox( wxString( send_error_msg, *wxConvCurrent ),
-			    wxT( "DICOM Store Error" ) );
+	    wxMessageBox( wxString( "Error Association Request Failed", *wxConvCurrent ),
+			    wxT( "DICOM Store Error" ),wxICON_HAND);
+	
 	}
+
+
     }
 }
 

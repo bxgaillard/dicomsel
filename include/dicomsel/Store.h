@@ -33,15 +33,14 @@ private:
     wxTimer     *m_tmrRunning;
     bool        m_blnCancelled;
     int Type;
-    char *Address;
-    char *Port;
-    char *FileName;
+    wxString Address;
+    wxString Port;
+    wxString FileName;
     unsigned int Port_num;
     MainFrame *Frame;
-
 public:
     Store(wxString Address_,wxString Port_,wxString FileName_, int type_ );
-    //virtual _~Store( void );
+    virtual ~Store( void );
     void        Run();
     virtual wxThread::ExitCode    Entry();
     bool        IsRunning();

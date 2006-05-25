@@ -44,16 +44,18 @@ public:
     wxString GetPortSend();
     wxString GetPortRcp();
     wxString GetFileName();
-
+    wxString GetPathRcp();
 
     void SetPortRcp(wxString port);
+    void SetPathRcp(wxString path);
     void SetPortSend(wxString port);
     void SetAddressSend(wxString ad);
     void IsConfigEnable();
-    bool IsCheck();
-    bool IsCheckTimeFile();
-    void SetCheck(bool v);
+    bool IsCheck(int box_number);
+    void SetCheck(bool box1,bool box2,bool box3);
     wxStaticText *fileName;
+    wxStaticText *m_rcp_path;
+
 
 
 private:
@@ -63,13 +65,13 @@ private:
     wxTextCtrl         *pEditPortSend;
     wxNotebook	       *notebook1;
     wxCheckBox         *m_checkBoxe;
-    //wxCheckBox         *m_checkBoxeTls;
     wxCheckBox	       *m_checkBoxe_tn;
-    //wxCheckBox	       *m_checkBoxe_fe;
+    wxCheckBox	       *m_checkBoxe_dr;
     wxConfig 	       *m_config;
-    wxString	        m_fileName;
+    wxString	        m_fileName; 
+    wxString	        m_path;
 
-
+	wxButton * m_button_rcp;
 	Store *sendStore;
 
 
@@ -82,6 +84,7 @@ private:
     void OnEnableTimeFile(wxCommandEvent &event);
     void OnEnableExtention(wxCommandEvent &event);
     void OnSelectFile(wxCommandEvent &event);
+    void OnSelectDirectory(wxCommandEvent &event);
     void OnSendFile(wxCommandEvent &event);
 
     DECLARE_EVENT_TABLE()

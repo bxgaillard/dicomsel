@@ -43,6 +43,12 @@
 #include <wx/ipc.h>
 #include <wx/image.h>
 
+#include <time.h>
+#include <wx/filefn.h>
+#include <wx/dir.h>
+#include <wx/datetime.h>
+
+
 // Standard C library
 #include <cstring>
 
@@ -322,8 +328,12 @@ void MainFrame::LoadConfig( void )
 
     config.Read( wxT( "Store/Address" ), &Address, wxT( "192.168.0.1" ) );
     config.Read( wxT( "Store/PortRcp" ), &PortRcp, wxT( "4006" ) );
+    config.Read( wxT( "Store/Path" ), &StorePath, wxT( "./reception" ) );
     config.Read( wxT( "Store/PortSend" ), &PortSend, wxT( "4006" ) );
     config.Read( wxT( "Store/Check" ), &Check, true);
+    config.Read( wxT( "Store/Check_tn" ), &Check_tn, true);
+    config.Read( wxT( "Store/Check_dr" ), &Check_dr, true);
+
 }
 
 void MainFrame::SaveConfig( void ) const
@@ -345,8 +355,13 @@ void MainFrame::SaveConfig( void ) const
 
     config.Write( wxT( "Store/Address" ), Address );
     config.Write( wxT( "Store/PortRcp" ), PortRcp );
+    config.Write( wxT( "Store/Path" ), StorePath );
     config.Write( wxT( "Store/PortSend" ), PortSend );
     config.Write( wxT( "Store/Check" ), Check );
+    config.Write( wxT( "Store/Check_tn" ), Check_tn );
+    config.Write( wxT( "Store/Check_dr" ), Check_dr );
+
+
 }
 
 void MainFrame::RefreshDisplayedTags( void )
@@ -579,7 +594,7 @@ void MainFrame::OnMenuAbout( wxCommandEvent& WXUNUSED( event ) )
 			    L"\n\nPlease report bugs to <"
 			    WIDIFY( PACKAGE_BUGREPORT ) L">",
 			    *wxConvCurrent ),
-		  wxT( "About DicomSel" ), wxOK | wxICON_INFORMATION, this );
+		  	    wxT( "About DicomSel" ), wxOK | wxICON_INFORMATION, this );
 }
 
 void MainFrame::OnSelectionChanged( wxTreeEvent& WXUNUSED( event ) )
@@ -587,7 +602,6 @@ void MainFrame::OnSelectionChanged( wxTreeEvent& WXUNUSED( event ) )
     const wxImage& image = m_tree->GetImage();
     RefreshLabels();
     m_bitmap->SetImage( image );
-
     m_exportMenu->Enable( image.Ok() );
     m_sendMenu->Enable( image.Ok() );
 }
@@ -595,21 +609,24 @@ void MainFrame::OnSelectionChanged( wxTreeEvent& WXUNUSED( event ) )
 void MainFrame::OnMenuRetrieveFile( wxCommandEvent& WXUNUSED( event ) )
 {
     StoreDialog dialog( this, -1, wxT( "Dicom Store Options" ) );
-    dialog.SetCheck( Check );
+    dialog.SetCheck( Check,Check_tn,Check_dr );
     dialog.IsConfigEnable();
     dialog.SetPortRcp( PortRcp );
+
     dialog.SetPortSend( PortSend );
     dialog.SetAddressSend( Address );
+    dialog.SetPathRcp(StorePath);
+
 
     if( dialog.ShowModal() == wxID_OK )
     {
 	Address = dialog.GetAddressSend();
+        StorePath=dialog.GetPathRcp();
 	PortRcp = dialog.GetPortRcp();
 	PortSend = dialog.GetPortSend();
-	Check = dialog.IsCheck();
-	//wxMessageBox( wxT( "Configuration saved" ), wxT( "Save") );
-	// FIXME: handle dialog.IsCheckTimeFile()
-	//serverStore = new Store( PortRcp, this, 1, dialog.IsCheckTimeFile() );
+	Check = dialog.IsCheck(1);
+	Check_tn = dialog.IsCheck(2);
+	Check_dr = dialog.IsCheck(3);
 
 	if( m_server != NULL ) delete m_server;
 
@@ -617,26 +634,31 @@ void MainFrame::OnMenuRetrieveFile( wxCommandEvent& WXUNUSED( event ) )
 	{
 	    unsigned long port;
 	    PortRcp.ToULong( &port, 10 );
-	    m_server = new StoreSCP( wxT( "../reception" ), port, this );
+	    m_server = new StoreSCP( StorePath, port,Check_tn,Check_dr, this);
 	    m_server->Run();
 	}
-	else m_server = NULL;
+
+	else {
+		if (m_server != NULL){m_server->Stop();};
+	      }
     }
 }
 
 void MainFrame::OnThreadFinished( wxCommandEvent& WXUNUSED( event ) )
 {
+
     if( wxMessageBox( wxT( "A file was received with DICOM Store.\n")
 		      wxT( "Open this file?" ), wxT( "DICOM Store event" ),
 		      wxYES_NO ) == wxYES )
     {
-	if( m_tree->OpenDirectory( wxT( "../reception/" ) ) )
+	if( m_tree->OpenDirectory( StorePath) )
 	{
 	    m_bitmap->Clear();
 	    RefreshLabels();
 	    m_tree->SetFocus();
 	}
     }
+
 }
 
 } // namespace dicomsel

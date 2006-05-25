@@ -16,12 +16,14 @@
 
 #include <cstdio>
 #include <cstring>
-
+#include <time.h>
 #include <wx/string.h>
 #include <wx/buffer.h>
 #include <wx/arrstr.h>
 #include <wx/event.h>
-
+#include <wx/filefn.h>
+#include <wx/dir.h>
+#include <wx/datetime.h>
 #include <dicomsel/dcmtk.h>
 #include <dcmtk/dcmnet/assoc.h>
 
@@ -70,10 +72,21 @@ namespace dicomsel
 
 DEFINE_EVENT_TYPE( EVT_FILE_RECEIVED )
 
-StoreSCP::StoreSCP( const wxString& directory, const unsigned short port,
+StoreSCP::StoreSCP( const wxString& directory, const unsigned short port,bool time_name,bool change_dir,
 		    wxEvtHandler* const evtHandler )
-:   m_directory( directory ), m_port( port ), m_evtHandler( evtHandler )
-{}
+:    m_port( port ), m_tname(time_name),m_chdir(change_dir),m_evtHandler( evtHandler )
+{
+
+
+
+    const wxCharBuffer direct = directory.fn_str();
+    m_directory = new char[std::strlen( direct ) + 1 +8];
+    std::strcpy(m_directory, direct);
+
+}
+
+
+
 
 StoreSCP::~StoreSCP( void )
 {
@@ -91,9 +104,11 @@ bool StoreSCP::Run( void )
 
 bool StoreSCP::Stop( void )
 {
+
     wxThread* const thread = GetThread();
     return thread != NULL && thread->IsAlive() &&
 	   thread->Kill() == wxTHREAD_NO_ERROR;
+
 }
 
 bool StoreSCP::IsRunning( void )
@@ -132,22 +147,28 @@ wxThread::ExitCode StoreSCP::Entry( void )
     m_lastCount = 0;
     ptrStoreSCP = this;
 
-    const wxCharBuffer directory = m_directory.fn_str();
-    char* const dir = new char[std::strlen( directory ) + 1];
-    std::strcpy( dir, directory );
-
     char port[6];
     std::snprintf( port, sizeof( port ) / sizeof( *port ),
 		   "%u", static_cast< unsigned int >( m_port ) );
-    char *argv[] = { "storescp", "-od", dir, port };
+
+    char* options = new char[10];
+    if (m_tname) std::strcpy( options,"-tn");
+    else  std::strcpy( options,"-uf");
+
+    if(m_chdir) udir=true;
+    else udir=false;
+
+
+    char *argv[] = { "storescp","-od", m_directory,options, port };
+
 
     const int code = storescp_main( sizeof( argv ) / sizeof( *argv ), argv );
-    delete dir;
 
     // Cast to unsigned long long makes MSVC happier
     return reinterpret_cast< wxThread::ExitCode >
 	    ( static_cast< unsigned long long >( code ) );
 }
+ 
 
 } // namespace dicomsel
 

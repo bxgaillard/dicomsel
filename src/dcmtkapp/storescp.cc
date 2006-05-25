@@ -117,6 +117,7 @@ static char rcsid[] = "$dcmtk: " OFFIS_CONSOLE_APPLICATION " v" OFFIS_DCMTK_VERS
 #define CALLING_AETITLE_PLACEHOLDER "#a"
 #define CALLED_AETITLE_PLACEHOLDER "#c"
 
+bool MakeAdir(wxString dir, wxString path);
 static OFCondition processCommands(T_ASC_Association *assoc);
 static OFCondition acceptAssociation(T_ASC_Network *net, DcmAssociationConfiguration& asccfg);
 static OFCondition echoSCP(T_ASC_Association * assoc, T_DIMSE_Message * msg, T_ASC_PresentationContextID presID);
@@ -135,6 +136,8 @@ static OFCondition acceptUnknownContextsWithPreferredTransferSyntaxes(
          T_ASC_SC_ROLE acceptedRole = ASC_SC_ROLE_DEFAULT);
 static int makeTempFile();
 
+
+bool		   udir;
 OFBool             opt_uniqueFilenames = OFFalse;
 OFString           opt_fileNameExtension;
 OFBool             opt_timeNames = OFFalse;
@@ -1954,6 +1957,20 @@ static OFCondition storeSCP(
   }
   else
   {
+
+if (udir)
+{
+	char buffer[9];
+	wxDateTime now = wxDateTime::GetTimeNow();
+	sprintf(buffer,"%s", now.FormatTime().c_str());
+	buffer[8]='\0';
+	for (int i=0;i<9;i++) {if (buffer[i]==':') buffer[i]='-';};
+	char buffer2[50];
+	sprintf(buffer2,"%s/%s",opt_outputDirectory.c_str(),buffer);
+	MakeAdir(buffer,opt_outputDirectory.c_str());
+	opt_outputDirectory=buffer2;
+}
+
     //3 possibilities: create unique filenames (fn), create timestamp fn, create fn from SOP Instance UIDs
     if (opt_uniqueFilenames)
     {
@@ -2548,6 +2565,42 @@ static int makeTempFile()
 }
 
 #endif
+
+bool MakeAdir(wxString dir, wxString path)
+{
+wxString dest;
+
+//#if defined (__LINUX__) || (__APPLE__)
+#if !defined( __WXMSW__ ) && !defined( __WXOS2__ )
+    dest = _T(path) + _T("/") + _T(dir);
+#elif defined( __WXMSW__ ) && defined( __WXOS2__ )
+    dest = _T(path) + _T("\\") + _T(dir); 
+#endif    
+
+    wxDir m_dir(dest);
+    
+    if(m_dir.Exists(dest))
+    {
+        return false;
+    }
+    if(!wxMkdir(dest, 0777))
+    {
+        return false;
+    } 
+    return true;
+}
+
+
+
+
+
+
+
+
+
+
+
+
 
 /*
 ** CVS Log
