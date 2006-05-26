@@ -26,8 +26,7 @@
 
 // C standard library
 #include <cstdlib>
-
-#include <iostream>
+#include <cstring>
 
 // Current module
 #include <dicomsel/DicomTree.h>
@@ -67,8 +66,9 @@ wxImage DicomFile::GetImage( void )
     if( !m_loaded && !Read() ) return wxNullImage;
 
     // We use malloc() and not new, as required by the wxImage constructor
-    unsigned char* const data = reinterpret_cast< unsigned char* >(
-	std::malloc( m_size.GetWidth() * m_size.GetHeight() * 3 ) );
+    const unsigned size = m_size.GetWidth() * m_size.GetHeight() * 3;
+    unsigned char* const data =
+	    reinterpret_cast< unsigned char* >( std::malloc( size ) );
     if( data == NULL ) return wxNullImage;
 
     switch( m_format )
@@ -91,6 +91,10 @@ wxImage DicomFile::GetImage( void )
 	case FF_S16:
 	    ConvertData< signed short >(
 		data, reinterpret_cast< signed short* >( m_frame ) );
+	    break;
+
+	default:
+	    std::memcpy( data, m_frame, size );
 	    break;
     }
 

@@ -30,19 +30,19 @@ class MainFrame;
 class Store: public wxThreadHelper, wxEvtHandler
 {
 private:
-    wxTimer     *m_tmrRunning;
     bool        m_blnCancelled;
-    int Type;
-    wxString Address;
-    wxString Port;
-    wxString FileName;
+    int         Type;
+    wxString    Address, Port, FileName;
+    wxTimer*    m_tmrRunning;
     unsigned int Port_num;
     MainFrame *Frame;
+
 public:
     Store(wxString Address_,wxString Port_,wxString FileName_, int type_ );
     virtual ~Store( void );
-    void        Run();
-    virtual wxThread::ExitCode    Entry();
+
+    void                       Run();
+    virtual wxThread::ExitCode Entry();
     bool        IsRunning();
     void        OnTimer(wxTimerEvent &event);
 

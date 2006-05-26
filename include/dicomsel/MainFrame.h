@@ -77,8 +77,8 @@ private:
     }
     m_labels[TagSet::TAG__LAST];
 
-    wxString Address, PortRcp, PortSend,StorePath;
-    bool     Check,Check_tn,Check_dr;
+    wxString Address, PortRcp, PortSend, StorePath;
+    bool     Check, Check_tn, Check_dr;
     StoreSCP* m_server;
 
     // No copy/assignment

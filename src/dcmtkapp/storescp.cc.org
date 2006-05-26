@@ -135,8 +135,6 @@ static OFCondition acceptUnknownContextsWithPreferredTransferSyntaxes(
          T_ASC_SC_ROLE acceptedRole = ASC_SC_ROLE_DEFAULT);
 static int makeTempFile();
 
-OFBool             udir = OFFalse;
-OFString           urootdir;
 OFBool             opt_uniqueFilenames = OFFalse;
 OFString           opt_fileNameExtension;
 OFBool             opt_timeNames = OFFalse;
@@ -1956,22 +1954,6 @@ static OFCondition storeSCP(
   }
   else
   {
-    if (udir)
-    {
-	time_t now;
-	char buffer[21];
-
-	time(&now);
-	strftime(buffer, sizeof(buffer), "/%Y-%m-%d-%H-%M-%S",
-		 localtime(&now));
-	opt_outputDirectory = urootdir + buffer;
-	mkdir(opt_outputDirectory.c_str()
-#ifndef _WIN32
-		, 0777
-#endif // !_WIN32
-	     );
-    }
-
     //3 possibilities: create unique filenames (fn), create timestamp fn, create fn from SOP Instance UIDs
     if (opt_uniqueFilenames)
     {

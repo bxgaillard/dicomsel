@@ -25,6 +25,8 @@ LIBRARIES = \
 
 TARGETS = \
     dcmdata.lib \
+    dcmimage.lib \
+    dcmimgle.lib \
     dcmnet.lib \
     ofstd.lib
 

@@ -27,7 +27,7 @@ WXDIR = wxmsw
 PWD ?= $(shell pwd)
 PWD := $(PWD)
 
-.PHONY: default all autogen autoclean clean head
+.PHONY: default all autogen autoclean conf clean head
 .PHONY: dist bindist linux win32 win32-mingw win32-msc mac
 
 default: dist bindist autoclean
@@ -46,6 +46,9 @@ autoclean:
 	test ! -f Makefile || make distclean
 	rm -rf autom4te.cache config.h.in aclocal.m4 configure autotools \
 	    `find -name Makefile.in | grep -v ^\\./3rdparty`
+
+conf:
+	$(CONFIGURE) CFLAGS="$(CFLAGS)" CXXFLAGS="$(CXXFLAGS)" LDFLAGS="-s"
 
 dist: configure
 	./configure

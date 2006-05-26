@@ -15,15 +15,18 @@
 TOPDIR = ..
 !INCLUDE $(TOPDIR)\msvc\flags.mak
 
-DCMTK_LIBS = ofstd.lib dcmdata.lib dcmnet.lib \
+DCMTK_LIBS = ofstd.lib dcmdata.lib dcmnet.lib dcmimgle.lib dcmimage.lib \
 	     ws2_32.lib netapi32.lib
 
 DEFS     = /DDICOM_NODLL $(WX_DEFS)
 INCLUDES = /I..\include /I..\libdicom\include /I..\libdicom\include\dicom \
-	   $(WX_INCLUDES) /I..\$(DCMTK_DIR)\include
+	   /I..\$(DCMTK_DIR)\include /I..\$(OPENJPEG_DIR)\include \
+	   $(WX_INCLUDES)
 RC_INCLS = $(WX_RC_INCLS)
-LIBS     = /LIBPATH:..\libdicom\src dicom.lib $(WX_LIBS) \
-	   /LIBPATH:..\3rdparty\dcmtk-$(DCMTK_VERSION) $(DCMTK_LIBS)
+LIBS     = /LIBPATH:..\libdicom\src dicom.lib \
+	   /LIBPATH:..\$(DCMTK_DIR) $(DCMTK_LIBS) \
+	   /LIBPATH:..\$(OPENJPEG_DIR)\src openjpeg.lib \
+	   $(WX_LIBS)
 
 dicomsel.exe: \
     BitmapPanel.obj \

@@ -288,7 +288,7 @@ const uint32 LibDicomFile::VisitDicomPixelDataTag(
 		*/
 
 		opj_dparameters_t parameters;
-		opj_set_default_decoder_parameters(&parameters);
+		opj_set_default_decoder_parameters( &parameters );
 		opj_setup_decoder( dinfo, &parameters );
 		opj_cio_t* const cio =
 			opj_cio_open( reinterpret_cast< opj_common_ptr >( dinfo ),

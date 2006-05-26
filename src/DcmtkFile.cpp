@@ -28,6 +28,8 @@
 #include <dcmtk/dcmdata/dcfilefo.h>
 #include <dcmtk/dcmdata/dcdatset.h>
 #include <dcmtk/dcmdata/dctagkey.h>
+#include <dcmtk/dcmimgle/dcmimage.h>
+#include <dcmtk/dcmimage/diregist.h>
 
 // Current module
 #include <dicomsel/DicomTree.h>
@@ -68,15 +70,36 @@ bool DcmtkFile::ReadFile( const wxString& filename )
 	    const TagSet::TagID tag = static_cast< TagSet::TagID >( i );
 	    DcmTagKey key( TagSet::GetTagGroup( tag ),
 			   TagSet::GetTagElement( tag ) );
-	    if( dataset->findAndGetOFString( key, str ).good() )
+	    if( dataset->findAndGetOFStringArray( key, str ).good() )
 	    {
-		SetTagString( tag, wxString( str.c_str(), wxConvISO8859_1 ) );
+		wxString tagStr( str.c_str(), wxConvISO8859_1 );
+		switch( i )
+		{
+		    case TagSet::TAG_IMAGE_POSITION:
+		    case TagSet::TAG_PIXEL_SPACING:
+			tagStr.Replace( wxT( "\\" ), wxT( " " ) );
+			break;
+		}
+		SetTagString( tag, tagStr );
 	    }
 	}
 
+	DicomImage image( &format, dataset->getOriginalXfer() );
+	SetSize( image.getWidth(), image.getHeight() );
+
+	const unsigned long size = image.getOutputDataSize( 16 );
+	unsigned char* const data = new unsigned char[size];
+	image.getOutputData( data, size, 16 );
+
+	// FIXME: not FF_ASIS for 16-bit RGB images!
+	SetFrame( reinterpret_cast< char* >( data ),
+		  image.isMonochrome() ? FF_U16 : FF_ASIS );
+
 	// Free memory
 	format.clear();
+	m_valid = true;
     }
+    else m_valid = false;
 
     return true;
 }

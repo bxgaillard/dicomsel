@@ -21,6 +21,7 @@
 # French report
 reportdir = $(datadir)/doc/$(PACKAGE_TARNAME)-$(PACKAGE_VERSION)
 dist_report_DATA = \
+    report-fr/rapport-2.pdf \
     report-fr/rapport-page_de_garde.pdf \
     report-fr/rapport.pdf
 
@@ -28,6 +29,7 @@ dist_report_DATA = \
 EXTRA_DIST = \
     README \
     coding_conventions_fr.pdf \
+    report-fr/rapport-2.odt \
     report-fr/rapport.doc
 
 # End of File

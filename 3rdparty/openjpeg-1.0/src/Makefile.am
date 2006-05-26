@@ -42,3 +42,6 @@ libopenjpeg_a_SOURCES = \
     tcd.h \
     tgt.c \
     tgt.h
+
+EXTRA_DIST = \
+    Makefile.msc

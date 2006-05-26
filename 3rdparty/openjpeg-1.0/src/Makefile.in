@@ -213,6 +213,9 @@ libopenjpeg_a_SOURCES = \
     tgt.c \
     tgt.h
 
+EXTRA_DIST = \
+    Makefile.msc
+
 all: all-am
 
 .SUFFIXES:

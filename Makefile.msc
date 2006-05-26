@@ -20,6 +20,8 @@ all:
 	$(MAKE) /NOLOGO /f Makefile.msc
 	cd "$(MAKEDIR)\$(DCMTK_DIR)"
 	$(MAKE) /NOLOGO /f Makefile.msc
+	cd "$(MAKEDIR)\$(OPENJPEG_DIR)\src"
+	$(MAKE) /NOLOGO /f Makefile.msc
 	cd "$(MAKEDIR)\src"
 	$(MAKE) /NOLOGO /f Makefile.msc
 #	cd "$(MAKEDIR)\rfsample"
@@ -29,6 +31,8 @@ clean:
 	cd "$(MAKEDIR)\libdicom\src"
 	$(MAKE) /NOLOGO /f Makefile.msc clean
 	cd "$(MAKEDIR)\$(DCMTK_DIR)"
+	$(MAKE) /NOLOGO /f Makefile.msc clean
+	cd "$(MAKEDIR)\$(OPENJPEG_DIR)\src"
 	$(MAKE) /NOLOGO /f Makefile.msc clean
 	cd "$(MAKEDIR)\src"
 	$(MAKE) /NOLOGO /f Makefile.msc clean

@@ -33,7 +33,8 @@
 #include <wx/msgdlg.h>
 #include <wx/dirdlg.h>
 
-
+// System
+#include <cstring>
 
 // Current module
 #include <dicomsel/StoreDialog.h>
@@ -306,7 +307,7 @@ bool StoreDialog::IsCheck(int box_number)
 	bool result=true;
 	if (box_number==1) result=(m_checkBoxe->GetValue());
 	if (box_number==2) result= (m_checkBoxe_tn->GetValue());
-	if (box_number==3) result=(m_checkBoxe_dr->GetValue());  
+	if (box_number==3) result=(m_checkBoxe_dr->GetValue());
 
 return result;
 }
@@ -377,9 +378,9 @@ void StoreDialog::OnSelectDirectory(wxCommandEvent& WXUNUSED( event ))
 
  	 wxDirDialog *openDirDialog = new wxDirDialog
    	 (this,wxT( "Choose a directory" ),wxGetCwd(),0,wxDefaultPosition);
-  
+
 	if (openDirDialog->ShowModal() ==  wxID_OK)
-	{ 
+	{
 		const wxString path(openDirDialog->GetPath());
 		m_rcp_path->SetLabel(path);
 		m_path=path;

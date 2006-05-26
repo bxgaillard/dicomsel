@@ -54,7 +54,7 @@ public:
     void Free( void );
 
 protected:
-    enum FrameFormat { FF_U8, FF_S8, FF_U16, FF_S16 };
+    enum FrameFormat { FF_ASIS, FF_U8, FF_S8, FF_U16, FF_S16 };
 
     void SetTagString( const TagSet::TagID tag, const wxString& str )
     {

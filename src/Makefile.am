@@ -22,7 +22,7 @@ AM_CPPFLAGS = -I$(top_srcdir)/include -I$(top_srcdir)/libdicom/include \
 AM_CXXFLAGS = $(WX_CXXFLAGS_ONLY)
 
 # DCMTK libs: put here which ones are used (-ldcmimage -ldcmnet ...)
-DCMTK_LIBS = -ldcmnet -lofstd -ldcmdata
+DCMTK_LIBS = -ldcmnet -lofstd -ldcmdata -ldcmimgle -ldcmimage
 
 # Windows resource handling
 if HAVE_RC
@@ -73,6 +73,7 @@ EXTRA_DIST = \
     images/series.xpm \
     images/study.xpm \
     dcmtkapp/storescp.cc \
+    dcmtkapp/storescp.cc.org \
     dcmtkapp/storescu.cc
 
 # End of File

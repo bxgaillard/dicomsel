@@ -33,6 +33,9 @@ WX_PATH = $(TOPDIR)\..\wxWidgets
 DCMTK_VERSION = 3.5.4
 DCMTK_DIR_NIX = 3rdparty/dcmtk-3.5.4
 DCMTK_DIR     = $(DCMTK_DIR_NIX:/=\)
+OPENJPEG_VERSION = 1.0
+OPENJPEG_DIR_NIX = 3rdparty/openjpeg-1.0
+OPENJPEG_DIR     = $(OPENJPEG_DIR_NIX:/=\)
 
 CC   = cl /TC $(CLFLAGS)
 CXX  = cl /TP $(CLFLAGS)

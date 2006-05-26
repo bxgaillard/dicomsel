@@ -1,0 +1,34 @@
+.SUFFIXES:
+.SUFFIXES: .c .obj
+.c.obj:: ; cl /nologo /MT /TC /Ox /DNDEBUG $(CPPFLAGS) /c $<
+
+CPPFLAGS = /DWIN32 /I..\include
+
+default: openjpeg.lib
+openjpeg.lib: ; link /LIB /NOLOGO /OUT:$@ $**
+
+openjpeg.lib: \
+    bio.obj \
+    cio.obj \
+    dwt.obj \
+    event.obj \
+    fix.obj \
+    image.obj \
+    int.obj \
+    j2k.obj \
+    j2k_lib.obj \
+    jp2.obj \
+    jpt.obj \
+    mct.obj \
+    mqc.obj \
+    openjpeg.obj \
+    pi.obj \
+    raw.obj \
+    t1.obj \
+    t2.obj \
+    tcd.obj \
+    tgt.obj
+
+clean:
+	-del *.obj
+	-del openjpeg.lib
