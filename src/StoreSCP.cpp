@@ -60,10 +60,15 @@ static int main( int argc, char *argv[] );
 #undef opt_blockMode
 #undef main
 
+// Add support for snprintf() in Microsoft Visual C++ and Apple's GCC 3.3
 #if defined( _WIN32 ) && (defined( _MSC_VER ) || defined( __MINGW32__ ))
 namespace std { using ::_snprintf; }
 # define snprintf _snprintf
-#endif // _WIN32 && (_MSC_VER || __MINGW32__)
+#elif defined( __APPLE__ ) && defined( __GNUC__ ) && \
+      __GNUC__ == 3 && __GNUC_MINOR__ == 3
+namespace std { using ::snprintf; }
+#endif // __APPLE__ && __GNUC__ && __GNUC__ == 3 && __GNUC_MINOR__ == 3
+
 
 namespace dicomsel
 {

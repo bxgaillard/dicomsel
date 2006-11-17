@@ -272,8 +272,8 @@ const uint32 LibDicomFile::VisitDicomPixelDataTag(
         {
 	    const wxString& syntax = m_tags[TagSet::TAG_TRANSFERT_SYNTAX];
 
-	    if( syntax == "1.2.840.10008.1.2.4.90" ||
-		syntax == "1.2.840.10008.1.2.4.91" )
+	    if( syntax == wxT( "1.2.840.10008.1.2.4.90" ) ||
+		syntax == wxT( "1.2.840.10008.1.2.4.91" ) )
 	    {
 		opj_dinfo_t* const dinfo = opj_create_decompress( CODEC_J2K );
 

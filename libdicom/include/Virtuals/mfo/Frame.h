@@ -42,7 +42,7 @@ public:
 	/**
 	 * Constructor
 	 */
-	CFrame::CFrame
+	CFrame
 	(
 		const std::string& _vFullPath,
 		mfo::CAcquisition* _pAcquisition
@@ -58,7 +58,7 @@ public:
 	/**
 	 * Constructor
 	 */
-	CFrame::CFrame
+	CFrame
 	(
 		const std::string& _vFullPath,
 		mfo::CAcquisition* _pAcquisition,
@@ -75,7 +75,7 @@ public:
 	/**
 	 * Destructor
 	 */
-	CFrame::~CFrame()
+	~CFrame()
 	{
 		if (this->m_pData != NULL)
 		{
@@ -286,7 +286,7 @@ public:
 	/**
 	 *
 	 */
-	CPointerFrame::~CPointerFrame()
+	~CPointerFrame()
 	{
 		//if (m_pFrame!=NULL) delete m_pFrame;
 		// Do not delete because objects (frames) are only use for process (sort)

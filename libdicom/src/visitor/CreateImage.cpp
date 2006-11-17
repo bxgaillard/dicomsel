@@ -111,7 +111,7 @@ CCreateImage::CCreateImage(const std::string& _sOutputFilename, mfo::CAcquisitio
 
    // Post-condition
    assert(this->m_pBuffer					== NULL	) ;
-   assert(this->m_iterFrame					!= NULL	) ;
+   assert(*this->m_iterFrame					!= NULL	) ;
    assert(this->m_pAcquisition				!= NULL	) ;
    assert(this->m_sOutputFilename.size()	> 0		) ;
    assert(this->m_vectorPixelSize.size()	== 2	) ;

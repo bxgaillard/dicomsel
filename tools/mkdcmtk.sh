@@ -1,13 +1,46 @@
 #!/bin/sh
 
 if [ $# -lt 2 -o $# -gt 3 ]; then
-    echo "Syntax: $0 <srcdir> <dstdir> [module1,module2...]"
+    echo "Syntax: $0 <src.tar.gz> <dstdir> [module1,module2...]" 1>&2
     exit 1
 fi
 
-srcdir="$1"
+srcarc="$1"
 dstdir="$2"
+
+if [ ! -f "$srcarc" ]; then
+    echo "Fatal: '$srcarc' doesn't exist." 1>&2
+    exit 2
+fi
+
+if [ ! -d "$dstdir" ]; then
+    echo "Fatal: '$dstdir' doesn't exist." 1>&2
+    exit 3
+fi
+
+case "$srcarc" in
+    *.tar.gz | *.tgz )
+	arcopt=z
+	;;
+    *.tar.bz2 )
+	arcopt=j
+	;;
+    * )
+	echo 'Fatal: unknown archive format.' 1>&2
+	exit 4
+esac
+
+srcver="`basename "$srcarc" | \
+	 sed 's/.*-\(.*\)\.\(tar\.\(gz\|bz2\)\|tgz\)/\1/'`"
+
+echo 'Extracting archive...'
+tmpdir="`mktemp -d /tmp/dcmtk.XXXXXXXXXX`"
+tar -x"$arcopt"f "$1" -C "$tmpdir"
+srcdir="$tmpdir/dcmtk-$srcver"
+dstdir="$dstdir/dcmtk-$srcver"
 modules=",$3,"
+
+echo 'Copying files...'
 
 rm -rf "$dstdir"
 mkdir "$dstdir"
@@ -150,9 +183,41 @@ for dir in "$srcdir"/*/include; do
 done
 echo >&3
 
+echo >&4
+echo 'clean:'>&4
+
+for dir in "$srcdir"/*/libsrc; do
+    basedir="`dirname "$dir"`"
+    basedir="`basename "$basedir"`"
+
+    case "$modules" in
+	,, | *,"$basedir",* )
+	    for src in "$dir"/*.cc; do
+		fname="$basedir\\`basename "$src" .cc`.obj"
+		echo $'\t'"if exist $fname del $fname" >&4
+	    done
+
+	    if [ "x$basedir" = xdcmjpeg ]; then
+		for sdir in "$srcdir"/dcmjpeg/libijg*; do
+		    for src in "$sdir"/*.c; do
+			fname="dcmjpeg\\`basename "$sdir"`\\"
+			fname="$fname`basename "$src" .c`.obj"
+			echo $'\t'"if exist $fname del $fname" >&4
+		    done
+		done
+	    fi
+
+	    fname="$basedir.lib"
+	    echo $'\t'"if exist $fname del $fname" >&4
+	;;
+    esac
+done
+
 exec 3>&- 4>&-
 
 init_am='AM_INIT_AUTOMAKE([1.7 no-define dist-bzip2 -Wall])'
+def_pth='AC_DEFINE(\[HAVE_POINTER_TYPE_PTHREAD_T\], \[1\],'
+def_pth="$def_pth \\[Wether pthread_t is a pointer\\])"
 
 sed -e 's/\[\(dcmtk\)-[0-9]\+\.[0-9]\+\.[0-9]\+\]/[\1]/' \
     -e 's/Makefile\.in/Makefile.am/' \
@@ -162,19 +227,79 @@ sed -e 's/\[\(dcmtk\)-[0-9]\+\.[0-9]\+\.[0-9]\+\]/[\1]/' \
     -e 's/^AC_CHECK_PROGS(LIBTOOL[^)]\+)$//' \
     -e 's/^AC_OUTPUT([^)]\+)$/AC_OUTPUT(Makefile)/' \
     <"$srcdir/config/configure.in" >"$dstdir/configure.ac"
-cp -p "$srcdir/config/aclocal.m4" "$dstdir/aclocal-2.m4"
 cp -p "$srcdir/HISTORY" "$dstdir/NEWS"
 cp -p "$srcdir/COPYRIGHT" "$dstdir/COPYING"
 cp -p "$srcdir/CHANGES".??? "$dstdir/ChangeLog"
 cp -p "$srcdir/README" "$srcdir/INSTALL" "$dstdir"
 echo 'See COPYING.' >"$dstdir/AUTHORS"
-mkdir "$dstdir/autotools"
 
+mkdir "$dstdir/autotools"
+cp -p "$srcdir/config/aclocal.m4" "$dstdir/autotools/dcmtk.m4"
+rm -rf "$tmpdir"
+
+echo 'Patching files...'
 cd "$dstdir"
-aclocal
-cat aclocal-2.m4 >> aclocal.m4
-rm -f aclocal-2.m4
-autoconf
-autoheader
-automake -a -c
+patch -Np1 << EOF
+diff -ur dcmtk-3.5.4.old/autotools/dcmtk.m4 dcmtk-3.5.4/autotools/dcmtk.m4
+--- dcmtk-3.5.4.old/autotools/dcmtk.m4	2005-11-15 17:05:51 +0100
++++ dcmtk-3.5.4/autotools/dcmtk.m4	2006-11-17 08:27:38 +0100
+@@ -1408,7 +1408,14 @@
+ #ifdef __cplusplus
+ }
+ #endif
+-],[\$1 p; unsigned long l = p],
++],[
++\$1 p; unsigned long l =
++#ifdef __cplusplus
++static_cast<unsigned long>(p)
++#else
++p
++#endif
++],
+ eval "ac_cv_pointer_type_\$tmp_save_1=no", eval "ac_cv_pointer_type_\$tmp_save_1=yes")])dnl
+ if eval "test \\"\`echo '\$''{'ac_cv_pointer_type_\$tmp_save_1'}'\`\\" = yes"; then
+   AC_MSG_RESULT(yes)
+diff -ur dcmtk-3.5.4.old/dcmdata/mkdeftag.cc dcmtk-3.5.4/dcmdata/mkdeftag.cc
+--- dcmtk-3.5.4.old/dcmdata/mkdeftag.cc	2005-12-09 16:04:37 +0100
++++ dcmtk-3.5.4/dcmdata/mkdeftag.cc	2006-08-05 02:05:54 +0200
+@@ -154,9 +154,11 @@
+ static char*
+ getUserName(char* userString, int maxLen)
+ {
+-#if defined(_REENTRANT) && !defined(_WIN32) && !defined(__CYGWIN__)
++#if defined(_REENTRANT) && !defined(_WIN32) && !defined(__CYGWIN__) \\
++    && defined(_POSIX_THREAD_SAFE_FUNCTIONS)
+     // use getlogin_r instead of getlogin
+-    return getlogin_r(userString, int maxLen)
++    getlogin_r(userString, maxLen);
++    return userString;
+ #else
+     char* s;
+     s = getlogin(); // thread unsafe
+diff -ur dcmtk-3.5.4.old/dcmdata/mkdictbi.cc dcmtk-3.5.4/dcmdata/mkdictbi.cc
+--- dcmtk-3.5.4.old/dcmdata/mkdictbi.cc	2005-12-09 16:04:37 +0100
++++ dcmtk-3.5.4/dcmdata/mkdictbi.cc	2006-08-05 02:06:43 +0200
+@@ -137,9 +137,11 @@
+ static char*
+ getUserName(char* userString, int maxLen)
+ {
+-#if defined(_REENTRANT) && !defined(_WIN32) && !defined(__CYGWIN__)
++#if defined(_REENTRANT) && !defined(_WIN32) && !defined(__CYGWIN__) \\
++    && defined(_POSIX_THREAD_SAFE_FUNCTIONS)
+     // use getlogin_r instead of getlogin
+-    return getlogin_r(userString, int maxLen)
++    getlogin_r(userString, maxLen);
++    return userString;
+ #else
+     char* s;
+     s = getlogin(); // thread unsafe
+EOF
+
+echo 'Running Autotools...'
+aclocal-1.10 -I autotools || aclocal -I autotools
+autoconf-2.60 || autoconf
+autoheader-2.60 || autoheader
+automake-1.10 -a -c || automake -a -c
 rm -rf autom4te.cache
+
+echo 'Done.'

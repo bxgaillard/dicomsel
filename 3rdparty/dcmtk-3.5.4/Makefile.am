@@ -30,8 +30,8 @@ libdcmdata_a_SOURCES = \
     dcmdata/dcdebug.cc \
     dcmdata/dcdicdir.cc \
     dcmdata/dcdicent.cc \
-    dcmdata/dcdictbi.cc \
     dcmdata/dcdict.cc \
+    dcmdata/dcdictbi.cc \
     dcmdata/dcdictzz.cc \
     dcmdata/dcdirrec.cc \
     dcmdata/dcelem.cc \
@@ -68,10 +68,10 @@ libdcmdata_a_SOURCES = \
     dcmdata/dctypes.cc \
     dcmdata/dcuid.cc \
     dcmdata/dcvm.cc \
+    dcmdata/dcvr.cc \
     dcmdata/dcvrae.cc \
     dcmdata/dcvras.cc \
     dcmdata/dcvrat.cc \
-    dcmdata/dcvr.cc \
     dcmdata/dcvrcs.cc \
     dcmdata/dcvrda.cc \
     dcmdata/dcvrds.cc \
@@ -150,6 +150,7 @@ libdcmdata_a_SOURCES = \
     include/dcmtk/dcmdata/dctypes.h \
     include/dcmtk/dcmdata/dcuid.h \
     include/dcmtk/dcmdata/dcvm.h \
+    include/dcmtk/dcmdata/dcvr.h \
     include/dcmtk/dcmdata/dcvrae.h \
     include/dcmtk/dcmdata/dcvras.h \
     include/dcmtk/dcmdata/dcvrat.h \
@@ -159,7 +160,6 @@ libdcmdata_a_SOURCES = \
     include/dcmtk/dcmdata/dcvrdt.h \
     include/dcmtk/dcmdata/dcvrfd.h \
     include/dcmtk/dcmdata/dcvrfl.h \
-    include/dcmtk/dcmdata/dcvr.h \
     include/dcmtk/dcmdata/dcvris.h \
     include/dcmtk/dcmdata/dcvrlo.h \
     include/dcmtk/dcmdata/dcvrlt.h \
@@ -257,10 +257,10 @@ libdcmimgle_a_SOURCES = \
     dcmimgle/diluptab.cc \
     dcmimgle/dimo1img.cc \
     dcmimgle/dimo2img.cc \
+    dcmimgle/dimoimg.cc \
     dcmimgle/dimoimg3.cc \
     dcmimgle/dimoimg4.cc \
     dcmimgle/dimoimg5.cc \
-    dcmimgle/dimoimg.cc \
     dcmimgle/dimomod.cc \
     dcmimgle/dimoopx.cc \
     dcmimgle/dimopx.cc \
@@ -685,8 +685,8 @@ libdcmpstat_a_SOURCES = \
     dcmpstat/dvpsmsg.cc \
     dcmpstat/dvpsov.cc \
     dcmpstat/dvpsovl.cc \
-    dcmpstat/dvpspl2.cc \
     dcmpstat/dvpspl.cc \
+    dcmpstat/dvpspl2.cc \
     dcmpstat/dvpspll.cc \
     dcmpstat/dvpspr.cc \
     dcmpstat/dvpsprt.cc \
@@ -805,8 +805,8 @@ libdcmsign_a_SOURCES = \
     include/dcmtk/dcmsign/sicertvf.h \
     include/dcmtk/dcmsign/sicreapr.h \
     include/dcmtk/dcmsign/sidsa.h \
-    include/dcmtk/dcmsign/simaccon.h \
     include/dcmtk/dcmsign/simac.h \
+    include/dcmtk/dcmsign/simaccon.h \
     include/dcmtk/dcmsign/simd5.h \
     include/dcmtk/dcmsign/sinullpr.h \
     include/dcmtk/dcmsign/siprivat.h \
@@ -929,8 +929,8 @@ libdcmwlm_a_SOURCES = \
     dcmwlm/wldsfs.cc \
     dcmwlm/wlfsim.cc \
     dcmwlm/wlmactmg.cc \
-    include/dcmtk/dcmwlm/wldsfs.h \
     include/dcmtk/dcmwlm/wlds.h \
+    include/dcmtk/dcmwlm/wldsfs.h \
     include/dcmtk/dcmwlm/wlfsim.h \
     include/dcmtk/dcmwlm/wlmactmg.h \
     include/dcmtk/dcmwlm/wltypdef.h

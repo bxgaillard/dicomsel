@@ -23,14 +23,6 @@ LIBRARIES = \
     dcmwlm.lib \
     ofstd.lib
 
-TARGETS = \
-    dcmdata.lib \
-    dcmimage.lib \
-    dcmimgle.lib \
-    dcmnet.lib \
-    ofstd.lib
-
-default: $(TARGETS)
 all: $(LIBRARIES)
 $(LIBRARIES): ; link /LIB /NOLOGO /OUT:$@ $**
 
@@ -44,8 +36,8 @@ dcmdata.lib: \
     dcmdata\dcdebug.obj \
     dcmdata\dcdicdir.obj \
     dcmdata\dcdicent.obj \
-    dcmdata\dcdictbi.obj \
     dcmdata\dcdict.obj \
+    dcmdata\dcdictbi.obj \
     dcmdata\dcdictzz.obj \
     dcmdata\dcdirrec.obj \
     dcmdata\dcelem.obj \
@@ -82,10 +74,10 @@ dcmdata.lib: \
     dcmdata\dctypes.obj \
     dcmdata\dcuid.obj \
     dcmdata\dcvm.obj \
+    dcmdata\dcvr.obj \
     dcmdata\dcvrae.obj \
     dcmdata\dcvras.obj \
     dcmdata\dcvrat.obj \
-    dcmdata\dcvr.obj \
     dcmdata\dcvrcs.obj \
     dcmdata\dcvrda.obj \
     dcmdata\dcvrds.obj \
@@ -150,10 +142,10 @@ dcmimgle.lib: \
     dcmimgle\diluptab.obj \
     dcmimgle\dimo1img.obj \
     dcmimgle\dimo2img.obj \
+    dcmimgle\dimoimg.obj \
     dcmimgle\dimoimg3.obj \
     dcmimgle\dimoimg4.obj \
     dcmimgle\dimoimg5.obj \
-    dcmimgle\dimoimg.obj \
     dcmimgle\dimomod.obj \
     dcmimgle\dimoopx.obj \
     dcmimgle\dimopx.obj \
@@ -443,8 +435,8 @@ dcmpstat.lib: \
     dcmpstat\dvpsmsg.obj \
     dcmpstat\dvpsov.obj \
     dcmpstat\dvpsovl.obj \
-    dcmpstat\dvpspl2.obj \
     dcmpstat\dvpspl.obj \
+    dcmpstat\dvpspl2.obj \
     dcmpstat\dvpspll.obj \
     dcmpstat\dvpspr.obj \
     dcmpstat\dvpsprt.obj \
@@ -575,19 +567,531 @@ ofstd.lib: \
     ofstd\oftime.obj
 
 clean:
-	-del dcmdata\*.obj
-	-del dcmimage\*.obj
-	-del dcmimgle\*.obj
-	-del dcmjpeg\*.obj
-	-del dcmjpeg\libijg12\*.obj
-	-del dcmjpeg\libijg16\*.obj
-	-del dcmjpeg\libijg8\*.obj
-	-del dcmnet\*.obj
-	-del dcmpstat\*.obj
-	-del dcmqrdb\*.obj
-	-del dcmsign\*.obj
-	-del dcmsr\*.obj
-	-del dcmtls\*.obj
-	-del dcmwlm\*.obj
-	-del ofstd\*.obj
-	-del *.lib
+	if exist dcmdata\cmdlnarg.obj del dcmdata\cmdlnarg.obj
+	if exist dcmdata\dcbytstr.obj del dcmdata\dcbytstr.obj
+	if exist dcmdata\dcchrstr.obj del dcmdata\dcchrstr.obj
+	if exist dcmdata\dccodec.obj del dcmdata\dccodec.obj
+	if exist dcmdata\dcdatset.obj del dcmdata\dcdatset.obj
+	if exist dcmdata\dcddirif.obj del dcmdata\dcddirif.obj
+	if exist dcmdata\dcdebug.obj del dcmdata\dcdebug.obj
+	if exist dcmdata\dcdicdir.obj del dcmdata\dcdicdir.obj
+	if exist dcmdata\dcdicent.obj del dcmdata\dcdicent.obj
+	if exist dcmdata\dcdict.obj del dcmdata\dcdict.obj
+	if exist dcmdata\dcdictbi.obj del dcmdata\dcdictbi.obj
+	if exist dcmdata\dcdictzz.obj del dcmdata\dcdictzz.obj
+	if exist dcmdata\dcdirrec.obj del dcmdata\dcdirrec.obj
+	if exist dcmdata\dcelem.obj del dcmdata\dcelem.obj
+	if exist dcmdata\dcerror.obj del dcmdata\dcerror.obj
+	if exist dcmdata\dcfilefo.obj del dcmdata\dcfilefo.obj
+	if exist dcmdata\dchashdi.obj del dcmdata\dchashdi.obj
+	if exist dcmdata\dcistrma.obj del dcmdata\dcistrma.obj
+	if exist dcmdata\dcistrmb.obj del dcmdata\dcistrmb.obj
+	if exist dcmdata\dcistrmf.obj del dcmdata\dcistrmf.obj
+	if exist dcmdata\dcistrmz.obj del dcmdata\dcistrmz.obj
+	if exist dcmdata\dcitem.obj del dcmdata\dcitem.obj
+	if exist dcmdata\dclist.obj del dcmdata\dclist.obj
+	if exist dcmdata\dcmetinf.obj del dcmdata\dcmetinf.obj
+	if exist dcmdata\dcobject.obj del dcmdata\dcobject.obj
+	if exist dcmdata\dcostrma.obj del dcmdata\dcostrma.obj
+	if exist dcmdata\dcostrmb.obj del dcmdata\dcostrmb.obj
+	if exist dcmdata\dcostrmf.obj del dcmdata\dcostrmf.obj
+	if exist dcmdata\dcostrmz.obj del dcmdata\dcostrmz.obj
+	if exist dcmdata\dcpcache.obj del dcmdata\dcpcache.obj
+	if exist dcmdata\dcpixel.obj del dcmdata\dcpixel.obj
+	if exist dcmdata\dcpixseq.obj del dcmdata\dcpixseq.obj
+	if exist dcmdata\dcpxitem.obj del dcmdata\dcpxitem.obj
+	if exist dcmdata\dcrleccd.obj del dcmdata\dcrleccd.obj
+	if exist dcmdata\dcrlecce.obj del dcmdata\dcrlecce.obj
+	if exist dcmdata\dcrlecp.obj del dcmdata\dcrlecp.obj
+	if exist dcmdata\dcrledrg.obj del dcmdata\dcrledrg.obj
+	if exist dcmdata\dcrleerg.obj del dcmdata\dcrleerg.obj
+	if exist dcmdata\dcrlerp.obj del dcmdata\dcrlerp.obj
+	if exist dcmdata\dcsequen.obj del dcmdata\dcsequen.obj
+	if exist dcmdata\dcstack.obj del dcmdata\dcstack.obj
+	if exist dcmdata\dcswap.obj del dcmdata\dcswap.obj
+	if exist dcmdata\dctag.obj del dcmdata\dctag.obj
+	if exist dcmdata\dctagkey.obj del dcmdata\dctagkey.obj
+	if exist dcmdata\dctypes.obj del dcmdata\dctypes.obj
+	if exist dcmdata\dcuid.obj del dcmdata\dcuid.obj
+	if exist dcmdata\dcvm.obj del dcmdata\dcvm.obj
+	if exist dcmdata\dcvr.obj del dcmdata\dcvr.obj
+	if exist dcmdata\dcvrae.obj del dcmdata\dcvrae.obj
+	if exist dcmdata\dcvras.obj del dcmdata\dcvras.obj
+	if exist dcmdata\dcvrat.obj del dcmdata\dcvrat.obj
+	if exist dcmdata\dcvrcs.obj del dcmdata\dcvrcs.obj
+	if exist dcmdata\dcvrda.obj del dcmdata\dcvrda.obj
+	if exist dcmdata\dcvrds.obj del dcmdata\dcvrds.obj
+	if exist dcmdata\dcvrdt.obj del dcmdata\dcvrdt.obj
+	if exist dcmdata\dcvrfd.obj del dcmdata\dcvrfd.obj
+	if exist dcmdata\dcvrfl.obj del dcmdata\dcvrfl.obj
+	if exist dcmdata\dcvris.obj del dcmdata\dcvris.obj
+	if exist dcmdata\dcvrlo.obj del dcmdata\dcvrlo.obj
+	if exist dcmdata\dcvrlt.obj del dcmdata\dcvrlt.obj
+	if exist dcmdata\dcvrobow.obj del dcmdata\dcvrobow.obj
+	if exist dcmdata\dcvrof.obj del dcmdata\dcvrof.obj
+	if exist dcmdata\dcvrpn.obj del dcmdata\dcvrpn.obj
+	if exist dcmdata\dcvrpobw.obj del dcmdata\dcvrpobw.obj
+	if exist dcmdata\dcvrsh.obj del dcmdata\dcvrsh.obj
+	if exist dcmdata\dcvrsl.obj del dcmdata\dcvrsl.obj
+	if exist dcmdata\dcvrss.obj del dcmdata\dcvrss.obj
+	if exist dcmdata\dcvrst.obj del dcmdata\dcvrst.obj
+	if exist dcmdata\dcvrtm.obj del dcmdata\dcvrtm.obj
+	if exist dcmdata\dcvrui.obj del dcmdata\dcvrui.obj
+	if exist dcmdata\dcvrul.obj del dcmdata\dcvrul.obj
+	if exist dcmdata\dcvrulup.obj del dcmdata\dcvrulup.obj
+	if exist dcmdata\dcvrus.obj del dcmdata\dcvrus.obj
+	if exist dcmdata\dcvrut.obj del dcmdata\dcvrut.obj
+	if exist dcmdata\dcxfer.obj del dcmdata\dcxfer.obj
+	if exist dcmdata\mkdeftag.obj del dcmdata\mkdeftag.obj
+	if exist dcmdata\mkdictbi.obj del dcmdata\mkdictbi.obj
+	if exist dcmdata.lib del dcmdata.lib
+	if exist dcmimage\diargimg.obj del dcmimage\diargimg.obj
+	if exist dcmimage\dicmyimg.obj del dcmimage\dicmyimg.obj
+	if exist dcmimage\dicoimg.obj del dcmimage\dicoimg.obj
+	if exist dcmimage\dicoopx.obj del dcmimage\dicoopx.obj
+	if exist dcmimage\dicopx.obj del dcmimage\dicopx.obj
+	if exist dcmimage\dihsvimg.obj del dcmimage\dihsvimg.obj
+	if exist dcmimage\dipalimg.obj del dcmimage\dipalimg.obj
+	if exist dcmimage\dipipng.obj del dcmimage\dipipng.obj
+	if exist dcmimage\dipitiff.obj del dcmimage\dipitiff.obj
+	if exist dcmimage\diqtctab.obj del dcmimage\diqtctab.obj
+	if exist dcmimage\diqtfs.obj del dcmimage\diqtfs.obj
+	if exist dcmimage\diqthash.obj del dcmimage\diqthash.obj
+	if exist dcmimage\diqthitl.obj del dcmimage\diqthitl.obj
+	if exist dcmimage\diqtpbox.obj del dcmimage\diqtpbox.obj
+	if exist dcmimage\diquant.obj del dcmimage\diquant.obj
+	if exist dcmimage\diregist.obj del dcmimage\diregist.obj
+	if exist dcmimage\dirgbimg.obj del dcmimage\dirgbimg.obj
+	if exist dcmimage\diybrimg.obj del dcmimage\diybrimg.obj
+	if exist dcmimage\diyf2img.obj del dcmimage\diyf2img.obj
+	if exist dcmimage\diyp2img.obj del dcmimage\diyp2img.obj
+	if exist dcmimage.lib del dcmimage.lib
+	if exist dcmimgle\dcmimage.obj del dcmimgle\dcmimage.obj
+	if exist dcmimgle\dibaslut.obj del dcmimgle\dibaslut.obj
+	if exist dcmimgle\diciefn.obj del dcmimgle\diciefn.obj
+	if exist dcmimgle\dicielut.obj del dcmimgle\dicielut.obj
+	if exist dcmimgle\didislut.obj del dcmimgle\didislut.obj
+	if exist dcmimgle\didispfn.obj del dcmimgle\didispfn.obj
+	if exist dcmimgle\didocu.obj del dcmimgle\didocu.obj
+	if exist dcmimgle\digsdfn.obj del dcmimgle\digsdfn.obj
+	if exist dcmimgle\digsdlut.obj del dcmimgle\digsdlut.obj
+	if exist dcmimgle\diimage.obj del dcmimgle\diimage.obj
+	if exist dcmimgle\diinpx.obj del dcmimgle\diinpx.obj
+	if exist dcmimgle\diluptab.obj del dcmimgle\diluptab.obj
+	if exist dcmimgle\dimo1img.obj del dcmimgle\dimo1img.obj
+	if exist dcmimgle\dimo2img.obj del dcmimgle\dimo2img.obj
+	if exist dcmimgle\dimoimg.obj del dcmimgle\dimoimg.obj
+	if exist dcmimgle\dimoimg3.obj del dcmimgle\dimoimg3.obj
+	if exist dcmimgle\dimoimg4.obj del dcmimgle\dimoimg4.obj
+	if exist dcmimgle\dimoimg5.obj del dcmimgle\dimoimg5.obj
+	if exist dcmimgle\dimomod.obj del dcmimgle\dimomod.obj
+	if exist dcmimgle\dimoopx.obj del dcmimgle\dimoopx.obj
+	if exist dcmimgle\dimopx.obj del dcmimgle\dimopx.obj
+	if exist dcmimgle\diovdat.obj del dcmimgle\diovdat.obj
+	if exist dcmimgle\diovlay.obj del dcmimgle\diovlay.obj
+	if exist dcmimgle\diovlimg.obj del dcmimgle\diovlimg.obj
+	if exist dcmimgle\diovpln.obj del dcmimgle\diovpln.obj
+	if exist dcmimgle\diutils.obj del dcmimgle\diutils.obj
+	if exist dcmimgle.lib del dcmimgle.lib
+	if exist dcmjpeg\ddpiimpl.obj del dcmjpeg\ddpiimpl.obj
+	if exist dcmjpeg\dipijpeg.obj del dcmjpeg\dipijpeg.obj
+	if exist dcmjpeg\djcodecd.obj del dcmjpeg\djcodecd.obj
+	if exist dcmjpeg\djcodece.obj del dcmjpeg\djcodece.obj
+	if exist dcmjpeg\djcparam.obj del dcmjpeg\djcparam.obj
+	if exist dcmjpeg\djdecbas.obj del dcmjpeg\djdecbas.obj
+	if exist dcmjpeg\djdecext.obj del dcmjpeg\djdecext.obj
+	if exist dcmjpeg\djdeclol.obj del dcmjpeg\djdeclol.obj
+	if exist dcmjpeg\djdecode.obj del dcmjpeg\djdecode.obj
+	if exist dcmjpeg\djdecpro.obj del dcmjpeg\djdecpro.obj
+	if exist dcmjpeg\djdecsps.obj del dcmjpeg\djdecsps.obj
+	if exist dcmjpeg\djdecsv1.obj del dcmjpeg\djdecsv1.obj
+	if exist dcmjpeg\djdijg12.obj del dcmjpeg\djdijg12.obj
+	if exist dcmjpeg\djdijg16.obj del dcmjpeg\djdijg16.obj
+	if exist dcmjpeg\djdijg8.obj del dcmjpeg\djdijg8.obj
+	if exist dcmjpeg\djeijg12.obj del dcmjpeg\djeijg12.obj
+	if exist dcmjpeg\djeijg16.obj del dcmjpeg\djeijg16.obj
+	if exist dcmjpeg\djeijg8.obj del dcmjpeg\djeijg8.obj
+	if exist dcmjpeg\djencbas.obj del dcmjpeg\djencbas.obj
+	if exist dcmjpeg\djencext.obj del dcmjpeg\djencext.obj
+	if exist dcmjpeg\djenclol.obj del dcmjpeg\djenclol.obj
+	if exist dcmjpeg\djencode.obj del dcmjpeg\djencode.obj
+	if exist dcmjpeg\djencpro.obj del dcmjpeg\djencpro.obj
+	if exist dcmjpeg\djencsps.obj del dcmjpeg\djencsps.obj
+	if exist dcmjpeg\djencsv1.obj del dcmjpeg\djencsv1.obj
+	if exist dcmjpeg\djrplol.obj del dcmjpeg\djrplol.obj
+	if exist dcmjpeg\djrploss.obj del dcmjpeg\djrploss.obj
+	if exist dcmjpeg\djutils.obj del dcmjpeg\djutils.obj
+	if exist dcmjpeg\libijg12\jaricom.obj del dcmjpeg\libijg12\jaricom.obj
+	if exist dcmjpeg\libijg12\jcapimin.obj del dcmjpeg\libijg12\jcapimin.obj
+	if exist dcmjpeg\libijg12\jcapistd.obj del dcmjpeg\libijg12\jcapistd.obj
+	if exist dcmjpeg\libijg12\jcarith.obj del dcmjpeg\libijg12\jcarith.obj
+	if exist dcmjpeg\libijg12\jccoefct.obj del dcmjpeg\libijg12\jccoefct.obj
+	if exist dcmjpeg\libijg12\jccolor.obj del dcmjpeg\libijg12\jccolor.obj
+	if exist dcmjpeg\libijg12\jcdctmgr.obj del dcmjpeg\libijg12\jcdctmgr.obj
+	if exist dcmjpeg\libijg12\jcdiffct.obj del dcmjpeg\libijg12\jcdiffct.obj
+	if exist dcmjpeg\libijg12\jchuff.obj del dcmjpeg\libijg12\jchuff.obj
+	if exist dcmjpeg\libijg12\jcinit.obj del dcmjpeg\libijg12\jcinit.obj
+	if exist dcmjpeg\libijg12\jclhuff.obj del dcmjpeg\libijg12\jclhuff.obj
+	if exist dcmjpeg\libijg12\jclossls.obj del dcmjpeg\libijg12\jclossls.obj
+	if exist dcmjpeg\libijg12\jclossy.obj del dcmjpeg\libijg12\jclossy.obj
+	if exist dcmjpeg\libijg12\jcmainct.obj del dcmjpeg\libijg12\jcmainct.obj
+	if exist dcmjpeg\libijg12\jcmarker.obj del dcmjpeg\libijg12\jcmarker.obj
+	if exist dcmjpeg\libijg12\jcmaster.obj del dcmjpeg\libijg12\jcmaster.obj
+	if exist dcmjpeg\libijg12\jcodec.obj del dcmjpeg\libijg12\jcodec.obj
+	if exist dcmjpeg\libijg12\jcomapi.obj del dcmjpeg\libijg12\jcomapi.obj
+	if exist dcmjpeg\libijg12\jcparam.obj del dcmjpeg\libijg12\jcparam.obj
+	if exist dcmjpeg\libijg12\jcphuff.obj del dcmjpeg\libijg12\jcphuff.obj
+	if exist dcmjpeg\libijg12\jcpred.obj del dcmjpeg\libijg12\jcpred.obj
+	if exist dcmjpeg\libijg12\jcprepct.obj del dcmjpeg\libijg12\jcprepct.obj
+	if exist dcmjpeg\libijg12\jcsample.obj del dcmjpeg\libijg12\jcsample.obj
+	if exist dcmjpeg\libijg12\jcscale.obj del dcmjpeg\libijg12\jcscale.obj
+	if exist dcmjpeg\libijg12\jcshuff.obj del dcmjpeg\libijg12\jcshuff.obj
+	if exist dcmjpeg\libijg12\jctrans.obj del dcmjpeg\libijg12\jctrans.obj
+	if exist dcmjpeg\libijg12\jdapimin.obj del dcmjpeg\libijg12\jdapimin.obj
+	if exist dcmjpeg\libijg12\jdapistd.obj del dcmjpeg\libijg12\jdapistd.obj
+	if exist dcmjpeg\libijg12\jdarith.obj del dcmjpeg\libijg12\jdarith.obj
+	if exist dcmjpeg\libijg12\jdatadst.obj del dcmjpeg\libijg12\jdatadst.obj
+	if exist dcmjpeg\libijg12\jdatasrc.obj del dcmjpeg\libijg12\jdatasrc.obj
+	if exist dcmjpeg\libijg12\jdcoefct.obj del dcmjpeg\libijg12\jdcoefct.obj
+	if exist dcmjpeg\libijg12\jdcolor.obj del dcmjpeg\libijg12\jdcolor.obj
+	if exist dcmjpeg\libijg12\jddctmgr.obj del dcmjpeg\libijg12\jddctmgr.obj
+	if exist dcmjpeg\libijg12\jddiffct.obj del dcmjpeg\libijg12\jddiffct.obj
+	if exist dcmjpeg\libijg12\jdhuff.obj del dcmjpeg\libijg12\jdhuff.obj
+	if exist dcmjpeg\libijg12\jdinput.obj del dcmjpeg\libijg12\jdinput.obj
+	if exist dcmjpeg\libijg12\jdlhuff.obj del dcmjpeg\libijg12\jdlhuff.obj
+	if exist dcmjpeg\libijg12\jdlossls.obj del dcmjpeg\libijg12\jdlossls.obj
+	if exist dcmjpeg\libijg12\jdlossy.obj del dcmjpeg\libijg12\jdlossy.obj
+	if exist dcmjpeg\libijg12\jdmainct.obj del dcmjpeg\libijg12\jdmainct.obj
+	if exist dcmjpeg\libijg12\jdmarker.obj del dcmjpeg\libijg12\jdmarker.obj
+	if exist dcmjpeg\libijg12\jdmaster.obj del dcmjpeg\libijg12\jdmaster.obj
+	if exist dcmjpeg\libijg12\jdmerge.obj del dcmjpeg\libijg12\jdmerge.obj
+	if exist dcmjpeg\libijg12\jdphuff.obj del dcmjpeg\libijg12\jdphuff.obj
+	if exist dcmjpeg\libijg12\jdpostct.obj del dcmjpeg\libijg12\jdpostct.obj
+	if exist dcmjpeg\libijg12\jdpred.obj del dcmjpeg\libijg12\jdpred.obj
+	if exist dcmjpeg\libijg12\jdsample.obj del dcmjpeg\libijg12\jdsample.obj
+	if exist dcmjpeg\libijg12\jdscale.obj del dcmjpeg\libijg12\jdscale.obj
+	if exist dcmjpeg\libijg12\jdshuff.obj del dcmjpeg\libijg12\jdshuff.obj
+	if exist dcmjpeg\libijg12\jdtrans.obj del dcmjpeg\libijg12\jdtrans.obj
+	if exist dcmjpeg\libijg12\jerror.obj del dcmjpeg\libijg12\jerror.obj
+	if exist dcmjpeg\libijg12\jfdctflt.obj del dcmjpeg\libijg12\jfdctflt.obj
+	if exist dcmjpeg\libijg12\jfdctfst.obj del dcmjpeg\libijg12\jfdctfst.obj
+	if exist dcmjpeg\libijg12\jfdctint.obj del dcmjpeg\libijg12\jfdctint.obj
+	if exist dcmjpeg\libijg12\jidctflt.obj del dcmjpeg\libijg12\jidctflt.obj
+	if exist dcmjpeg\libijg12\jidctfst.obj del dcmjpeg\libijg12\jidctfst.obj
+	if exist dcmjpeg\libijg12\jidctint.obj del dcmjpeg\libijg12\jidctint.obj
+	if exist dcmjpeg\libijg12\jidctred.obj del dcmjpeg\libijg12\jidctred.obj
+	if exist dcmjpeg\libijg12\jmemmgr.obj del dcmjpeg\libijg12\jmemmgr.obj
+	if exist dcmjpeg\libijg12\jmemnobs.obj del dcmjpeg\libijg12\jmemnobs.obj
+	if exist dcmjpeg\libijg12\jquant1.obj del dcmjpeg\libijg12\jquant1.obj
+	if exist dcmjpeg\libijg12\jquant2.obj del dcmjpeg\libijg12\jquant2.obj
+	if exist dcmjpeg\libijg12\jutils.obj del dcmjpeg\libijg12\jutils.obj
+	if exist dcmjpeg\libijg16\jaricom.obj del dcmjpeg\libijg16\jaricom.obj
+	if exist dcmjpeg\libijg16\jcapimin.obj del dcmjpeg\libijg16\jcapimin.obj
+	if exist dcmjpeg\libijg16\jcapistd.obj del dcmjpeg\libijg16\jcapistd.obj
+	if exist dcmjpeg\libijg16\jcarith.obj del dcmjpeg\libijg16\jcarith.obj
+	if exist dcmjpeg\libijg16\jccoefct.obj del dcmjpeg\libijg16\jccoefct.obj
+	if exist dcmjpeg\libijg16\jccolor.obj del dcmjpeg\libijg16\jccolor.obj
+	if exist dcmjpeg\libijg16\jcdctmgr.obj del dcmjpeg\libijg16\jcdctmgr.obj
+	if exist dcmjpeg\libijg16\jcdiffct.obj del dcmjpeg\libijg16\jcdiffct.obj
+	if exist dcmjpeg\libijg16\jchuff.obj del dcmjpeg\libijg16\jchuff.obj
+	if exist dcmjpeg\libijg16\jcinit.obj del dcmjpeg\libijg16\jcinit.obj
+	if exist dcmjpeg\libijg16\jclhuff.obj del dcmjpeg\libijg16\jclhuff.obj
+	if exist dcmjpeg\libijg16\jclossls.obj del dcmjpeg\libijg16\jclossls.obj
+	if exist dcmjpeg\libijg16\jclossy.obj del dcmjpeg\libijg16\jclossy.obj
+	if exist dcmjpeg\libijg16\jcmainct.obj del dcmjpeg\libijg16\jcmainct.obj
+	if exist dcmjpeg\libijg16\jcmarker.obj del dcmjpeg\libijg16\jcmarker.obj
+	if exist dcmjpeg\libijg16\jcmaster.obj del dcmjpeg\libijg16\jcmaster.obj
+	if exist dcmjpeg\libijg16\jcodec.obj del dcmjpeg\libijg16\jcodec.obj
+	if exist dcmjpeg\libijg16\jcomapi.obj del dcmjpeg\libijg16\jcomapi.obj
+	if exist dcmjpeg\libijg16\jcparam.obj del dcmjpeg\libijg16\jcparam.obj
+	if exist dcmjpeg\libijg16\jcphuff.obj del dcmjpeg\libijg16\jcphuff.obj
+	if exist dcmjpeg\libijg16\jcpred.obj del dcmjpeg\libijg16\jcpred.obj
+	if exist dcmjpeg\libijg16\jcprepct.obj del dcmjpeg\libijg16\jcprepct.obj
+	if exist dcmjpeg\libijg16\jcsample.obj del dcmjpeg\libijg16\jcsample.obj
+	if exist dcmjpeg\libijg16\jcscale.obj del dcmjpeg\libijg16\jcscale.obj
+	if exist dcmjpeg\libijg16\jcshuff.obj del dcmjpeg\libijg16\jcshuff.obj
+	if exist dcmjpeg\libijg16\jctrans.obj del dcmjpeg\libijg16\jctrans.obj
+	if exist dcmjpeg\libijg16\jdapimin.obj del dcmjpeg\libijg16\jdapimin.obj
+	if exist dcmjpeg\libijg16\jdapistd.obj del dcmjpeg\libijg16\jdapistd.obj
+	if exist dcmjpeg\libijg16\jdarith.obj del dcmjpeg\libijg16\jdarith.obj
+	if exist dcmjpeg\libijg16\jdatadst.obj del dcmjpeg\libijg16\jdatadst.obj
+	if exist dcmjpeg\libijg16\jdatasrc.obj del dcmjpeg\libijg16\jdatasrc.obj
+	if exist dcmjpeg\libijg16\jdcoefct.obj del dcmjpeg\libijg16\jdcoefct.obj
+	if exist dcmjpeg\libijg16\jdcolor.obj del dcmjpeg\libijg16\jdcolor.obj
+	if exist dcmjpeg\libijg16\jddctmgr.obj del dcmjpeg\libijg16\jddctmgr.obj
+	if exist dcmjpeg\libijg16\jddiffct.obj del dcmjpeg\libijg16\jddiffct.obj
+	if exist dcmjpeg\libijg16\jdhuff.obj del dcmjpeg\libijg16\jdhuff.obj
+	if exist dcmjpeg\libijg16\jdinput.obj del dcmjpeg\libijg16\jdinput.obj
+	if exist dcmjpeg\libijg16\jdlhuff.obj del dcmjpeg\libijg16\jdlhuff.obj
+	if exist dcmjpeg\libijg16\jdlossls.obj del dcmjpeg\libijg16\jdlossls.obj
+	if exist dcmjpeg\libijg16\jdlossy.obj del dcmjpeg\libijg16\jdlossy.obj
+	if exist dcmjpeg\libijg16\jdmainct.obj del dcmjpeg\libijg16\jdmainct.obj
+	if exist dcmjpeg\libijg16\jdmarker.obj del dcmjpeg\libijg16\jdmarker.obj
+	if exist dcmjpeg\libijg16\jdmaster.obj del dcmjpeg\libijg16\jdmaster.obj
+	if exist dcmjpeg\libijg16\jdmerge.obj del dcmjpeg\libijg16\jdmerge.obj
+	if exist dcmjpeg\libijg16\jdphuff.obj del dcmjpeg\libijg16\jdphuff.obj
+	if exist dcmjpeg\libijg16\jdpostct.obj del dcmjpeg\libijg16\jdpostct.obj
+	if exist dcmjpeg\libijg16\jdpred.obj del dcmjpeg\libijg16\jdpred.obj
+	if exist dcmjpeg\libijg16\jdsample.obj del dcmjpeg\libijg16\jdsample.obj
+	if exist dcmjpeg\libijg16\jdscale.obj del dcmjpeg\libijg16\jdscale.obj
+	if exist dcmjpeg\libijg16\jdshuff.obj del dcmjpeg\libijg16\jdshuff.obj
+	if exist dcmjpeg\libijg16\jdtrans.obj del dcmjpeg\libijg16\jdtrans.obj
+	if exist dcmjpeg\libijg16\jerror.obj del dcmjpeg\libijg16\jerror.obj
+	if exist dcmjpeg\libijg16\jfdctflt.obj del dcmjpeg\libijg16\jfdctflt.obj
+	if exist dcmjpeg\libijg16\jfdctfst.obj del dcmjpeg\libijg16\jfdctfst.obj
+	if exist dcmjpeg\libijg16\jfdctint.obj del dcmjpeg\libijg16\jfdctint.obj
+	if exist dcmjpeg\libijg16\jidctflt.obj del dcmjpeg\libijg16\jidctflt.obj
+	if exist dcmjpeg\libijg16\jidctfst.obj del dcmjpeg\libijg16\jidctfst.obj
+	if exist dcmjpeg\libijg16\jidctint.obj del dcmjpeg\libijg16\jidctint.obj
+	if exist dcmjpeg\libijg16\jidctred.obj del dcmjpeg\libijg16\jidctred.obj
+	if exist dcmjpeg\libijg16\jmemmgr.obj del dcmjpeg\libijg16\jmemmgr.obj
+	if exist dcmjpeg\libijg16\jmemnobs.obj del dcmjpeg\libijg16\jmemnobs.obj
+	if exist dcmjpeg\libijg16\jquant1.obj del dcmjpeg\libijg16\jquant1.obj
+	if exist dcmjpeg\libijg16\jquant2.obj del dcmjpeg\libijg16\jquant2.obj
+	if exist dcmjpeg\libijg16\jutils.obj del dcmjpeg\libijg16\jutils.obj
+	if exist dcmjpeg\libijg8\jaricom.obj del dcmjpeg\libijg8\jaricom.obj
+	if exist dcmjpeg\libijg8\jcapimin.obj del dcmjpeg\libijg8\jcapimin.obj
+	if exist dcmjpeg\libijg8\jcapistd.obj del dcmjpeg\libijg8\jcapistd.obj
+	if exist dcmjpeg\libijg8\jcarith.obj del dcmjpeg\libijg8\jcarith.obj
+	if exist dcmjpeg\libijg8\jccoefct.obj del dcmjpeg\libijg8\jccoefct.obj
+	if exist dcmjpeg\libijg8\jccolor.obj del dcmjpeg\libijg8\jccolor.obj
+	if exist dcmjpeg\libijg8\jcdctmgr.obj del dcmjpeg\libijg8\jcdctmgr.obj
+	if exist dcmjpeg\libijg8\jcdiffct.obj del dcmjpeg\libijg8\jcdiffct.obj
+	if exist dcmjpeg\libijg8\jchuff.obj del dcmjpeg\libijg8\jchuff.obj
+	if exist dcmjpeg\libijg8\jcinit.obj del dcmjpeg\libijg8\jcinit.obj
+	if exist dcmjpeg\libijg8\jclhuff.obj del dcmjpeg\libijg8\jclhuff.obj
+	if exist dcmjpeg\libijg8\jclossls.obj del dcmjpeg\libijg8\jclossls.obj
+	if exist dcmjpeg\libijg8\jclossy.obj del dcmjpeg\libijg8\jclossy.obj
+	if exist dcmjpeg\libijg8\jcmainct.obj del dcmjpeg\libijg8\jcmainct.obj
+	if exist dcmjpeg\libijg8\jcmarker.obj del dcmjpeg\libijg8\jcmarker.obj
+	if exist dcmjpeg\libijg8\jcmaster.obj del dcmjpeg\libijg8\jcmaster.obj
+	if exist dcmjpeg\libijg8\jcodec.obj del dcmjpeg\libijg8\jcodec.obj
+	if exist dcmjpeg\libijg8\jcomapi.obj del dcmjpeg\libijg8\jcomapi.obj
+	if exist dcmjpeg\libijg8\jcparam.obj del dcmjpeg\libijg8\jcparam.obj
+	if exist dcmjpeg\libijg8\jcphuff.obj del dcmjpeg\libijg8\jcphuff.obj
+	if exist dcmjpeg\libijg8\jcpred.obj del dcmjpeg\libijg8\jcpred.obj
+	if exist dcmjpeg\libijg8\jcprepct.obj del dcmjpeg\libijg8\jcprepct.obj
+	if exist dcmjpeg\libijg8\jcsample.obj del dcmjpeg\libijg8\jcsample.obj
+	if exist dcmjpeg\libijg8\jcscale.obj del dcmjpeg\libijg8\jcscale.obj
+	if exist dcmjpeg\libijg8\jcshuff.obj del dcmjpeg\libijg8\jcshuff.obj
+	if exist dcmjpeg\libijg8\jctrans.obj del dcmjpeg\libijg8\jctrans.obj
+	if exist dcmjpeg\libijg8\jdapimin.obj del dcmjpeg\libijg8\jdapimin.obj
+	if exist dcmjpeg\libijg8\jdapistd.obj del dcmjpeg\libijg8\jdapistd.obj
+	if exist dcmjpeg\libijg8\jdarith.obj del dcmjpeg\libijg8\jdarith.obj
+	if exist dcmjpeg\libijg8\jdatadst.obj del dcmjpeg\libijg8\jdatadst.obj
+	if exist dcmjpeg\libijg8\jdatasrc.obj del dcmjpeg\libijg8\jdatasrc.obj
+	if exist dcmjpeg\libijg8\jdcoefct.obj del dcmjpeg\libijg8\jdcoefct.obj
+	if exist dcmjpeg\libijg8\jdcolor.obj del dcmjpeg\libijg8\jdcolor.obj
+	if exist dcmjpeg\libijg8\jddctmgr.obj del dcmjpeg\libijg8\jddctmgr.obj
+	if exist dcmjpeg\libijg8\jddiffct.obj del dcmjpeg\libijg8\jddiffct.obj
+	if exist dcmjpeg\libijg8\jdhuff.obj del dcmjpeg\libijg8\jdhuff.obj
+	if exist dcmjpeg\libijg8\jdinput.obj del dcmjpeg\libijg8\jdinput.obj
+	if exist dcmjpeg\libijg8\jdlhuff.obj del dcmjpeg\libijg8\jdlhuff.obj
+	if exist dcmjpeg\libijg8\jdlossls.obj del dcmjpeg\libijg8\jdlossls.obj
+	if exist dcmjpeg\libijg8\jdlossy.obj del dcmjpeg\libijg8\jdlossy.obj
+	if exist dcmjpeg\libijg8\jdmainct.obj del dcmjpeg\libijg8\jdmainct.obj
+	if exist dcmjpeg\libijg8\jdmarker.obj del dcmjpeg\libijg8\jdmarker.obj
+	if exist dcmjpeg\libijg8\jdmaster.obj del dcmjpeg\libijg8\jdmaster.obj
+	if exist dcmjpeg\libijg8\jdmerge.obj del dcmjpeg\libijg8\jdmerge.obj
+	if exist dcmjpeg\libijg8\jdphuff.obj del dcmjpeg\libijg8\jdphuff.obj
+	if exist dcmjpeg\libijg8\jdpostct.obj del dcmjpeg\libijg8\jdpostct.obj
+	if exist dcmjpeg\libijg8\jdpred.obj del dcmjpeg\libijg8\jdpred.obj
+	if exist dcmjpeg\libijg8\jdsample.obj del dcmjpeg\libijg8\jdsample.obj
+	if exist dcmjpeg\libijg8\jdscale.obj del dcmjpeg\libijg8\jdscale.obj
+	if exist dcmjpeg\libijg8\jdshuff.obj del dcmjpeg\libijg8\jdshuff.obj
+	if exist dcmjpeg\libijg8\jdtrans.obj del dcmjpeg\libijg8\jdtrans.obj
+	if exist dcmjpeg\libijg8\jerror.obj del dcmjpeg\libijg8\jerror.obj
+	if exist dcmjpeg\libijg8\jfdctflt.obj del dcmjpeg\libijg8\jfdctflt.obj
+	if exist dcmjpeg\libijg8\jfdctfst.obj del dcmjpeg\libijg8\jfdctfst.obj
+	if exist dcmjpeg\libijg8\jfdctint.obj del dcmjpeg\libijg8\jfdctint.obj
+	if exist dcmjpeg\libijg8\jidctflt.obj del dcmjpeg\libijg8\jidctflt.obj
+	if exist dcmjpeg\libijg8\jidctfst.obj del dcmjpeg\libijg8\jidctfst.obj
+	if exist dcmjpeg\libijg8\jidctint.obj del dcmjpeg\libijg8\jidctint.obj
+	if exist dcmjpeg\libijg8\jidctred.obj del dcmjpeg\libijg8\jidctred.obj
+	if exist dcmjpeg\libijg8\jmemmgr.obj del dcmjpeg\libijg8\jmemmgr.obj
+	if exist dcmjpeg\libijg8\jmemnobs.obj del dcmjpeg\libijg8\jmemnobs.obj
+	if exist dcmjpeg\libijg8\jquant1.obj del dcmjpeg\libijg8\jquant1.obj
+	if exist dcmjpeg\libijg8\jquant2.obj del dcmjpeg\libijg8\jquant2.obj
+	if exist dcmjpeg\libijg8\jutils.obj del dcmjpeg\libijg8\jutils.obj
+	if exist dcmjpeg.lib del dcmjpeg.lib
+	if exist dcmnet\assoc.obj del dcmnet\assoc.obj
+	if exist dcmnet\cond.obj del dcmnet\cond.obj
+	if exist dcmnet\dcasccff.obj del dcmnet\dcasccff.obj
+	if exist dcmnet\dcasccfg.obj del dcmnet\dcasccfg.obj
+	if exist dcmnet\dccfenmp.obj del dcmnet\dccfenmp.obj
+	if exist dcmnet\dccfpcmp.obj del dcmnet\dccfpcmp.obj
+	if exist dcmnet\dccfprmp.obj del dcmnet\dccfprmp.obj
+	if exist dcmnet\dccfrsmp.obj del dcmnet\dccfrsmp.obj
+	if exist dcmnet\dccftsmp.obj del dcmnet\dccftsmp.obj
+	if exist dcmnet\dccfuidh.obj del dcmnet\dccfuidh.obj
+	if exist dcmnet\dcmlayer.obj del dcmnet\dcmlayer.obj
+	if exist dcmnet\dcmtrans.obj del dcmnet\dcmtrans.obj
+	if exist dcmnet\dcompat.obj del dcmnet\dcompat.obj
+	if exist dcmnet\dimcancl.obj del dcmnet\dimcancl.obj
+	if exist dcmnet\dimcmd.obj del dcmnet\dimcmd.obj
+	if exist dcmnet\dimdump.obj del dcmnet\dimdump.obj
+	if exist dcmnet\dimecho.obj del dcmnet\dimecho.obj
+	if exist dcmnet\dimfind.obj del dcmnet\dimfind.obj
+	if exist dcmnet\dimget.obj del dcmnet\dimget.obj
+	if exist dcmnet\dimmove.obj del dcmnet\dimmove.obj
+	if exist dcmnet\dimse.obj del dcmnet\dimse.obj
+	if exist dcmnet\dimstore.obj del dcmnet\dimstore.obj
+	if exist dcmnet\diutil.obj del dcmnet\diutil.obj
+	if exist dcmnet\dul.obj del dcmnet\dul.obj
+	if exist dcmnet\dulconst.obj del dcmnet\dulconst.obj
+	if exist dcmnet\dulextra.obj del dcmnet\dulextra.obj
+	if exist dcmnet\dulfsm.obj del dcmnet\dulfsm.obj
+	if exist dcmnet\dulparse.obj del dcmnet\dulparse.obj
+	if exist dcmnet\dulpres.obj del dcmnet\dulpres.obj
+	if exist dcmnet\extneg.obj del dcmnet\extneg.obj
+	if exist dcmnet\lst.obj del dcmnet\lst.obj
+	if exist dcmnet.lib del dcmnet.lib
+	if exist dcmpstat\dcmpstat.obj del dcmpstat\dcmpstat.obj
+	if exist dcmpstat\dviface.obj del dcmpstat\dviface.obj
+	if exist dcmpstat\dvpsab.obj del dcmpstat\dvpsab.obj
+	if exist dcmpstat\dvpsabl.obj del dcmpstat\dvpsabl.obj
+	if exist dcmpstat\dvpsal.obj del dcmpstat\dvpsal.obj
+	if exist dcmpstat\dvpsall.obj del dcmpstat\dvpsall.obj
+	if exist dcmpstat\dvpscf.obj del dcmpstat\dvpscf.obj
+	if exist dcmpstat\dvpscu.obj del dcmpstat\dvpscu.obj
+	if exist dcmpstat\dvpscul.obj del dcmpstat\dvpscul.obj
+	if exist dcmpstat\dvpsda.obj del dcmpstat\dvpsda.obj
+	if exist dcmpstat\dvpsdal.obj del dcmpstat\dvpsdal.obj
+	if exist dcmpstat\dvpsfs.obj del dcmpstat\dvpsfs.obj
+	if exist dcmpstat\dvpsga.obj del dcmpstat\dvpsga.obj
+	if exist dcmpstat\dvpsgal.obj del dcmpstat\dvpsgal.obj
+	if exist dcmpstat\dvpsgl.obj del dcmpstat\dvpsgl.obj
+	if exist dcmpstat\dvpsgll.obj del dcmpstat\dvpsgll.obj
+	if exist dcmpstat\dvpsgr.obj del dcmpstat\dvpsgr.obj
+	if exist dcmpstat\dvpsgrl.obj del dcmpstat\dvpsgrl.obj
+	if exist dcmpstat\dvpshlp.obj del dcmpstat\dvpshlp.obj
+	if exist dcmpstat\dvpsib.obj del dcmpstat\dvpsib.obj
+	if exist dcmpstat\dvpsibl.obj del dcmpstat\dvpsibl.obj
+	if exist dcmpstat\dvpsmsg.obj del dcmpstat\dvpsmsg.obj
+	if exist dcmpstat\dvpsov.obj del dcmpstat\dvpsov.obj
+	if exist dcmpstat\dvpsovl.obj del dcmpstat\dvpsovl.obj
+	if exist dcmpstat\dvpspl.obj del dcmpstat\dvpspl.obj
+	if exist dcmpstat\dvpspl2.obj del dcmpstat\dvpspl2.obj
+	if exist dcmpstat\dvpspll.obj del dcmpstat\dvpspll.obj
+	if exist dcmpstat\dvpspr.obj del dcmpstat\dvpspr.obj
+	if exist dcmpstat\dvpsprt.obj del dcmpstat\dvpsprt.obj
+	if exist dcmpstat\dvpsri.obj del dcmpstat\dvpsri.obj
+	if exist dcmpstat\dvpsril.obj del dcmpstat\dvpsril.obj
+	if exist dcmpstat\dvpsrs.obj del dcmpstat\dvpsrs.obj
+	if exist dcmpstat\dvpsrsl.obj del dcmpstat\dvpsrsl.obj
+	if exist dcmpstat\dvpssp.obj del dcmpstat\dvpssp.obj
+	if exist dcmpstat\dvpsspl.obj del dcmpstat\dvpsspl.obj
+	if exist dcmpstat\dvpssv.obj del dcmpstat\dvpssv.obj
+	if exist dcmpstat\dvpssvl.obj del dcmpstat\dvpssvl.obj
+	if exist dcmpstat\dvpstat.obj del dcmpstat\dvpstat.obj
+	if exist dcmpstat\dvpstx.obj del dcmpstat\dvpstx.obj
+	if exist dcmpstat\dvpstxl.obj del dcmpstat\dvpstxl.obj
+	if exist dcmpstat\dvpsvl.obj del dcmpstat\dvpsvl.obj
+	if exist dcmpstat\dvpsvll.obj del dcmpstat\dvpsvll.obj
+	if exist dcmpstat\dvpsvw.obj del dcmpstat\dvpsvw.obj
+	if exist dcmpstat\dvpsvwl.obj del dcmpstat\dvpsvwl.obj
+	if exist dcmpstat\dvsighdl.obj del dcmpstat\dvsighdl.obj
+	if exist dcmpstat.lib del dcmpstat.lib
+	if exist dcmqrdb\dcmqrcbf.obj del dcmqrdb\dcmqrcbf.obj
+	if exist dcmqrdb\dcmqrcbg.obj del dcmqrdb\dcmqrcbg.obj
+	if exist dcmqrdb\dcmqrcbm.obj del dcmqrdb\dcmqrcbm.obj
+	if exist dcmqrdb\dcmqrcbs.obj del dcmqrdb\dcmqrcbs.obj
+	if exist dcmqrdb\dcmqrcnf.obj del dcmqrdb\dcmqrcnf.obj
+	if exist dcmqrdb\dcmqrdbi.obj del dcmqrdb\dcmqrdbi.obj
+	if exist dcmqrdb\dcmqrdbs.obj del dcmqrdb\dcmqrdbs.obj
+	if exist dcmqrdb\dcmqropt.obj del dcmqrdb\dcmqropt.obj
+	if exist dcmqrdb\dcmqrptb.obj del dcmqrdb\dcmqrptb.obj
+	if exist dcmqrdb\dcmqrsrv.obj del dcmqrdb\dcmqrsrv.obj
+	if exist dcmqrdb\dcmqrtis.obj del dcmqrdb\dcmqrtis.obj
+	if exist dcmqrdb.lib del dcmqrdb.lib
+	if exist dcmsign\dcsignat.obj del dcmsign\dcsignat.obj
+	if exist dcmsign\siautopr.obj del dcmsign\siautopr.obj
+	if exist dcmsign\sibrsapr.obj del dcmsign\sibrsapr.obj
+	if exist dcmsign\sicert.obj del dcmsign\sicert.obj
+	if exist dcmsign\sicertvf.obj del dcmsign\sicertvf.obj
+	if exist dcmsign\sicreapr.obj del dcmsign\sicreapr.obj
+	if exist dcmsign\sidsa.obj del dcmsign\sidsa.obj
+	if exist dcmsign\simaccon.obj del dcmsign\simaccon.obj
+	if exist dcmsign\simd5.obj del dcmsign\simd5.obj
+	if exist dcmsign\sinullpr.obj del dcmsign\sinullpr.obj
+	if exist dcmsign\siprivat.obj del dcmsign\siprivat.obj
+	if exist dcmsign\siripemd.obj del dcmsign\siripemd.obj
+	if exist dcmsign\sirsa.obj del dcmsign\sirsa.obj
+	if exist dcmsign\sisha1.obj del dcmsign\sisha1.obj
+	if exist dcmsign\sisprof.obj del dcmsign\sisprof.obj
+	if exist dcmsign\sitypes.obj del dcmsign\sitypes.obj
+	if exist dcmsign.lib del dcmsign.lib
+	if exist dcmsr\dsrbascc.obj del dcmsr\dsrbascc.obj
+	if exist dcmsr\dsrchecc.obj del dcmsr\dsrchecc.obj
+	if exist dcmsr\dsrcitem.obj del dcmsr\dsrcitem.obj
+	if exist dcmsr\dsrcodtn.obj del dcmsr\dsrcodtn.obj
+	if exist dcmsr\dsrcodvl.obj del dcmsr\dsrcodvl.obj
+	if exist dcmsr\dsrcomcc.obj del dcmsr\dsrcomcc.obj
+	if exist dcmsr\dsrcomtn.obj del dcmsr\dsrcomtn.obj
+	if exist dcmsr\dsrcomvl.obj del dcmsr\dsrcomvl.obj
+	if exist dcmsr\dsrcontn.obj del dcmsr\dsrcontn.obj
+	if exist dcmsr\dsrcsidl.obj del dcmsr\dsrcsidl.obj
+	if exist dcmsr\dsrdattn.obj del dcmsr\dsrdattn.obj
+	if exist dcmsr\dsrdoc.obj del dcmsr\dsrdoc.obj
+	if exist dcmsr\dsrdoctn.obj del dcmsr\dsrdoctn.obj
+	if exist dcmsr\dsrdoctr.obj del dcmsr\dsrdoctr.obj
+	if exist dcmsr\dsrdtitn.obj del dcmsr\dsrdtitn.obj
+	if exist dcmsr\dsrenhcc.obj del dcmsr\dsrenhcc.obj
+	if exist dcmsr\dsrimgfr.obj del dcmsr\dsrimgfr.obj
+	if exist dcmsr\dsrimgtn.obj del dcmsr\dsrimgtn.obj
+	if exist dcmsr\dsrimgvl.obj del dcmsr\dsrimgvl.obj
+	if exist dcmsr\dsriodcc.obj del dcmsr\dsriodcc.obj
+	if exist dcmsr\dsrkeycc.obj del dcmsr\dsrkeycc.obj
+	if exist dcmsr\dsrmamcc.obj del dcmsr\dsrmamcc.obj
+	if exist dcmsr\dsrnumtn.obj del dcmsr\dsrnumtn.obj
+	if exist dcmsr\dsrnumvl.obj del dcmsr\dsrnumvl.obj
+	if exist dcmsr\dsrpnmtn.obj del dcmsr\dsrpnmtn.obj
+	if exist dcmsr\dsrprocc.obj del dcmsr\dsrprocc.obj
+	if exist dcmsr\dsrreftn.obj del dcmsr\dsrreftn.obj
+	if exist dcmsr\dsrscogr.obj del dcmsr\dsrscogr.obj
+	if exist dcmsr\dsrscotn.obj del dcmsr\dsrscotn.obj
+	if exist dcmsr\dsrscovl.obj del dcmsr\dsrscovl.obj
+	if exist dcmsr\dsrsoprf.obj del dcmsr\dsrsoprf.obj
+	if exist dcmsr\dsrstrvl.obj del dcmsr\dsrstrvl.obj
+	if exist dcmsr\dsrtcodt.obj del dcmsr\dsrtcodt.obj
+	if exist dcmsr\dsrtcosp.obj del dcmsr\dsrtcosp.obj
+	if exist dcmsr\dsrtcotn.obj del dcmsr\dsrtcotn.obj
+	if exist dcmsr\dsrtcoto.obj del dcmsr\dsrtcoto.obj
+	if exist dcmsr\dsrtcovl.obj del dcmsr\dsrtcovl.obj
+	if exist dcmsr\dsrtextn.obj del dcmsr\dsrtextn.obj
+	if exist dcmsr\dsrtimtn.obj del dcmsr\dsrtimtn.obj
+	if exist dcmsr\dsrtncsr.obj del dcmsr\dsrtncsr.obj
+	if exist dcmsr\dsrtree.obj del dcmsr\dsrtree.obj
+	if exist dcmsr\dsrtypes.obj del dcmsr\dsrtypes.obj
+	if exist dcmsr\dsruidtn.obj del dcmsr\dsruidtn.obj
+	if exist dcmsr\dsrwavch.obj del dcmsr\dsrwavch.obj
+	if exist dcmsr\dsrwavtn.obj del dcmsr\dsrwavtn.obj
+	if exist dcmsr\dsrwavvl.obj del dcmsr\dsrwavvl.obj
+	if exist dcmsr\dsrxmlc.obj del dcmsr\dsrxmlc.obj
+	if exist dcmsr\dsrxmld.obj del dcmsr\dsrxmld.obj
+	if exist dcmsr\dsrxrdcc.obj del dcmsr\dsrxrdcc.obj
+	if exist dcmsr.lib del dcmsr.lib
+	if exist dcmtls\tlslayer.obj del dcmtls\tlslayer.obj
+	if exist dcmtls\tlstrans.obj del dcmtls\tlstrans.obj
+	if exist dcmtls.lib del dcmtls.lib
+	if exist dcmwlm\wlds.obj del dcmwlm\wlds.obj
+	if exist dcmwlm\wldsfs.obj del dcmwlm\wldsfs.obj
+	if exist dcmwlm\wlfsim.obj del dcmwlm\wlfsim.obj
+	if exist dcmwlm\wlmactmg.obj del dcmwlm\wlmactmg.obj
+	if exist dcmwlm.lib del dcmwlm.lib
+	if exist ofstd\ofcmdln.obj del ofstd\ofcmdln.obj
+	if exist ofstd\ofconapp.obj del ofstd\ofconapp.obj
+	if exist ofstd\ofcond.obj del ofstd\ofcond.obj
+	if exist ofstd\ofconfig.obj del ofstd\ofconfig.obj
+	if exist ofstd\ofconsol.obj del ofstd\ofconsol.obj
+	if exist ofstd\ofcrc32.obj del ofstd\ofcrc32.obj
+	if exist ofstd\ofdate.obj del ofstd\ofdate.obj
+	if exist ofstd\ofdatime.obj del ofstd\ofdatime.obj
+	if exist ofstd\offname.obj del ofstd\offname.obj
+	if exist ofstd\oflist.obj del ofstd\oflist.obj
+	if exist ofstd\oflogfil.obj del ofstd\oflogfil.obj
+	if exist ofstd\ofstd.obj del ofstd\ofstd.obj
+	if exist ofstd\ofstring.obj del ofstd\ofstring.obj
+	if exist ofstd\ofthread.obj del ofstd\ofthread.obj
+	if exist ofstd\oftime.obj del ofstd\oftime.obj
+	if exist ofstd.lib del ofstd.lib

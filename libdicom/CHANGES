@@ -12,4 +12,6 @@ Corrections and improvements made to libdicom during DicomSel development:
   library.
 * Missing "#include <cassert>" (which caused compilation failures with legacy
   GCC versions < 3.4) have been added.
+* Compatibility fix for GCC 4.1: removed class name in methods declaration
+  ("class x { int x::f(void); };" -> "class x { int f(void); };").
 * Some other minor corrections.

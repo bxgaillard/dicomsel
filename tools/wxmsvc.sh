@@ -98,6 +98,6 @@ sed -e 's%\(#include[ \t]\+\)"wx/dynload\.h"%\1"wx/dynlib.h"%' -i.bak \
 #
 
 cd "${WXROOT}/build/msw"
-exec wine nmake /NOLOGO /f makefile.vc
+exec env -i WINEDEBUG=-all wine nmake /NOLOGO /f makefile.vc
 
 # End of File

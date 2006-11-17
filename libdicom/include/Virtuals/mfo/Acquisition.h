@@ -79,7 +79,7 @@ public :
 	 * @pre parent (study) exists.
 	 * @post parent member is initialized, pixel vector is created
 	 */
-	CAcquisition::CAcquisition(
+	CAcquisition(
 			const uint32		_ui32AcquisitionNumber,
 			const std::string&	_sDate,
 			mfo::CStudy*		_pStudy,
@@ -144,7 +144,7 @@ public :
 	 *********************
 	 * @post pixel vector is created
 	 */
-	CAcquisition::CAcquisition(
+	CAcquisition(
 			const std::string&	_sDate,
 			const uint32		_ui32AcquisitionIndex,
 			const std::string&  _sImageType,

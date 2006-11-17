@@ -77,8 +77,8 @@ StoreDialog::StoreDialog( wxWindow* parent, wxWindowID id, const wxString& title
 	      wxDEFAULT_DIALOG_STYLE, wxT( "StoreDialogBox" ) )
 {
 
-	m_frmParent=parent;
-	m_fileName="no_file";
+	m_frmParent = parent;
+	m_fileName = wxT( "no_file" );
 
 	notebook1 = new wxNotebook(this,
                                  wxID_ANY,

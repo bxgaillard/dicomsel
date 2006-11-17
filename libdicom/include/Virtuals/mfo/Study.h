@@ -40,7 +40,7 @@ public:
 	/**
 	 * Constructor used by the DICOM parser
 	 */
-	CStudy::CStudy(
+	CStudy(
 		const std::string& _sUID,
 		mfo::CPatient* _pPatient,
 		const std::string& _sHospital,
@@ -67,7 +67,7 @@ public:
 	/**
 	 * Constructor used by the database
 	 */
-	CStudy::CStudy(
+	CStudy(
 		mfo::CPatient* _pPatient,
 		const std::string& _sHospital,
 		const std::string& _sModality,
@@ -92,7 +92,7 @@ public:
 	/**
 	 * Destructor
 	 */
-	CStudy::~CStudy()
+	~CStudy()
 	{
 		for(
 			std::vector<mfo::CAcquisition*>::reverse_iterator iterDelete = m_vectorAcquisition.rbegin();

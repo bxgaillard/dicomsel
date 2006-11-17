@@ -25,7 +25,7 @@ CPPFLAGS = /DNDEBUG /DHAVE_CONFIG_H /I$(TOPDIR)\msvc /I$(TOPDIR)
 #CPPFLAGS = /DDEBUG /DHAVE_CONFIG_H /I$(TOPDIR)\msvc /I$(TOPDIR)
 
 # Path to the wxWidgets main directory
-WX_PATH = $(TOPDIR)\..\wxWidgets
+WX_PATH = $(TOPDIR)\wxmsw\msvc
 
 # Please do not change anything below this line
 

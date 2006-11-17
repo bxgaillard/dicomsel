@@ -21,6 +21,12 @@
 #endif
 #include <wx/string.h>
 
+// Current module
+#include <dicomsel/DicomTree.h>
+#include <dicomsel/TagSet.h>
+#include <dicomsel/DicomFile.h>
+#include <dicomsel/DcmtkFile.h>
+
 // DCMTK
 #include <dicomsel/dcmtk.h>
 #include <dcmtk/ofstd/ofcond.h>
@@ -30,12 +36,6 @@
 #include <dcmtk/dcmdata/dctagkey.h>
 #include <dcmtk/dcmimgle/dcmimage.h>
 #include <dcmtk/dcmimage/diregist.h>
-
-// Current module
-#include <dicomsel/DicomTree.h>
-#include <dicomsel/TagSet.h>
-#include <dicomsel/DicomFile.h>
-#include <dicomsel/DcmtkFile.h>
 
 
 namespace dicomsel

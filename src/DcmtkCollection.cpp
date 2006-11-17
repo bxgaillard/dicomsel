@@ -20,8 +20,13 @@
 # pragma hdrstop
 #endif
 #include <wx/string.h>
+#include <wx/arrstr.h>
 #include <wx/strconv.h>
 #include <wx/dir.h>
+
+// Current module
+#include <dicomsel/DicomCollection.h>
+#include <dicomsel/DcmtkCollection.h>
 
 // DCMTK
 #include <dicomsel/dcmtk.h>
@@ -30,10 +35,6 @@
 #include <dcmtk/dcmdata/dcfilefo.h>
 #include <dcmtk/dcmdata/dcdatset.h>
 #include <dcmtk/dcmdata/dcdeftag.h>
-
-// Current module
-#include <dicomsel/DicomCollection.h>
-#include <dicomsel/DcmtkCollection.h>
 
 
 namespace dicomsel

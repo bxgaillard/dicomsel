@@ -21,12 +21,12 @@ dnl --------------------------------------------------------------------------
 dnl Process this file with autoconf to produce a configure script.
 
 dnl General settings
-AC_PREREQ(2.52g)
-AC_INIT([DicomSel], [1.9.5], [Johan.Moreau@ircad.u-strasbg.fr], [dicomsel])
+AC_PREREQ(2.60)
+AC_INIT([DicomSel], [1.9.6], [Johan.Moreau@ircad.u-strasbg.fr], [dicomsel])
 AC_CONFIG_SRCDIR([src/main.cpp])
 AC_CONFIG_HEADER([config.h])
 AC_CONFIG_AUX_DIR([autotools])
-AM_INIT_AUTOMAKE([1.7 no-define dist-bzip2 -Wall])
+AM_INIT_AUTOMAKE([1.10 no-define dist-bzip2 -Wall])
 
 dnl Additional definitions
 AC_SUBST([PACKAGE_YEARS], ["2005, 2006"])

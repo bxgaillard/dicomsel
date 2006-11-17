@@ -19,8 +19,7 @@
 
 
 # French report
-reportdir = $(datadir)/doc/$(PACKAGE_TARNAME)-$(PACKAGE_VERSION)
-dist_report_DATA = \
+dist_pdf_DATA = \
     report-fr/rapport-2.pdf \
     report-fr/rapport-page_de_garde.pdf \
     report-fr/rapport.pdf

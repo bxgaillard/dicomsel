@@ -154,9 +154,11 @@ getUserName(char* userString, int /* maxLen */)
 static char*
 getUserName(char* userString, int maxLen)
 {
-#if defined(_REENTRANT) && !defined(_WIN32) && !defined(__CYGWIN__)
+#if defined(_REENTRANT) && !defined(_WIN32) && !defined(__CYGWIN__) \
+    && defined(_POSIX_THREAD_SAFE_FUNCTIONS)
     // use getlogin_r instead of getlogin
-    return getlogin_r(userString, int maxLen)
+    getlogin_r(userString, maxLen);
+    return userString;
 #else
     char* s;
     s = getlogin(); // thread unsafe

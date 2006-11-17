@@ -42,7 +42,7 @@ public :
 	 * @pre parent (acquisition) exists.
 	 * @post parent member is initialized, color vector is created
 	 */
-	CReconstruction::CReconstruction(
+	CReconstruction(
 					 const std::string&	_sOrganName,
 					 const std::string&	_sReconstructionFormat,
 					 const std::string&	_sPath,
@@ -75,14 +75,14 @@ public :
 	/**
 	 * Destructor.
 	 */
-	CReconstruction::~CReconstruction()
+	~CReconstruction()
 	{
 	}
 
 	/**
 	 * @return const std::string& : the organ name
 	 */
-	const std::string& CReconstruction::GetOrganName (void) const
+	const std::string& GetOrganName (void) const
 	{
 		return this->m_sOrganName;
 	}
@@ -90,7 +90,7 @@ public :
 	/**
 	 * @param const std::string& : the organ name
 	 */
-	void CReconstruction::SetOrganName (const std::string& _sOrganName)
+	void SetOrganName (const std::string& _sOrganName)
 	{
 		this->m_sOrganName = _sOrganName;
 	}
@@ -98,7 +98,7 @@ public :
 	/**
 	 * @return const std::string& : the reconstruction format
 	 */
-	const std::string& CReconstruction::GetReconstructionFormat ( void ) const
+	const std::string& GetReconstructionFormat ( void ) const
 	{
 		return this->m_sReconstructionFormat;
 	}
@@ -106,7 +106,7 @@ public :
 	/**
 	 * @param const std::string& : the reconstruction format
 	 */
-	void CReconstruction::SetReconstructionFormat(const std::string& _sFormat)
+	void SetReconstructionFormat(const std::string& _sFormat)
 	{
 		this->m_sReconstructionFormat = _sFormat;
 	}
@@ -114,7 +114,7 @@ public :
 	/**
 	 * @return const std::string& : the reconstruction path
 	 */
-	const std::string& CReconstruction::GetPath ( void ) const
+	const std::string& GetPath ( void ) const
 	{
 		return this->m_sPath;
 	}
@@ -122,7 +122,7 @@ public :
 	/**
 	 * @param const std::string& : the reconstruction path
 	 */
-	void CReconstruction::SetPath(const std::string& _sPath)
+	void SetPath(const std::string& _sPath)
 	{
 		this->m_sPath = _sPath;
 	}
@@ -130,7 +130,7 @@ public :
 	/**
 	 * @return const std::vector<double>& : the organ color (r, g, b, a)
 	 */
-	const std::vector<double> & CReconstruction::GetOrganColor( void ) const
+	const std::vector<double> & GetOrganColor( void ) const
 	{
 		return this->m_vectorOrganColor;
 	}
@@ -138,7 +138,7 @@ public :
 	/**
 	 * @param const std::vector<double>& : the organ color (r, g, b, a)
 	 */
-	void CReconstruction::SetOrganColor(const std::vector<double> & _vColor)
+	void SetOrganColor(const std::vector<double> & _vColor)
 	{
 		this->m_vectorOrganColor = _vColor;
 	}
@@ -146,7 +146,7 @@ public :
 	/**
 	 * @return const bool : true if the organ is to be shown
 	 */
-	const bool CReconstruction::IsVisible (void) const
+	const bool IsVisible (void) const
 	{
 		return this->m_bIsVisible;
 	}
@@ -154,7 +154,7 @@ public :
 	/**
 	 * @param const bool : true if the organ is to be shown
 	 */
-	void CReconstruction::SetIsVisible(const bool _bIsVisible)
+	void SetIsVisible(const bool _bIsVisible)
 	{
 		this->m_bIsVisible = _bIsVisible;
 	}
@@ -162,7 +162,7 @@ public :
 	/**
 	 * @return const mfo::CAcquisition* : the acquisition from which comes this reconstruction
 	 */
-	const mfo::CAcquisition * const CReconstruction::GetAcquisition( void ) const
+	const mfo::CAcquisition * const GetAcquisition( void ) const
 	{
 		return this->m_pAcquisition;
 	}

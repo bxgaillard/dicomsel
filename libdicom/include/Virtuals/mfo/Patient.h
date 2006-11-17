@@ -50,7 +50,7 @@ public:
 	 * @param const std::string & _strBirthdate	: Birthdate (Dicom format !!)
 	 * @param const int8 _i8Sex		: 'M' or 'F'
 	 */
-	CPatient::CPatient(
+	CPatient(
 				const std::string & _strName,
 				const std::string & _strIDDicom,
 				const std::string & _strBirthdate,
@@ -82,7 +82,7 @@ public:
 	 * @param const bool _bSex					: Male is true
 	 * @param const std::string & _sParentBase	: eventual parent database. "" for local database
 	 */
-	CPatient::CPatient(
+	CPatient(
 				const std::string & _strName,
 				const std::string & _strIDDicom,
 				const std::string & _strFirstname,
@@ -113,7 +113,7 @@ public:
 	 * @param const CStudy * const _pStudy			:
 	 * @param CAcquisition * const _pAcquisition	:
 	 */
-	CPatient::CPatient(	const mfo::CPatient * const _pPatient,
+	CPatient(	const mfo::CPatient * const _pPatient,
 						const mfo::CStudy * const _pStudy,
 						const mfo::CAcquisition * const _pAcquisition)
 	{
@@ -227,7 +227,7 @@ public:
 	 * it calls the destructor.
 	 * This class not used another pointer.
 	*/
-	CPatient::~CPatient()
+	~CPatient()
 	{
 		for(
 			std::vector<mfo::CStudy*>::reverse_iterator iterDelete = m_vectorStudy.rbegin();
